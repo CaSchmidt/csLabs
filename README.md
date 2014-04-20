@@ -1,5 +1,5 @@
-cslabs -- The Software Laboratory of Carsten Schmidt
-====================================================
+cslabs - The Software Laboratory of Carsten Schmidt
+===================================================
 
 About
 -----
