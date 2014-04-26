@@ -5,7 +5,7 @@ About
 -----
 
 This repository countains some of the code I am working on.
-As you will find out, most of it is written in C++ utilizing Qt as the main dependency.
+As you will find out, most of it is written in C++ utilizing [Qt](http://qt-project.org/) as the main dependency.
 
 License
 -------
