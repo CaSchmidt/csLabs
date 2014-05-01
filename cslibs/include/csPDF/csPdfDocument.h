@@ -55,6 +55,8 @@ public:
   csPdfPage page(const int no) const; // no == [0, pageCount()-1]
   csPdfContentsNode *tableOfContents() const;
   csPdfTextPages textPages(const int first, const int count = -1) const;
+  int renderThreads() const;
+  int setRenderThreads(const int count);
 
   static csPdfDocument load(const QString& filename, const bool memory = false);
 

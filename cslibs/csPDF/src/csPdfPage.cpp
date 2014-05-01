@@ -139,7 +139,7 @@ QImage csPdfPage::renderToImage(const QRectF& area, const double scale) const
 
   QList<FzRenderData> renderJobs;
 
-  const int noJobs = 1;
+  const int noJobs = impl->pdf->renderThreads;
 
   int y0 = iRenderBox.y0;
   for(int i = 0; i < noJobs; i++) {

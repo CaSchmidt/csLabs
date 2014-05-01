@@ -30,6 +30,7 @@
 *****************************************************************************/
 
 #include <QtCore/QMimeData>
+#include <QtCore/QThread>
 #include <QtGui/QClipboard>
 #include <QtGui/QKeyEvent>
 #include <QtWidgets/QActionGroup>
@@ -198,7 +199,8 @@ void WMainWindow::keyPressEvent(QKeyEvent *event)
 
 void WMainWindow::openFile(const QString& filename)
 {
-  const csPdfDocument doc = csPdfDocument::load(filename);
+  csPdfDocument doc = csPdfDocument::load(filename);
+  doc.setRenderThreads(QThread::idealThreadCount());
   ui->pdfView->setDocument(doc);
   ui->contentsWidget->setDocument(doc);
   ui->searchWidget->setDocument(doc);

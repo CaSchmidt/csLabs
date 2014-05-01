@@ -210,6 +210,31 @@ csPdfTextPages csPdfDocument::textPages(const int first, const int count) const
   return results;
 }
 
+int csPdfDocument::renderThreads() const
+{
+  if( isEmpty() ) {
+    return 0;
+  }
+
+  CSPDF_DOCIMPL();
+
+  return impl->renderThreads;
+}
+
+int csPdfDocument::setRenderThreads(const int count)
+{
+  if( isEmpty() ) {
+    return 0;
+  }
+
+  CSPDF_DOCIMPL();
+
+  const int old = impl->renderThreads;
+  impl->renderThreads = qMax(count, 1);
+
+  return old;
+}
+
 csPdfDocument csPdfDocument::load(const QString& filename, const bool memory)
 {
   QByteArray data;

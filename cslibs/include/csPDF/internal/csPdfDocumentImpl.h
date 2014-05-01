@@ -55,7 +55,8 @@ public:
       data(),
       filename(),
       mutex(),
-      locks(NULL)
+      locks(NULL),
+      renderThreads(1)
   {
   }
 
@@ -76,6 +77,7 @@ public:
   QString filename;
   QMutex mutex;
   fz_locks_context *locks;
+  int renderThreads;
 };
 
 #endif // __CSPDFDOCUMENTIMPL_H__
