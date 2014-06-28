@@ -116,12 +116,12 @@ namespace priv {
 ////// public ////////////////////////////////////////////////////////////////
 
 WPdfView::WPdfView(QWidget *parent)
-  : QGraphicsView(parent),
-    _scene(0),
-    _doc(),
-    _page(),
-    _zoom(ZOOM_INIT),
-    _pageBounces(0)
+  : QGraphicsView(parent)
+  , _scene(0)
+  , _doc()
+  , _page()
+  , _zoom(ZOOM_INIT)
+  , _pageBounces(0)
 {
   // Graphics Scene //////////////////////////////////////////////////////////
 
@@ -183,6 +183,7 @@ QString WPdfView::selectedText() const
 
 void WPdfView::setDocument(const csPdfDocument& doc)
 {
+  _scene->clear();
   _doc.clear();
   _page.clear();
 
@@ -262,6 +263,8 @@ void WPdfView::showNextPage()
 
 void WPdfView::showPage(int no)
 {
+  _pageBounces = 0;
+
   if( _doc.isEmpty() ) {
     emit pageChanged(1);
     return;
@@ -278,11 +281,9 @@ void WPdfView::showPage(int no)
   renderPage();
 
   foreach(const csPdfLink link, _page.links()) {
-    if( !link.isGoto() ) {
-      continue;
+    if( link.isGoto() ) {
+      priv::addLink(_scene, link);
     }
-
-    priv::addLink(_scene, link);
   }
 
   emit pageChanged(pageNo+1);
@@ -334,7 +335,10 @@ bool WPdfView::eventFilter(QObject *watched, QEvent *event)
   if( event->type() == QEvent::GraphicsSceneMousePress ) {
     QGraphicsSceneMouseEvent *mev =
         dynamic_cast<QGraphicsSceneMouseEvent*>(event);
-    return followLink(mev->scenePos());
+    if( mev->modifiers() == Qt::NoModifier  &&
+        mev->buttons() ==  Qt::LeftButton ) {
+      return followLink(mev->scenePos());
+    }
   }
 
   return QGraphicsView::eventFilter(watched, event);
@@ -345,24 +349,32 @@ void WPdfView::keyPressEvent(QKeyEvent *event)
   if(        event->matches(QKeySequence::MoveToStartOfDocument) ) {
     showFirstPage();
     event->accept();
+    return;
   } else if( event->matches(QKeySequence::MoveToEndOfDocument) ) {
     showLastPage();
     event->accept();
+    return;
   } else if( event->matches(QKeySequence::MoveToNextPage) ) {
     showNextPage();
     event->accept();
+    return;
   } else if( event->matches(QKeySequence::MoveToPreviousPage) ) {
     showPreviousPage();
     event->accept();
+    return;
   } else if( event->matches(QKeySequence::ZoomIn)  ||
              (event->modifiers() == Qt::ControlModifier  &&
               event->key() == Qt::Key_BracketRight) ) {
     zoomIn();
     event->accept();
+    return;
   } else if( event->matches(QKeySequence::ZoomOut) ) {
     zoomOut();
     event->accept();
+    return;
   }
+
+  QGraphicsView::keyPressEvent(event);
 }
 
 void WPdfView::wheelEvent(QWheelEvent *event)
@@ -376,21 +388,25 @@ void WPdfView::wheelEvent(QWheelEvent *event)
     if(        dy < 0 ) {
       showNextPage();
       event->accept();
+      return;
     } else if( dy > 0 ) {
       showPreviousPage();
       event->accept();
+      return;
     }
   } else if( event->modifiers() == Qt::ShiftModifier ) {
     if(        dy < 0 ) {
       zoomIn();
       event->accept();
+      return;
     } else if( dy > 0 ) {
       zoomOut();
       event->accept();
+      return;
     }
-  } else {
-    QCoreApplication::sendEvent(verticalScrollBar(), event);
   }
+
+  QGraphicsView::wheelEvent(event);
 }
 
 ////// private slots /////////////////////////////////////////////////////////
@@ -452,20 +468,10 @@ bool WPdfView::followLink(const QPointF& scenePos)
 {
   QGraphicsItem *hitItem = 0;
   foreach(QGraphicsItem *item, _scene->items(scenePos)) {
-    if( item->data(DATA_ID).toInt() != ID_LINK ) {
-      continue;
-    }
-
-    if( hitItem == 0 ) {
+    if( item->data(DATA_ID).toInt() == ID_LINK  &&
+        item->sceneBoundingRect().contains(scenePos) ) {
       hitItem = item;
-    } else {
-      const QPointF dHit =
-          hitItem->mapToScene(hitItem->boundingRect().center()) - scenePos;
-      const QPointF dTest =
-          item->mapToScene(item->boundingRect().center()) - scenePos;
-      if( QPointF::dotProduct(dTest, dTest) < QPointF::dotProduct(dHit, dHit) ) {
-        hitItem = item;
-      }
+      break;
     }
   }
 
@@ -474,6 +480,7 @@ bool WPdfView::followLink(const QPointF& scenePos)
     const QPointF dest = hitItem->data(DATA_LINKDEST).toPointF();
 
     showPage(page+1);
+    centerOn(_page.rect().center().x(), 0);
     // centerOn(dest); // TODO: Transform 'dest'; cf. SumatraPDF
 
     return true;

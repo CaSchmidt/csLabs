@@ -51,7 +51,7 @@ public slots:
   void showFirstPage();
   void showLastPage();
   void showNextPage();
-  void showPage(int no); // [1, _doc.pageCount()]
+  virtual void showPage(int no); // [1, _doc.pageCount()]
   void showPreviousPage();
   void zoom(double level); // [%]
   void zoomIn();
@@ -71,9 +71,12 @@ private:
   void removeItems(const int id);
   void renderPage();
 
+protected:
   QGraphicsScene *_scene;
   csPdfDocument _doc;
   csPdfPage _page;
+
+private:
   double _zoom; // [%]
   int _pageBounces;
 
