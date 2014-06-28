@@ -4,13 +4,12 @@
 #
 #-------------------------------------------------
 
-QT += core gui widgets
-
-TARGET = csPDF
 TEMPLATE = app
 
-CONFIG(debug, debug|release): TARGET = $${TARGET}_debug
-# CONFIG += console
+include(../../global.pri)
+TARGET = csPDF$${TARGET_POSTFIX}
+
+QT += core gui widgets
 
 DESTDIR = ../../bin
 
@@ -22,10 +21,7 @@ DEPENDPATH += ./include
 DEPENDPATH += ../../cslibs/include
 
 LIBS += -L../../lib
-CONFIG(debug, debug|release):   LIBS += -lcsPDF_debug
-CONFIG(release, debug|release): LIBS += -lcsPDF
-CONFIG(debug, debug|release):   LIBS += -lcsQt_debug
-CONFIG(release, debug|release): LIBS += -lcsQt
+LIBS += -lcsQt$${TARGET_POSTFIX} -lcsPDF$${TARGET_POSTFIX}
 
 
 SOURCES += \

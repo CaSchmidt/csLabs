@@ -4,10 +4,10 @@
 #
 #-------------------------------------------------
 
-TARGET = csQt
 TEMPLATE = lib
 
-CONFIG(debug, debug|release): TARGET = $${TARGET}_debug
+include(../../global.pri)
+TARGET = csQt$${TARGET_POSTFIX}
 
 QT += core gui widgets
 

@@ -4,12 +4,12 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets concurrent
-
-TARGET = TaqNG
 TEMPLATE = app
 
-CONFIG(debug, debug|release): TARGET = $${TARGET}_debug
+include(../../global.pri)
+TARGET = TaqNG$${TARGET_POSTFIX}
+
+QT       += core gui widgets concurrent
 
 DESTDIR = ../../bin
 
@@ -21,9 +21,8 @@ DEPENDPATH += ./include
 DEPENDPATH += ../../cslibs/include
 
 LIBS += -L../../lib
-CONFIG(debug,   debug|release): LIBS += -lcsQt_debug
-CONFIG(release, debug|release): LIBS += -lcsQt
-LIBS += -lid3-x64
+LIBS += -lcsQt$${TARGET_POSTFIX}
+LIBS += -lid3$${TARGET_ARCH}
 
 
 SOURCES += \
