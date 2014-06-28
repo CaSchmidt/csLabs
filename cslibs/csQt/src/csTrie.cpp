@@ -207,6 +207,11 @@ csTrie::csTrie()
 
 csTrie::~csTrie()
 {
+  clear();
+}
+
+void csTrie::clear()
+{
   delete _root;
 }
 

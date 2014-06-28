@@ -48,6 +48,8 @@ public:
   csTrie();
   ~csTrie();
 
+  void clear();
+
   QStringList complete(const QString& base) const;
 
   MatchResult find(const QString& str) const;
