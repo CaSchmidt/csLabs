@@ -81,6 +81,8 @@ WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
 
   connect(ui->showSearchAction, SIGNAL(triggered()),
           ui->searchDock, SLOT(show()));
+  connect(ui->showSearchAction, SIGNAL(triggered()),
+          ui->searchWidget, SLOT(selectSearchText()));
   connect(ui->searchWidget, SIGNAL(pageRequested(int)),
           ui->pdfView, SLOT(showPage(int)));
   connect(ui->searchWidget, SIGNAL(highlightRequested(const QString&)),

@@ -128,6 +128,11 @@ void WPdfSearch::clear()
   _results->clear();
 }
 
+void WPdfSearch::selectSearchText()
+{
+  ui->searchEdit->selectAll();
+}
+
 void WPdfSearch::setStartPage(int no)
 {
   _startIndex = no-1;

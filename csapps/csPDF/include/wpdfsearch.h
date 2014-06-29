@@ -51,6 +51,7 @@ public:
 public slots:
   void cancel();
   void clear();
+  void selectSearchText();
   void setStartPage(int no);
   void start();
 
