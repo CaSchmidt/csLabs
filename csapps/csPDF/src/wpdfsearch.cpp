@@ -131,6 +131,7 @@ void WPdfSearch::clear()
 void WPdfSearch::selectSearchText()
 {
   ui->searchEdit->selectAll();
+  ui->searchEdit->setFocus(Qt::OtherFocusReason);
 }
 
 void WPdfSearch::setStartPage(int no)
