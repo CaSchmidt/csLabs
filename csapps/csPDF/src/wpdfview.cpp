@@ -480,7 +480,7 @@ bool WPdfView::followLink(const QPointF& scenePos)
     const QPointF dest = hitItem->data(DATA_LINKDEST).toPointF();
 
     showPage(page+1);
-    centerOn(_page.rect().center().x(), 0);
+    centerOn(_page.rect().center().x(), _page.rect().top());
     // centerOn(dest); // TODO: Transform 'dest'; cf. SumatraPDF
 
     return true;
