@@ -20,7 +20,7 @@ DEFINES += CS_BUILD_PDF_LIB
 INCLUDEPATH += ../include
 DEPENDPATH  += ../include
 
-LIBS += -lpdf-x64
+LIBS += -lpdf$${TARGET_ARCH}
 
 
 SOURCES += \
