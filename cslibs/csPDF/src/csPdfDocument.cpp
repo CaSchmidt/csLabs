@@ -242,7 +242,11 @@ csPdfDocument csPdfDocument::load(const QString& filename, const bool memory)
     QFile f(filename);
     if( f.open(QIODevice::ReadOnly) ) {
       data = f.readAll();
+      const bool sizeOk = f.size() == (qint64)data.size();
       f.close();
+      if( !sizeOk ) {
+        return csPdfDocument();
+      }
     } else {
       return csPdfDocument();
     }
