@@ -29,9 +29,6 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <QtCore/QtGlobal>
-#include <QtCore/QVector>
-
 #include "csQt/csTrie.h"
 
 ////// Macros ////////////////////////////////////////////////////////////////
