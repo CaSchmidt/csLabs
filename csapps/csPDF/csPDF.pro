@@ -21,26 +21,20 @@ DEPENDPATH += ./include
 DEPENDPATH += ../../cslibs/include
 
 LIBS += -L../../lib
-LIBS += -lcsQt$${TARGET_POSTFIX} -lcsPDF$${TARGET_POSTFIX}
+LIBS += -lcsQt$${TARGET_POSTFIX}
+LIBS += -lcsPDF$${TARGET_POSTFIX}
+LIBS += -lcsPDFUI$${TARGET_POSTFIX}
 
 
 SOURCES += \
     src/main.cpp \
     src/wmainwindow.cpp \
-    src/wpdfview.cpp \
-    src/wquicksearch.cpp \
-    src/wpdfsearch.cpp \
-    src/wpdfcontents.cpp
+    src/wquicksearch.cpp
 
 HEADERS  += \
     include/wmainwindow.h \
-    include/wpdfview.h \
-    include/wquicksearch.h \
-    include/wpdfsearch.h \
-    include/wpdfcontents.h
+    include/wquicksearch.h
 
 FORMS    += \
     forms/wmainwindow.ui \
-    forms/wquicksearch.ui \
-    forms/wpdfsearch.ui \
-    forms/wpdfcontents.ui
+    forms/wquicksearch.ui

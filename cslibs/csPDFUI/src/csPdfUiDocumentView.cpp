@@ -47,18 +47,6 @@
 #define DATA_LINKDEST       2
 #define DATA_SELECTIONTEXT  3
 
-// Item IDs
-#define ID_PAGE       1
-#define ID_LINK       2
-#define ID_HIGHLIGHT  3
-#define ID_SELECTION  4
-
-// Item Layers
-#define Z_PAGE        0.0
-#define Z_LINK       10.0
-#define Z_HIGHLIGHT  20.0
-#define Z_SELECTION  30.0
-
 // Zoom
 
 #define ZOOM_INIT  100.0
@@ -78,8 +66,8 @@ namespace priv {
     QGraphicsItem *item = scene->addRect(rect,
                                          QPen(Qt::NoPen),
                                          QBrush(hlColor, Qt::SolidPattern));
-    item->setZValue(Z_HIGHLIGHT);
-    item->setData(DATA_ID, ID_HIGHLIGHT);
+    item->setZValue(csPdfUiDocumentView::HighlightLayer);
+    item->setData(DATA_ID, csPdfUiDocumentView::HighlightId);
 
     return item;
   }
@@ -89,8 +77,8 @@ namespace priv {
     QGraphicsItem *item = scene->addRect(link.sourceRect());
     item->setFlag(QGraphicsItem::ItemHasNoContents, true);
     item->setCursor(Qt::PointingHandCursor);
-    item->setZValue(Z_LINK);
-    item->setData(DATA_ID, ID_LINK);
+    item->setZValue(csPdfUiDocumentView::LinkLayer);
+    item->setData(DATA_ID, csPdfUiDocumentView::LinkId);
     item->setData(DATA_LINKPAGE, link.page());
     item->setData(DATA_LINKDEST, link.destTopLeft());
 
@@ -104,8 +92,8 @@ namespace priv {
     QGraphicsItem *item = scene->addRect(pdfText.rect(),
                                          QPen(Qt::NoPen),
                                          QBrush(selColor, Qt::SolidPattern));
-    item->setZValue(Z_SELECTION);
-    item->setData(DATA_ID, ID_SELECTION);
+    item->setZValue(csPdfUiDocumentView::SelectionLayer);
+    item->setData(DATA_ID, csPdfUiDocumentView::SelectionId);
     item->setData(DATA_SELECTIONTEXT, pdfText.text());
 
     return item;
@@ -149,7 +137,7 @@ QString csPdfUiDocumentView::selectedText() const
 {
   csPdfTexts texts;
   foreach(QGraphicsItem *item, _scene->items()) {
-    if( item->data(DATA_ID).toInt() == ID_SELECTION ) {
+    if( item->data(DATA_ID).toInt() == SelectionId ) {
       QGraphicsRectItem *ri = dynamic_cast<QGraphicsRectItem*>(item);
       texts.push_back(csPdfText(ri->rect(),
                                 item->data(DATA_SELECTIONTEXT).toString()));
@@ -200,7 +188,7 @@ void csPdfUiDocumentView::setDocument(const csPdfDocument& doc)
 
 void csPdfUiDocumentView::highlightText(const QString& text)
 {
-  removeItems(ID_HIGHLIGHT);
+  removeItems(HighlightId);
 
   if( _page.isEmpty() ) {
     return;
@@ -231,8 +219,8 @@ void csPdfUiDocumentView::highlightText(const QString& text)
 
 void csPdfUiDocumentView::removeMarks()
 {
-  removeItems(ID_HIGHLIGHT);
-  removeItems(ID_SELECTION);
+  removeItems(HighlightId);
+  removeItems(SelectionId);
 }
 
 void csPdfUiDocumentView::showFirstPage()
@@ -422,7 +410,7 @@ void csPdfUiDocumentView::selectArea(QRect rect, QPointF fromScene, QPointF toSc
   const double w = qAbs(fromScene.x() - toScene.x());
   const double h = qAbs(fromScene.y() - toScene.y());
 
-  removeItems(ID_SELECTION);
+  removeItems(SelectionId);
   foreach(const csPdfText t, _page.texts(QRectF(x, y, w, h))) {
     priv::addSelection(_scene, t);
   }
@@ -468,7 +456,7 @@ bool csPdfUiDocumentView::followLink(const QPointF& scenePos)
 {
   QGraphicsItem *hitItem = 0;
   foreach(QGraphicsItem *item, _scene->items(scenePos)) {
-    if( item->data(DATA_ID).toInt() == ID_LINK  &&
+    if( item->data(DATA_ID).toInt() == LinkId  &&
         item->sceneBoundingRect().contains(scenePos) ) {
       hitItem = item;
       break;
@@ -501,7 +489,7 @@ void csPdfUiDocumentView::removeItems(const int id)
 
 void csPdfUiDocumentView::renderPage()
 {
-  removeItems(ID_PAGE);
+  removeItems(PageId);
 
   if( _page.isEmpty() ) {
     return;
@@ -510,8 +498,8 @@ void csPdfUiDocumentView::renderPage()
   const QImage image = _page.renderToImage(_SCALE);
   QGraphicsItem *item = _scene->addPixmap(QPixmap::fromImage(image));
   item->setTransform(QTransform::fromScale(1.0/_SCALE, 1.0/_SCALE));
-  item->setZValue(Z_PAGE);
-  item->setData(DATA_ID, ID_PAGE);
+  item->setZValue(PageLayer);
+  item->setData(DATA_ID, PageId);
 
   setSceneRect(_page.rect());
 }
