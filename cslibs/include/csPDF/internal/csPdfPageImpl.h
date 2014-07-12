@@ -43,10 +43,10 @@
 class csPdfPageImpl {
 public:
   csPdfPageImpl()
-    : page(NULL),
-      no(-1),
-      pdf(),
-      textsCache()
+    : page(NULL)
+    , no(-1)
+    , pdf()
+    , textsCache()
   {
   }
 

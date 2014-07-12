@@ -46,8 +46,8 @@ typedef ushort csUtf16;
 class csTrieNode {
 public:
   csTrieNode(const csUtf16 _letter)
-    : _status(0),
-      _children(0)
+    : _status(0)
+    , _children(0)
   {
     _status   = _letter;
     _status <<= STATUS_SHIFT_LETTER;

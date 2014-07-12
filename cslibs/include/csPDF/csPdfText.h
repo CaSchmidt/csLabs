@@ -39,8 +39,8 @@
 class csPdfText {
 public:
   inline csPdfText(const QRectF& r = QRectF(), const QString& t = QString())
-    : _rect(r),
-      _text(t)
+    : _rect(r)
+    , _text(t)
   {
   }
 

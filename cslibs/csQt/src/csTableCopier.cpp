@@ -43,9 +43,9 @@
 ////// public ////////////////////////////////////////////////////////////////
 
 csTableCopier::csTableCopier(QObject *parent)
-  : QObject(parent),
-    extractionRole(Qt::DisplayRole),
-    extractionFlags(cs::ExtractHHeader | cs::ExtractVHeader)
+  : QObject(parent)
+  , extractionRole(Qt::DisplayRole)
+  , extractionFlags(cs::ExtractHHeader | cs::ExtractVHeader)
 {
 }
 

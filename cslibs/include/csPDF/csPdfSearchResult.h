@@ -38,9 +38,9 @@ class csPdfSearchResult {
 public:
   inline csPdfSearchResult(const int pg = -1, const int idx = -1,
                            const QStringList& ctx = QStringList())
-    : _page(pg),
-      _index(idx),
-      _context(ctx)
+    : _page(pg)
+    , _index(idx)
+    , _context(ctx)
   {
   }
 

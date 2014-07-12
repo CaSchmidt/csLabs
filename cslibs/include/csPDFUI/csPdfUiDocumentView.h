@@ -40,9 +40,8 @@
 class  CS_PDFUI_EXPORT csPdfUiDocumentView : public QGraphicsView {
   Q_OBJECT
 public:
-  // Set With QGraphicsItem::setData(0, ...)
   enum ItemId {
-    PageId = 0,
+    PageId = 1,
     LinkId,
     HighlightId,
     SelectionId,
@@ -63,6 +62,9 @@ public:
   QString selectedText() const;
   void setDocument(const csPdfDocument& doc);
 
+  static void setItemId(QGraphicsItem *item, const int id);
+  static int itemId(const QGraphicsItem *item);
+
 public slots:
   void highlightText(const QString& text);
   void removeMarks();
@@ -78,6 +80,8 @@ public slots:
 protected:
   bool eventFilter(QObject *watched, QEvent *event);
   void keyPressEvent(QKeyEvent *event);
+  QList<QGraphicsItem*> listItems(const int id) const;
+  void removeItems(const int id);
   void wheelEvent(QWheelEvent *event);
 
 private slots:
@@ -86,7 +90,6 @@ private slots:
 
 private:
   bool followLink(const QPointF& scenePos);
-  void removeItems(const int id);
   void renderPage();
 
 protected:

@@ -35,9 +35,9 @@
 
 csSubstringHighlighter::csSubstringHighlighter(QTextDocument *document,
                                                const Qt::CaseSensitivity cs)
-  : QSyntaxHighlighter(document),
-    _matcher("", cs, QRegExp::RegExp),
-    _fmt()
+  : QSyntaxHighlighter(document)
+  , _matcher("", cs, QRegExp::RegExp)
+  , _fmt()
 {
   setBackground(QColor());
   setBold(true);

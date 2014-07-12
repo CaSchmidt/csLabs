@@ -33,7 +33,9 @@
 #include <csPDF/internal/fz_util.h>
 
 FzRenderData::FzRenderData()
-  : context(NULL), displayList(NULL), pixmap(NULL)
+  : context(NULL)
+  , displayList(NULL)
+  , pixmap(NULL)
 {
   renderRect.x0 = 0;
   renderRect.y0 = 0;
@@ -43,7 +45,9 @@ FzRenderData::FzRenderData()
 
 FzRenderData::FzRenderData(fz_context *ctx, fz_display_list *list,
                            fz_pixmap *pix, fz_rect *rect)
-  : context(ctx), displayList(list), pixmap(pix)
+  : context(ctx)
+  , displayList(list)
+  , pixmap(pix)
 {
   renderRect.x0 = rect->x0;
   renderRect.y0 = rect->y0;
@@ -54,8 +58,10 @@ FzRenderData::FzRenderData(fz_context *ctx, fz_display_list *list,
 }
 
 FzRenderData::FzRenderData(const FzRenderData& other)
-  : context(other.context), displayList(other.displayList),
-    pixmap(other.pixmap), renderRect(other.renderRect)
+  : context(other.context)
+  , displayList(other.displayList)
+  , pixmap(other.pixmap)
+  , renderRect(other.renderRect)
 {
   ref();
 }

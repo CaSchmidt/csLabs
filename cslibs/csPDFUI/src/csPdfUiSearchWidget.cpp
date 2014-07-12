@@ -102,6 +102,7 @@ void csPdfUiSearchWidget::setDocument(const csPdfDocument& doc)
   cancel();
   clear();
   _doc = doc;
+  _startIndex = 0;
 }
 
 ////// public slots //////////////////////////////////////////////////////////

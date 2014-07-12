@@ -41,6 +41,7 @@
 
 csHighlightingDelegate::csHighlightingDelegate(QObject *parent)
   : QStyledItemDelegate(parent)
+  , _substring()
 {
 }
 

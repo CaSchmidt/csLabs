@@ -37,11 +37,11 @@
 ////// public ////////////////////////////////////////////////////////////////
 
 csFontResizer::csFontResizer(QObject *parent)
-  : QObject(parent),
-    minSize(6),
-    maxSize(14),
-    incSize(2),
-    defSize()
+  : QObject(parent)
+  , minSize(6)
+  , maxSize(14)
+  , incSize(2)
+  , defSize()
 {
 }
 

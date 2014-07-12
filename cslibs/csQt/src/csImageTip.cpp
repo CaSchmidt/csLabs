@@ -71,8 +71,8 @@ csTipWidget::csTipWidget(const QImage& image,
                          const csImageTip::Flags flags,
                          QWidget *parent, Qt::WindowFlags)
   : QWidget(parent,
-            Qt::ToolTip | Qt::BypassGraphicsProxyWidget | Qt::FramelessWindowHint),
-    pixmap()
+            Qt::ToolTip | Qt::BypassGraphicsProxyWidget | Qt::FramelessWindowHint)
+  , pixmap()
 {
   delete instance;
   instance = this;

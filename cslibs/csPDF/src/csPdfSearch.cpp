@@ -37,23 +37,23 @@
 ////// public ////////////////////////////////////////////////////////////////
 
 csPdfSearch::csPdfSearch(QObject *parent)
-  : QObject(parent),
-    _doc(),
-    _needles(),
-    _cs(),
-    _wrap(),
-    _context(),
-    _cancel(),
-    _running(),
-    _startIndex(),
-    _numBlocks(),
-    _numRemain(),
-    _cntBlocks(),
-    _cntRemain(),
-    _cntIndex(),
-    _numToDo(),
-    _cntDone(),
-    _lastProgress()
+  : QObject(parent)
+  , _doc()
+  , _needles()
+  , _cs()
+  , _wrap()
+  , _context()
+  , _cancel()
+  , _running()
+  , _startIndex()
+  , _numBlocks()
+  , _numRemain()
+  , _cntBlocks()
+  , _cntRemain()
+  , _cntIndex()
+  , _numToDo()
+  , _cntDone()
+  , _lastProgress()
 {
 }
 

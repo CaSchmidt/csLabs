@@ -44,15 +44,15 @@ public:
   };
 
   inline csPdfLink()
-    : _type(Invalid),
-      _srcRect(),
-      _page(-1),
-      _destTL(),
-      _destBR(),
-      _is_fit_h(),
-      _is_fit_v(),
-      _is_zoom(),
-      _is_new_window()
+    : _type(Invalid)
+    , _srcRect()
+    , _page(-1)
+    , _destTL()
+    , _destBR()
+    , _is_fit_h()
+    , _is_fit_v()
+    , _is_zoom()
+    , _is_new_window()
   {
   }
 

@@ -34,8 +34,8 @@
 ////// public ////////////////////////////////////////////////////////////////
 
 csPdfContentsModel::csPdfContentsModel(QObject *parent)
-  : QAbstractItemModel(parent),
-    _root(0)
+  : QAbstractItemModel(parent)
+  , _root(0)
 {
   _root = newRootNode();
 }

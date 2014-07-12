@@ -38,8 +38,8 @@ class csPdfTextPage {
 public:
   inline csPdfTextPage(const int pageNo = -1,
                        const csPdfTexts& txts = csPdfTexts())
-    : _no(pageNo),
-      _texts(txts)
+    : _no(pageNo)
+    , _texts(txts)
   {
   }
 

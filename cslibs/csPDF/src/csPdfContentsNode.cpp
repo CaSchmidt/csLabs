@@ -36,10 +36,10 @@
 csPdfContentsNode::csPdfContentsNode(const QString& title,
                                      const csPdfLink& link,
                                      csPdfContentsNode *parent)
-  : _title(title),
-    _link(link),
-    _parent(parent),
-    _children()
+  : _title(title)
+  , _link(link)
+  , _parent(parent)
+  , _children()
 {
 }
 

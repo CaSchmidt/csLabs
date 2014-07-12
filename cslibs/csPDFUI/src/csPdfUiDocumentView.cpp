@@ -67,7 +67,7 @@ namespace priv {
                                          QPen(Qt::NoPen),
                                          QBrush(hlColor, Qt::SolidPattern));
     item->setZValue(csPdfUiDocumentView::HighlightLayer);
-    item->setData(DATA_ID, csPdfUiDocumentView::HighlightId);
+    csPdfUiDocumentView::setItemId(item, csPdfUiDocumentView::HighlightId);
 
     return item;
   }
@@ -78,7 +78,7 @@ namespace priv {
     item->setFlag(QGraphicsItem::ItemHasNoContents, true);
     item->setCursor(Qt::PointingHandCursor);
     item->setZValue(csPdfUiDocumentView::LinkLayer);
-    item->setData(DATA_ID, csPdfUiDocumentView::LinkId);
+    csPdfUiDocumentView::setItemId(item, csPdfUiDocumentView::LinkId);
     item->setData(DATA_LINKPAGE, link.page());
     item->setData(DATA_LINKDEST, link.destTopLeft());
 
@@ -93,7 +93,7 @@ namespace priv {
                                          QPen(Qt::NoPen),
                                          QBrush(selColor, Qt::SolidPattern));
     item->setZValue(csPdfUiDocumentView::SelectionLayer);
-    item->setData(DATA_ID, csPdfUiDocumentView::SelectionId);
+    csPdfUiDocumentView::setItemId(item, csPdfUiDocumentView::SelectionId);
     item->setData(DATA_SELECTIONTEXT, pdfText.text());
 
     return item;
@@ -137,7 +137,7 @@ QString csPdfUiDocumentView::selectedText() const
 {
   csPdfTexts texts;
   foreach(QGraphicsItem *item, _scene->items()) {
-    if( item->data(DATA_ID).toInt() == SelectionId ) {
+    if( itemId(item) == SelectionId ) {
       QGraphicsRectItem *ri = dynamic_cast<QGraphicsRectItem*>(item);
       texts.push_back(csPdfText(ri->rect(),
                                 item->data(DATA_SELECTIONTEXT).toString()));
@@ -182,6 +182,16 @@ void csPdfUiDocumentView::setDocument(const csPdfDocument& doc)
   emit zoomChanged(_zoom);
 
   showFirstPage();
+}
+
+void csPdfUiDocumentView::setItemId(QGraphicsItem *item, const int id)
+{
+  item->setData(DATA_ID, id);
+}
+
+int csPdfUiDocumentView::itemId(const QGraphicsItem *item)
+{
+  return item->data(DATA_ID).toInt();
 }
 
 ////// public slots //////////////////////////////////////////////////////////
@@ -365,6 +375,27 @@ void csPdfUiDocumentView::keyPressEvent(QKeyEvent *event)
   QGraphicsView::keyPressEvent(event);
 }
 
+QList<QGraphicsItem*> csPdfUiDocumentView::listItems(const int id) const
+{
+  QList<QGraphicsItem*> found;
+  foreach(QGraphicsItem *item, _scene->items()) {
+    if( itemId(item) == id ) {
+      found.push_back(item);
+    }
+  }
+  return found;
+}
+
+void csPdfUiDocumentView::removeItems(const int id)
+{
+  foreach(QGraphicsItem *item, _scene->items()) {
+    if( itemId(item) == id ) {
+      _scene->removeItem(item);
+      delete item;
+    }
+  }
+}
+
 void csPdfUiDocumentView::wheelEvent(QWheelEvent *event)
 {
   // dy > 0: Away From User; dy < 0: Toward User
@@ -456,7 +487,7 @@ bool csPdfUiDocumentView::followLink(const QPointF& scenePos)
 {
   QGraphicsItem *hitItem = 0;
   foreach(QGraphicsItem *item, _scene->items(scenePos)) {
-    if( item->data(DATA_ID).toInt() == LinkId  &&
+    if( itemId(item) == LinkId  &&
         item->sceneBoundingRect().contains(scenePos) ) {
       hitItem = item;
       break;
@@ -477,16 +508,6 @@ bool csPdfUiDocumentView::followLink(const QPointF& scenePos)
   return false;
 }
 
-void csPdfUiDocumentView::removeItems(const int id)
-{
-  foreach(QGraphicsItem *item, _scene->items()) {
-    if( item->data(DATA_ID).toInt() == id ) {
-      _scene->removeItem(item);
-      delete item;
-    }
-  }
-}
-
 void csPdfUiDocumentView::renderPage()
 {
   removeItems(PageId);
@@ -499,7 +520,7 @@ void csPdfUiDocumentView::renderPage()
   QGraphicsItem *item = _scene->addPixmap(QPixmap::fromImage(image));
   item->setTransform(QTransform::fromScale(1.0/_SCALE, 1.0/_SCALE));
   item->setZValue(PageLayer);
-  item->setData(DATA_ID, PageId);
+  setItemId(item, PageId);
 
   setSceneRect(_page.rect());
 }

@@ -42,8 +42,8 @@ enum Columns {
 ////// public ////////////////////////////////////////////////////////////////
 
 csPdfSearchResultsModel::csPdfSearchResultsModel(QObject *parent)
-  : QAbstractTableModel(parent),
-    _results()
+  : QAbstractTableModel(parent)
+  , _results()
 {
 }
 

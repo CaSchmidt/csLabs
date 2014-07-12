@@ -49,14 +49,14 @@ extern "C" {
 class csPdfDocumentImpl {
 public:
   csPdfDocumentImpl()
-    : document(NULL),
-      stream(NULL),
-      context(NULL),
-      data(),
-      filename(),
-      mutex(),
-      locks(NULL),
-      renderThreads(1)
+    : document(NULL)
+    , stream(NULL)
+    , context(NULL)
+    , data()
+    , filename()
+    , mutex()
+    , locks(NULL)
+    , renderThreads(1)
   {
   }
 

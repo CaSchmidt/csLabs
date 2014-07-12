@@ -39,11 +39,11 @@
 ////// public ////////////////////////////////////////////////////////////////
 
 csItemSearcher::csItemSearcher(QObject *parent)
-  : QObject(parent),
-    matchColumn(0),
-    matchRole(Qt::DisplayRole),
-    matchRow(0),
-    matchString()
+  : QObject(parent)
+  , matchColumn(0)
+  , matchRole(Qt::DisplayRole)
+  , matchRow(0)
+  , matchString()
 {
 }
 
