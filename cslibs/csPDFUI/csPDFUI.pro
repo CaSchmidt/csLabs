@@ -14,7 +14,7 @@ QT       += core gui widgets
 DESTDIR    = ../../lib
 DLLDESTDIR = ../../bin
 
-DEFINES += CS_BUILD_PDFUI_LIB
+DEFINES += CS_BUILD_PDFUI_LIB QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII
 
 
 INCLUDEPATH += ../include

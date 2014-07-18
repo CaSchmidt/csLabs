@@ -155,5 +155,5 @@ CS_PDF_EXPORT csPdfFindResults csPdfFindAll(const csPdfTexts& hay,
 
 CS_PDF_EXPORT QStringList csPdfPrepareSearch(const QString& text)
 {
-  return text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+  return text.split(QRegExp(_L1("\\s+")), QString::SkipEmptyParts);
 }

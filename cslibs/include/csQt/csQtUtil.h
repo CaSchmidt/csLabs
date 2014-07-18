@@ -40,6 +40,18 @@
 #include <csQt/csqt_config.h>
 #include <csQt/csNamespace.h>
 
+#ifndef _L1
+# define _L1(s)  QString::fromLatin1(s)
+#endif
+
+#ifndef _L1C
+# define _L1C(c)  QChar::fromLatin1(c)
+#endif
+
+#ifndef _U8
+# define _U8(s)  QString::fromUtf8(s)
+#endif
+
 class QColor;
 class QTableView;
 class QVariant;

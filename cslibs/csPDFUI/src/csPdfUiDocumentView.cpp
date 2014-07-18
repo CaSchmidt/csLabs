@@ -157,9 +157,9 @@ QString csPdfUiDocumentView::selectedText() const
 
     if( lastRect.top() <= curRect.center().y()  &&
         curRect.center().y() <= lastRect.bottom() ) {
-      text += " ";
+      text += _L1C(' ');
     } else {
-      text += "\n";
+      text += _L1C('\n');
     }
     text += texts[i].text();
 

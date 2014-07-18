@@ -99,8 +99,8 @@ CS_QT_EXPORT QString csTableToString(const QTableView *table,
     for(int c = colFrom; c <= colTo; c++) {
       cols.push_back(csVariantToString(model->headerData(c, Qt::Horizontal, role)));
     }
-    text += cols.join("\t");
-    text += "\n";
+    text += cols.join(_L1C('\t'));
+    text += _L1C('\n');
   }
 
   for(int r = rowFrom; r <= rowTo; r++) {
@@ -111,8 +111,8 @@ CS_QT_EXPORT QString csTableToString(const QTableView *table,
     for(int c = colFrom; c <= colTo; c++) {
       cols.push_back(csVariantToString(model->data(model->index(r, c), role)));
     }
-    text += cols.join("\t");
-    text += "\n";
+    text += cols.join(_L1C('\t'));
+    text += _L1C('\n');
   }
 
   return text;

@@ -14,7 +14,7 @@ QT += core gui concurrent
 DESTDIR    = ../../lib
 DLLDESTDIR = ../../bin
 
-DEFINES += CS_BUILD_PDF_LIB
+DEFINES += CS_BUILD_PDF_LIB QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII
 
 
 INCLUDEPATH += ../include

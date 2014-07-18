@@ -34,6 +34,8 @@
 
 #include <QStringList>
 
+#include <csPDF/csPdfUtil.h>
+
 class csPdfSearchResult {
 public:
   inline csPdfSearchResult(const int pg = -1, const int idx = -1,
@@ -70,7 +72,7 @@ public:
 
   inline const QString contextString() const
   {
-    return _context.join(' ');
+    return _context.join(_L1C(' '));
   }
 
   inline bool operator<(const csPdfSearchResult& other) const

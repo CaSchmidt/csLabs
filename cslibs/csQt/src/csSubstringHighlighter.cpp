@@ -31,12 +31,14 @@
 
 #include "csQt/csSubstringHighlighter.h"
 
+#include "csQt/csQtUtil.h"
+
 ////// public ////////////////////////////////////////////////////////////////
 
 csSubstringHighlighter::csSubstringHighlighter(QTextDocument *document,
                                                const Qt::CaseSensitivity cs)
   : QSyntaxHighlighter(document)
-  , _matcher("", cs, QRegExp::RegExp)
+  , _matcher(QString(), cs, QRegExp::RegExp)
   , _fmt()
 {
   setBackground(QColor());
@@ -99,11 +101,11 @@ void csSubstringHighlighter::setForeground(const QColor& color)
 
 void csSubstringHighlighter::setSubstring(const QString& substring)
 {
-  const QStringList words = substring.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+  const QStringList words = substring.split(QRegExp(_L1("\\s+")), QString::SkipEmptyParts);
   if( words.isEmpty() ) {
-    _matcher.setPattern("");
+    _matcher.setPattern(QString());
   } else {
-    _matcher.setPattern(words.join("\\s+"));
+    _matcher.setPattern(words.join(_L1("\\s+")));
   }
   rehighlight();
 }
