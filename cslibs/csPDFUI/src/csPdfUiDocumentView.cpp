@@ -117,6 +117,10 @@ csPdfUiDocumentView::csPdfUiDocumentView(QWidget *parent)
   _scene->setBackgroundBrush(QBrush(Qt::gray, Qt::SolidPattern));
   setScene(_scene);
 
+  // Default Drag Mode ///////////////////////////////////////////////////////
+
+  setDragMode(ScrollHandDrag);
+
   // Event Filter ////////////////////////////////////////////////////////////
 
   _scene->installEventFilter(this);
@@ -485,18 +489,10 @@ void csPdfUiDocumentView::watchVScroll(int value)
 
 bool csPdfUiDocumentView::followLink(const QPointF& scenePos)
 {
-  QGraphicsItem *hitItem = 0;
-  foreach(QGraphicsItem *item, _scene->items(scenePos)) {
-    if( itemId(item) == LinkId  &&
-        item->sceneBoundingRect().contains(scenePos) ) {
-      hitItem = item;
-      break;
-    }
-  }
-
-  if( hitItem != 0 ) {
-    const int     page = hitItem->data(DATA_LINKPAGE).toInt();
-    const QPointF dest = hitItem->data(DATA_LINKDEST).toPointF();
+  QGraphicsItem *item = _scene->itemAt(scenePos, QTransform()); // Top-Most Item
+  if( item != 0  &&  itemId(item) == LinkId ) {
+    const int     page = item->data(DATA_LINKPAGE).toInt();
+    const QPointF dest = item->data(DATA_LINKDEST).toPointF();
 
     showPage(page+1);
     centerOn(_page.rect().center().x(), _page.rect().top());

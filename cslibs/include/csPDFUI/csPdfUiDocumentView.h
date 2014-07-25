@@ -42,18 +42,18 @@ class  CS_PDFUI_EXPORT csPdfUiDocumentView : public QGraphicsView {
 public:
   enum ItemId {
     PageId = 1,
-    LinkId,
     HighlightId,
     SelectionId,
-    UserId = 100
+    LinkId,
+    UserId = 1000
   };
 
   enum ItemLayer {
-    PageLayer      =   0,
-    LinkLayer      =  10,
-    HighlightLayer =  20,
-    SelectionLayer =  30,
-    UserLayer      = 100
+    PageLayer      =    0,
+    HighlightLayer =   10,
+    SelectionLayer =   20,
+    LinkLayer      =   30,
+    UserLayer      = 1000
   };
 
   csPdfUiDocumentView(QWidget *parent);
