@@ -61,6 +61,9 @@ public:
   int size() const;
 
 private:
+  csTrie(const csTrie&);
+  csTrie& operator=(const csTrie&);
+
   class csTrieNode *_root;
 };
 

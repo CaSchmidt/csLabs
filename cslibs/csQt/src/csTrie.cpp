@@ -204,12 +204,13 @@ csTrie::csTrie()
 
 csTrie::~csTrie()
 {
-  clear();
+  delete _root;
 }
 
 void csTrie::clear()
 {
   delete _root;
+  _root = new csTrieNode(0);
 }
 
 QStringList csTrie::complete(const QString& base) const
