@@ -30,7 +30,8 @@ SOURCES += \
     src/csQtUtil.cpp \
     src/csSubstringHighlighter.cpp \
     src/csHighlightingDelegate.cpp \
-    src/csTrie.cpp
+    src/csTrie.cpp \
+    src/csTreeItem.cpp
 
 HEADERS += \
     ../include/csQt/csTableCopier.h \
@@ -43,4 +44,5 @@ HEADERS += \
     ../include/csQt/csSubstringHighlighter.h \
     ../include/csQt/csHighlightingDelegate.h \
     ../include/csQt/csTrie.h \
-    ../include/csQt/csNamespace.h
+    ../include/csQt/csNamespace.h \
+    ../include/csQt/csTreeItem.h
