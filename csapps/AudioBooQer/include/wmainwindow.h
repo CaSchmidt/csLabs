@@ -47,8 +47,13 @@ public:
 private slots:
   void createNewChapter();
   void openDirectory();
+  void selectTool();
 
 private:
+  void loadSettings();
+  void saveSettings() const;
+  static QString settingsFileName();
+
   Ui::WMainWindow *ui;
 };
 

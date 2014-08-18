@@ -29,8 +29,10 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <QtWidgets/QApplication>
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
+#include <QtCore/QSettings>
 #include <QtWidgets/QFileDialog>
 
 #include <csQt/csQtUtil.h>
@@ -68,6 +70,9 @@ WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
   connect(ui->numberWidthSpin, SIGNAL(valueChanged(int)),
           model, SLOT(setWidthChapterNo(int)));
 
+  connect(ui->toolSoxButton,  SIGNAL(clicked()), SLOT(selectTool()));
+  connect(ui->toolLameButton, SIGNAL(clicked()), SLOT(selectTool()));
+
   // File Menu ///////////////////////////////////////////////////////////////
 
   ui->openDirAction->setShortcut(QKeySequence::Open);
@@ -98,10 +103,16 @@ WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
   ui->nextAction->setShortcut(Qt::CTRL+Qt::Key_4);
   connect(ui->nextAction, SIGNAL(triggered()),
           ui->playerWidget, SLOT(next()));
+
+  // Load Settings ///////////////////////////////////////////////////////////
+
+  loadSettings();
 }
 
 WMainWindow::~WMainWindow()
 {
+  saveSettings();
+
   delete ui;
 }
 
@@ -159,4 +170,58 @@ void WMainWindow::openDirectory()
   ui->playerWidget->setFiles(fileNames);
   ui->chaptersView->expandAll();
   QDir::setCurrent(dirPath);
+}
+
+void WMainWindow::selectTool()
+{
+  QString caption;
+  if(        sender() == ui->toolSoxButton ) {
+    caption = tr("Select tool \"SoX\"");
+  } else if( sender() == ui->toolLameButton ) {
+    caption = tr("Select tool \"LAME\"");
+  }
+
+  const QString fileName =
+      QFileDialog::getOpenFileName(this, caption);
+  if( fileName.isEmpty() ) {
+    return;
+  }
+
+  if(        sender() == ui->toolSoxButton ) {
+    ui->toolSoxEdit->setText(fileName);
+  } else if( sender() == ui->toolLameButton ) {
+    ui->toolLameEdit->setText(fileName);
+  }
+}
+
+////// private ///////////////////////////////////////////////////////////////
+
+void WMainWindow::loadSettings()
+{
+  QSettings settings(settingsFileName(), QSettings::IniFormat);
+
+  settings.beginGroup(_L1("tools"));
+  ui->toolSoxEdit->setText(settings.value(_L1("sox")).toString());
+  ui->toolLameEdit->setText(settings.value(_L1("lame")).toString());
+  ui->lameOptionsEdit->setText(settings.value(_L1("lame_options")).toString());
+  settings.endGroup();
+}
+
+void WMainWindow::saveSettings() const
+{
+  QSettings settings(settingsFileName(), QSettings::IniFormat);
+
+  settings.beginGroup(_L1("tools"));
+  settings.setValue(_L1("sox"), ui->toolSoxEdit->text());
+  settings.setValue(_L1("lame"), ui->toolLameEdit->text());
+  settings.setValue(_L1("lame_options"), ui->lameOptionsEdit->text());
+  settings.endGroup();
+
+  settings.sync();
+}
+
+QString WMainWindow::settingsFileName()
+{
+  return QFileInfo(QDir(QApplication::applicationDirPath()),
+                   _L1("AudioBooQer.ini")).absoluteFilePath();
 }

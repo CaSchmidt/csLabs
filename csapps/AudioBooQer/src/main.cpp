@@ -45,5 +45,7 @@ int main(int argc, char **argv)
 
   const int result = qapp.exec();
 
+  delete mainwindow;
+
   return result;
 }
