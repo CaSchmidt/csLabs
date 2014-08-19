@@ -42,6 +42,7 @@
 
 #include "chapter.h"
 #include "chaptermodel.h"
+#include "wjobinfo.h"
 
 ////// public ////////////////////////////////////////////////////////////////
 
@@ -70,6 +71,9 @@ WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
   connect(ui->numberWidthSpin, SIGNAL(valueChanged(int)),
           model, SLOT(setWidthChapterNo(int)));
 
+  // Buttons /////////////////////////////////////////////////////////////////
+
+  connect(ui->goButton, SIGNAL(clicked()), SLOT(processJobs()));
   connect(ui->toolSoxButton,  SIGNAL(clicked()), SLOT(selectTool()));
   connect(ui->toolLameButton, SIGNAL(clicked()), SLOT(selectTool()));
 
@@ -218,6 +222,35 @@ void WMainWindow::saveSettings() const
   settings.endGroup();
 
   settings.sync();
+}
+
+void WMainWindow::processJobs()
+{
+  if(     ui->toolSoxEdit->text().isEmpty()
+      ||  ui->toolLameEdit->text().isEmpty() ) {
+    return;
+  }
+
+  ChapterModel *model = dynamic_cast<ChapterModel*>(ui->chaptersView->model());
+  if( model == 0 ) {
+    return;
+  }
+
+  Jobs jobs = model->buildJobs();
+  if( jobs.size() < 1 ) {
+    return;
+  }
+
+  for(int i = 0; i < jobs.size(); i++) {
+    jobs[i].renameInput = ui->renameCheck->isChecked();
+
+    jobs[i].soxExe      = ui->toolSoxEdit->text();
+    jobs[i].lameExe     = ui->toolLameEdit->text();
+    jobs[i].lameOptions = ui->lameOptionsEdit->text();
+  }
+
+  WJobInfo jobInfo(this);
+  jobInfo.executeJobs(jobs);
 }
 
 QString WMainWindow::settingsFileName()

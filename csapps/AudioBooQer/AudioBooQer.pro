@@ -30,16 +30,21 @@ SOURCES += \
     src/chapter.cpp \
     src/chaptermodel.cpp \
     src/wmainwindow.cpp \
-    src/waudioplayer.cpp
+    src/waudioplayer.cpp \
+    src/job.cpp \
+    src/wjobinfo.cpp
 
 HEADERS  += \
     include/chapter.h \
     include/chaptermodel.h \
     include/wmainwindow.h \
-    include/waudioplayer.h
+    include/waudioplayer.h \
+    include/job.h \
+    include/wjobinfo.h
 
 FORMS    += \
     forms/wmainwindow.ui \
-    forms/waudioplayer.ui
+    forms/waudioplayer.ui \
+    forms/wjobinfo.ui
 
 RESOURCES +=

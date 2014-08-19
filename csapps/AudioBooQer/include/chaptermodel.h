@@ -34,6 +34,8 @@
 
 #include <QtCore/QAbstractItemModel>
 
+#include "job.h"
+
 class csITreeItem;
 
 class ChapterModel : public QAbstractItemModel {
@@ -48,6 +50,8 @@ public:
   bool showChapterNo() const;
   int firstChaopterNo() const;
   int widthChapterNo() const;
+
+  Jobs buildJobs() const;
 
   int columnCount(const QModelIndex& parent = QModelIndex()) const;
   QVariant data(const QModelIndex& index, int role) const;

@@ -29,6 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <QtCore/QDir>
 #include <QtGui/QColor>
 
 #include <csQt/csQtUtil.h>
@@ -114,6 +115,35 @@ int ChapterModel::firstChaopterNo() const
 int ChapterModel::widthChapterNo() const
 {
   return _widthChapterNo;
+}
+
+Jobs ChapterModel::buildJobs() const
+{
+  Jobs jobs;
+
+  // NOTE: Don't Build Job for <Files>!!! -> rowCount()-1
+  for(int cntNode = 0; cntNode < rowCount(QModelIndex())-1; cntNode++) {
+    QModelIndex nodeIndex = index(cntNode, 0, QModelIndex());
+
+    Job job;
+
+    for(int cntFile = 0; cntFile < rowCount(nodeIndex); cntFile++) {
+      QModelIndex fileIndex = index(cntFile, 0, nodeIndex);
+
+      ChapterFile *file = dynamic_cast<ChapterFile*>(csTreeItem(fileIndex));
+      job.inputFiles.push_back(file->fileName());
+    } // File
+
+    ChapterNode *node = dynamic_cast<ChapterNode*>(csTreeItem(nodeIndex));
+    const QString title = chapterTitle(node);
+
+    const QString outputDir = QFileInfo(job.inputFiles.front()).absolutePath();
+    job.outputFile = QFileInfo(QDir(outputDir), title+_L1(".mp3")).absoluteFilePath();
+
+    jobs.push_back(job);
+  } // Node
+
+  return jobs;
 }
 
 int ChapterModel::columnCount(const QModelIndex& parent) const
@@ -285,7 +315,7 @@ QString ChapterModel::chapterTitle(const class ChapterNode *node) const
 {
   if( _showChapterNo ) {
     return _L1("%1 - %2")
-        .arg(_firstChapterNo+node->row(), _widthChapterNo, 10, QChar::fromLatin1('0'))
+        .arg(_firstChapterNo+node->row(), _widthChapterNo, 10, _L1C('0'))
         .arg(node->title());
   }
   return node->title();

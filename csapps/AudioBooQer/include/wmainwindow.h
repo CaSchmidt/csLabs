@@ -47,6 +47,7 @@ public:
 private slots:
   void createNewChapter();
   void openDirectory();
+  void processJobs();
   void selectTool();
 
 private:

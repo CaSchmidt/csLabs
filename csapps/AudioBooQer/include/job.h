@@ -29,25 +29,34 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <cstdio>
-#include <cstdlib>
+#ifndef __JOB_H__
+#define __JOB_H__
 
-#include <QtCore/QLocale>
-#include <QtWidgets/QApplication>
+#include <QtCore/QByteArray>
+#include <QtCore/QList>
+#include <QtCore/QStringList>
 
-#include "wmainwindow.h"
+struct Job {
+  Job()
+    : inputFiles()
+    , outputFile()
+    , renameInput(false)
+    , soxExe()
+    , lameExe()
+    , lameOptions()
+  {
+  }
 
-int main(int argc, char **argv)
-{
-  QApplication qapp(argc, argv);
-  QLocale::setDefault(QLocale::system());
+  QStringList inputFiles;
+  QString outputFile;
+  bool renameInput;
+  QString soxExe;
+  QString lameExe;
+  QString lameOptions;
+};
 
-  WMainWindow *mainwindow = new WMainWindow();
-  mainwindow->show();
+typedef QList<Job> Jobs;
 
-  const int result = qapp.exec();
+QByteArray executeJob(const Job& job);
 
-  delete mainwindow;
-
-  return result;
-}
+#endif // __JOB_H__

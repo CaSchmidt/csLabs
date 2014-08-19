@@ -29,25 +29,43 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <cstdio>
-#include <cstdlib>
+#ifndef __WJOBINFO_H__
+#define __WJOBINFO_H__
 
-#include <QtCore/QLocale>
-#include <QtWidgets/QApplication>
+#include <QtCore/QFutureWatcher>
+#include <QtWidgets/QDialog>
 
-#include "wmainwindow.h"
+#include "job.h"
 
-int main(int argc, char **argv)
-{
-  QApplication qapp(argc, argv);
-  QLocale::setDefault(QLocale::system());
+namespace Ui {
+  class WJobInfo;
+};
 
-  WMainWindow *mainwindow = new WMainWindow();
-  mainwindow->show();
+class WJobInfo : public QDialog {
+  Q_OBJECT
+public:
+  WJobInfo(QWidget *parent, Qt::WindowFlags f = 0);
+  ~WJobInfo();
 
-  const int result = qapp.exec();
+  void executeJobs(const Jobs& jobs);
 
-  delete mainwindow;
+protected:
+  void keyPressEvent(QKeyEvent *event);
 
-  return result;
-}
+private slots:
+  void accept();
+  void done(int r);
+  int exec();
+  void open();
+  void reject();
+  void enableClose();
+  void readResult(int index);
+  void setProgressRange(int min, int max);
+  void setProgressValue(int val);
+
+private:
+  Ui::WJobInfo *ui;
+  QFutureWatcher<QByteArray> *watcher;
+};
+
+#endif // __WJOBINFO_H__
