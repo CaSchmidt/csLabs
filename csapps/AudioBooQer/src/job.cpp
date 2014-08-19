@@ -29,6 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <QtCore/QFile>
 #include <QtCore/QProcess>
 
 #include <csQt/csQtUtil.h>
@@ -96,6 +97,12 @@ QByteArray executeJob(const Job& job)
   result += sox.readAllStandardError();
   result += '\n';
   result += lame.readAllStandardError();
+
+  if( job.renameInput ) {
+    foreach(const QString& input, job.inputFiles) {
+      QFile::rename(input, input+_L1(".done"));
+    }
+  }
 
   return result;
 }

@@ -245,6 +245,8 @@ void WMainWindow::processJobs()
     return;
   }
 
+  ui->playerWidget->stop();
+
   for(int i = 0; i < jobs.size(); i++) {
     jobs[i].renameInput = ui->renameCheck->isChecked();
 
