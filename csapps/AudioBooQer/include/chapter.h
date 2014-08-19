@@ -52,6 +52,7 @@ public:
   ~ChapterRoot();
 
   bool insert(ChapterNode *node);
+  bool removeAt(const int index);
 
   int columnCount() const;
   QVariant data(int column) const;
@@ -65,6 +66,7 @@ public:
   bool isSource() const;
 
   QStringList files(const int count) const;
+  int insertFiles(const QStringList& fileNames);
   int remove(const int count);
   int setFiles(const QStringList& fileNames);
 

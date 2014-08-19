@@ -79,6 +79,15 @@ bool ChapterRoot::insert(ChapterNode *node)
   return true;
 }
 
+bool ChapterRoot::removeAt(const int index)
+{
+  if( index < 0  ||  index >= _children.size() ) {
+    return false;
+  }
+  delete _children.takeAt(index);
+  return true;
+}
+
 int ChapterRoot::columnCount() const
 {
   return 1;
@@ -116,6 +125,25 @@ QStringList ChapterNode::files(const int count) const
     list.push_back(file->fileName());
   }
   return list;
+}
+
+int ChapterNode::insertFiles(const QStringList& fileNames)
+{
+  if( !_isSource ) {
+    return 0;
+  }
+
+  QStringList names = fileNames;
+  qSort(names);
+
+  int cntInserted(0);
+  for(int i = 0; i < names.size(); i++) {
+    ChapterFile *file = new ChapterFile(this);
+    _children.insert(i, file);
+    file->setFileName(names[i]);
+    cntInserted++;
+  }
+  return cntInserted;
 }
 
 int ChapterNode::remove(const int count)

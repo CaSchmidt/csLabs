@@ -64,6 +64,7 @@ public:
                int role = Qt::EditRole);
 
 public slots:
+  void dissolveLastChapter();
   void setFirstChapterNo(int no);
   void setShowChapterNo(bool state);
   void setWidthChapterNo(int width);

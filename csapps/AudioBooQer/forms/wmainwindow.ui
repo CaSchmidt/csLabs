@@ -369,6 +369,7 @@
      <string>&amp;Edit</string>
     </property>
     <addaction name="newChapterAction"/>
+    <addaction name="dissolveChapterAction"/>
    </widget>
    <widget class="QMenu" name="menu_Playback">
     <property name="title">
@@ -396,7 +397,10 @@
   </action>
   <action name="newChapterAction">
    <property name="text">
-    <string>&amp;New chapter</string>
+    <string>Create &amp;new chapter</string>
+   </property>
+   <property name="toolTip">
+    <string>Create new chapter</string>
    </property>
   </action>
   <action name="previousAction">
@@ -417,6 +421,11 @@
   <action name="nextAction">
    <property name="text">
     <string>Ne&amp;xt</string>
+   </property>
+  </action>
+  <action name="dissolveChapterAction">
+   <property name="text">
+    <string>&amp;Dissolve last chapter</string>
    </property>
   </action>
  </widget>

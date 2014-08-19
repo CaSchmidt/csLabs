@@ -61,6 +61,10 @@ WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
   ui->firstChapterSpin->setValue(model->firstChaopterNo());
   ui->numberWidthSpin->setValue(model->widthChapterNo());
 
+  ui->dissolveChapterAction->setShortcut(Qt::CTRL+Qt::Key_D);
+  connect(ui->dissolveChapterAction, SIGNAL(triggered()),
+          model, SLOT(dissolveLastChapter()));
+
   connect(ui->playerWidget, SIGNAL(fileNameChanged(const QString&)),
           model, SLOT(setPlayingFileName(const QString&)));
 

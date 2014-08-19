@@ -275,6 +275,30 @@ bool ChapterModel::setData(const QModelIndex& index, const QVariant& value,
 
 ////// public slots //////////////////////////////////////////////////////////
 
+void ChapterModel::dissolveLastChapter()
+{
+  if( rowCount(QModelIndex()) < 2 ) {
+    return;
+  }
+
+  const int dissolveRow = rowCount(QModelIndex())-2;
+
+  beginRemoveRows(QModelIndex(), dissolveRow, dissolveRow);
+  ChapterNode *node = dynamic_cast<ChapterNode*>(_root->child(dissolveRow));
+  const QStringList dissolvedFiles = node->files(node->childCount());
+
+  ChapterRoot *root = dynamic_cast<ChapterRoot*>(_root);
+  root->removeAt(dissolveRow);
+  endRemoveRows();
+
+  const QModelIndex sourcesIndex =
+      index(rowCount(QModelIndex())-1, 0, QModelIndex());
+  beginInsertRows(sourcesIndex, 0, dissolvedFiles.size()-1);
+  ChapterNode *sources = dynamic_cast<ChapterNode*>(csTreeItem(sourcesIndex));
+  sources->insertFiles(dissolvedFiles);
+  endInsertRows();
+}
+
 void ChapterModel::setFirstChapterNo(int no)
 {
   _firstChapterNo = no;
