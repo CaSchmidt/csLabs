@@ -23,5 +23,6 @@ cslibs (base libraries):
 
 csapps:
 
+* AudioBooQer: Create chapters of audio books with ease.
 * CS::PDF: An intentionally minimalistic PDF viewer. My testbench for the above mentioned csPDF library.
 * Taq-NG: My ID3 tagging utility based on the famous [TagLib](http://taglib.github.io/). Development took place between 2005 and 2006. So don't expect me to approach software development like this anymore...
