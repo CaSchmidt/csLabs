@@ -41,7 +41,7 @@
 class CS_QT_EXPORT csITreeItem {
 public:
   csITreeItem(csITreeItem *parent);
-  ~csITreeItem();
+  virtual ~csITreeItem();
 
   virtual csITreeItem *child(int row);
   virtual int childCount() const;

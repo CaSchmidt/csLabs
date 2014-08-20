@@ -146,6 +146,21 @@ Jobs ChapterModel::buildJobs() const
   return jobs;
 }
 
+void ChapterModel::deleteJobs()
+{
+  if( rowCount(QModelIndex()) < 2 ) {
+    return;
+  }
+
+  const int numJobs = rowCount(QModelIndex())-1;
+  beginRemoveRows(QModelIndex(), 0, numJobs-1);
+  ChapterRoot *root = dynamic_cast<ChapterRoot*>(_root);
+  for(int i = 0; i < numJobs; i++) {
+    root->removeAt(0);
+  }
+  endRemoveRows();
+}
+
 int ChapterModel::columnCount(const QModelIndex& parent) const
 {
   if( parent.isValid() ) {

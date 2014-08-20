@@ -257,6 +257,8 @@ void WMainWindow::processJobs()
 
   WJobInfo jobInfo(this);
   jobInfo.executeJobs(jobs);
+
+  model->deleteJobs();
 }
 
 QString WMainWindow::settingsFileName()
