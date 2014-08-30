@@ -41,8 +41,6 @@
 
 int main(int argc, char **argv)
 {
-  qRegisterMetaType<csPdfSearchResults>("csPdfSearchResults");
-
   QApplication qapp(argc, argv);
 
   WMainWindow *mainwindow = new WMainWindow();

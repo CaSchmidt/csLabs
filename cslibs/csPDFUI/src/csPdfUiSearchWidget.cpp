@@ -57,6 +57,8 @@ csPdfUiSearchWidget::csPdfUiSearchWidget(QWidget *parent, Qt::WindowFlags f)
   , _thread(0)
   , _startIndex()
 {
+  qRegisterMetaType<csPdfSearchResults>("csPdfSearchResults");
+
   // Initialize UI ///////////////////////////////////////////////////////////
 
   ui->setupUi(this);
