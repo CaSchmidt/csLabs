@@ -489,16 +489,17 @@ void csPdfUiDocumentView::watchVScroll(int value)
 
 bool csPdfUiDocumentView::followLink(const QPointF& scenePos)
 {
-  QGraphicsItem *item = _scene->itemAt(scenePos, QTransform()); // Top-Most Item
-  if( item != 0  &&  itemId(item) == LinkId ) {
-    const int     page = item->data(DATA_LINKPAGE).toInt();
-    const QPointF dest = item->data(DATA_LINKDEST).toPointF();
+  foreach(QGraphicsItem *item, _scene->items(scenePos)) {
+    if( item != 0  &&  itemId(item) == LinkId ) {
+      const int     page = item->data(DATA_LINKPAGE).toInt();
+      const QPointF dest = item->data(DATA_LINKDEST).toPointF();
 
-    showPage(page+1);
-    centerOn(_page.rect().center().x(), _page.rect().top());
-    // centerOn(dest); // TODO: Transform 'dest'; cf. SumatraPDF
+      showPage(page+1);
+      centerOn(_page.rect().center().x(), _page.rect().top());
+      // centerOn(dest); // TODO: Transform 'dest'; cf. SumatraPDF
 
-    return true;
+      return true;
+    }
   }
 
   return false;
