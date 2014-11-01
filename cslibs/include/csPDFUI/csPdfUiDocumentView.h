@@ -32,6 +32,7 @@
 #ifndef __CSPDFUIDOCUMENTVIEW_H__
 #define __CSPDFUIDOCUMENTVIEW_H__
 
+#include <QtCore/QStack>
 #include <QtWidgets/QGraphicsView>
 
 #include <csPDFUI/cspdfui_config.h>
@@ -100,6 +101,7 @@ protected:
 private:
   double _zoom; // [%]
   int _pageBounces;
+  QStack<int> _linkHistory; // [1, _doc.pageCount()]
 
 signals:
   void pageChanged(int no); // [1, _doc.pageCount()]

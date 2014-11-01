@@ -110,6 +110,7 @@ csPdfUiDocumentView::csPdfUiDocumentView(QWidget *parent)
   , _page()
   , _zoom(ZOOM_INIT)
   , _pageBounces(0)
+  , _linkHistory()
 {
   // Graphics Scene //////////////////////////////////////////////////////////
 
@@ -178,6 +179,7 @@ void csPdfUiDocumentView::setDocument(const csPdfDocument& doc)
   _scene->clear();
   _doc.clear();
   _page.clear();
+  _linkHistory.clear();
 
   _doc = doc;
 
@@ -374,6 +376,12 @@ void csPdfUiDocumentView::keyPressEvent(QKeyEvent *event)
     zoomOut();
     event->accept();
     return;
+  } else if( event->matches(QKeySequence::Undo) ) {
+    if( !_linkHistory.isEmpty() ) {
+      showPage(_linkHistory.pop());
+    }
+    event->accept();
+    return;
   }
 
   QGraphicsView::keyPressEvent(event);
@@ -494,6 +502,7 @@ bool csPdfUiDocumentView::followLink(const QPointF& scenePos)
       const int     page = item->data(DATA_LINKPAGE).toInt();
       const QPointF dest = item->data(DATA_LINKDEST).toPointF();
 
+      _linkHistory.push(_page.number()+1);
       showPage(page+1);
       centerOn(_page.rect().center().x(), _page.rect().top());
       // centerOn(dest); // TODO: Transform 'dest'; cf. SumatraPDF
