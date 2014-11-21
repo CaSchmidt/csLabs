@@ -67,6 +67,7 @@ public:
   static int itemId(const QGraphicsItem *item);
 
 public slots:
+  void gotoLinkSource();
   void highlightText(const QString& text);
   void removeMarks();
   void showFirstPage();

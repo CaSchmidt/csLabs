@@ -202,6 +202,13 @@ int csPdfUiDocumentView::itemId(const QGraphicsItem *item)
 
 ////// public slots //////////////////////////////////////////////////////////
 
+void csPdfUiDocumentView::gotoLinkSource()
+{
+  if( !_linkHistory.isEmpty() ) {
+    showPage(_linkHistory.pop());
+  }
+}
+
 void csPdfUiDocumentView::highlightText(const QString& text)
 {
   removeItems(HighlightId);
@@ -377,9 +384,7 @@ void csPdfUiDocumentView::keyPressEvent(QKeyEvent *event)
     event->accept();
     return;
   } else if( event->matches(QKeySequence::Undo) ) {
-    if( !_linkHistory.isEmpty() ) {
-      showPage(_linkHistory.pop());
-    }
+    gotoLinkSource();
     event->accept();
     return;
   }
@@ -415,7 +420,7 @@ void csPdfUiDocumentView::wheelEvent(QWheelEvent *event)
 
   if( (event->modifiers() == Qt::NoModifier  &&
        !verticalScrollBar()->isVisible())
-      ||  event->modifiers() == Qt::ControlModifier) {
+      ||  event->modifiers() == Qt::ShiftModifier) {
     if(        dy < 0 ) {
       showNextPage();
       event->accept();
@@ -425,13 +430,13 @@ void csPdfUiDocumentView::wheelEvent(QWheelEvent *event)
       event->accept();
       return;
     }
-  } else if( event->modifiers() == Qt::ShiftModifier ) {
+  } else if( event->modifiers() == Qt::ControlModifier ) {
     if(        dy < 0 ) {
-      zoomIn();
+      zoomOut();
       event->accept();
       return;
     } else if( dy > 0 ) {
-      zoomOut();
+      zoomIn();
       event->accept();
       return;
     }
