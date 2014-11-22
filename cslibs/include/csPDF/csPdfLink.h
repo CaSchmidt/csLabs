@@ -134,7 +134,7 @@ private:
   bool _is_zoom;
   bool _is_new_window;
 
-  friend csPdfLink toLink(const QRectF&, void *);
+  friend csPdfLink toLink(const QRectF&, void *, const class QTransform&);
 };
 
 typedef QList<csPdfLink>                      csPdfLinks;

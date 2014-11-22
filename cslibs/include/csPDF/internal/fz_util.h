@@ -115,12 +115,14 @@ inline void toMatrix(fz_matrix *matrix, const QTransform& qtransform)
 
 void toContentsNode(fz_outline *fz_parent, csPdfContentsNode *parent);
 
-csPdfLink toLink(fz_link *link);
-csPdfLink toLink(const QRectF& sourceRect, void *data);
+csPdfLink toLink(fz_link *link, const QTransform& ctm);
+csPdfLink toLink(const QRectF& sourceRect, void *data, const QTransform& ctm);
 
 csPdfTexts extractText(void *data, const double wordSpacing);
 
 fz_locks_context *newLocksContext();
 void deleteLocksContext(fz_locks_context* &ctx);
+
+QTransform ctmForPage(fz_document *doc, fz_page *page);
 
 #endif // __FZ_UTIL_H__

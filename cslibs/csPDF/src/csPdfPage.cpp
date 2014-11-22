@@ -213,7 +213,7 @@ csPdfLinks csPdfPage::links() const
   fz_try(impl->pdf->context) {
     link = fz_load_links(impl->pdf->document, impl->page);
     for(fz_link *l = link; l != NULL; l = l->next) {
-      csPdfLink _l = toLink(l);
+      csPdfLink _l = toLink(l, ctmForPage(impl->pdf->document, impl->page));
       if( !_l.isInvalid() ) {
         _links.push_back(_l);
       }

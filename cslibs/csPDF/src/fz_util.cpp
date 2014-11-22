@@ -29,6 +29,10 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+extern "C" {
+#include <mupdf/pdf.h>
+};
+
 #include <csPDF/internal/fz_util.h>
 
 ////// Public ////////////////////////////////////////////////////////////////
@@ -36,7 +40,7 @@
 void toContentsNode(fz_outline *fz_node, csPdfContentsNode *parent)
 {
   const QString   title = QString::fromUtf8(fz_node->title);
-  const csPdfLink link  = toLink(QRectF(), &(fz_node->dest));
+  const csPdfLink link  = toLink(QRectF(), &(fz_node->dest), QTransform());
 
   csPdfContentsNode *child = new csPdfContentsNode(title, link, parent);
   if( child == 0 ) {
@@ -59,12 +63,12 @@ inline bool testFlags(fz_link_dest *dest, const int flags)
   return (dest->ld.gotor.flags & flags) != 0;
 }
 
-csPdfLink toLink(fz_link *link)
+csPdfLink toLink(fz_link *link, const QTransform& ctm)
 {
-  return toLink(toRect(&(link->rect)), &(link->dest));
+  return toLink(toRect(&(link->rect)), &(link->dest), ctm);
 }
 
-csPdfLink toLink(const QRectF& srcRect, void *data)
+csPdfLink toLink(const QRectF& srcRect, void *data, const QTransform& ctm)
 {
   fz_link_dest *dest = static_cast<fz_link_dest*>(data);
 
@@ -88,8 +92,8 @@ csPdfLink toLink(const QRectF& srcRect, void *data)
         ? dest->ld.gotor.rb.y
         : 0.0;
 
-    link._destTL = QPointF(l, t);
-    link._destBR = QPointF(r, b);
+    link._destTL = ctm.map(QPointF(l, t));
+    link._destBR = ctm.map(QPointF(r, b));
 
     link._is_fit_h      = testFlags(dest, fz_link_flag_fit_h);
     link._is_fit_v      = testFlags(dest, fz_link_flag_fit_v);
@@ -243,4 +247,16 @@ void deleteLocksContext(fz_locks_context* &ctx)
 
   free(ctx);
   ctx = NULL;
+}
+
+QTransform ctmForPage(fz_document *doc, fz_page *page)
+{
+  pdf_document *pdfdoc = pdf_specifics(doc);
+  if( pdfdoc == NULL ) {
+    return QTransform();
+  }
+
+  pdf_page *pdfpage = reinterpret_cast<pdf_page*>(page);
+
+  return toTransform(&(pdfpage->ctm));
 }

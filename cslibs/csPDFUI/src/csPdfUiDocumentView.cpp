@@ -509,8 +509,11 @@ bool csPdfUiDocumentView::followLink(const QPointF& scenePos)
 
       _linkHistory.push(_page.number()+1);
       showPage(page+1);
+#if 0
       centerOn(_page.rect().center().x(), _page.rect().top());
-      // centerOn(dest); // TODO: Transform 'dest'; cf. SumatraPDF
+#else
+      centerOn(dest);
+#endif
 
       return true;
     }
