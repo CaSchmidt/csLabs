@@ -51,6 +51,11 @@ csPdfUiTocWidget::csPdfUiTocWidget(QWidget *parent, Qt::WindowFlags f)
 
   connect(ui->contentsView, SIGNAL(activated(const QModelIndex&)),
           SLOT(activateTocItem(const QModelIndex&)));
+
+  // Filter //////////////////////////////////////////////////////////////////
+
+  connect(ui->filterEdit, SIGNAL(textChanged(const QString&)),
+          _contentsModel, SLOT(filter(const QString&)));
 }
 
 csPdfUiTocWidget::~csPdfUiTocWidget()
@@ -60,6 +65,7 @@ csPdfUiTocWidget::~csPdfUiTocWidget()
 
 void csPdfUiTocWidget::setDocument(const class csPdfDocument& doc)
 {
+  ui->filterEdit->clear();
   _contentsModel->setRootNode(doc.tableOfContents());
 }
 

@@ -49,10 +49,12 @@ public:
   QString title() const;
   csPdfLink link() const;
 
-  void appendChild(csPdfContentsNode *child);
+  void appendChild(const QString& title, const csPdfLink& link);
+  void appendChild(const csPdfContentsNode *child);
   csPdfContentsNode *child(int row);
   int childCount() const;
   int columnCount() const;
+  const csPdfContentsNode *constChild(int row) const;
   QVariant data(int column) const;
   csPdfContentsNode *parent();
   int row() const;

@@ -58,10 +58,18 @@ csPdfLink csPdfContentsNode::link() const
   return _link;
 }
 
-void csPdfContentsNode::appendChild(csPdfContentsNode *child)
+void csPdfContentsNode::appendChild(const QString& title, const csPdfLink& link)
+{
+  csPdfContentsNode *c = new csPdfContentsNode(title, link, this);
+  if( c != 0 ) {
+    _children.push_back(c);
+  }
+}
+
+void csPdfContentsNode::appendChild(const csPdfContentsNode *child)
 {
   if( child != 0 ) {
-    _children.push_back(child);
+    _children.push_back(const_cast<csPdfContentsNode*>(child));
   }
 }
 
@@ -78,6 +86,11 @@ int csPdfContentsNode::childCount() const
 int csPdfContentsNode::columnCount() const
 {
   return 1;
+}
+
+const csPdfContentsNode *csPdfContentsNode::constChild(int row) const
+{
+  return _children.value(row);
 }
 
 QVariant csPdfContentsNode::data(int /*column*/) const

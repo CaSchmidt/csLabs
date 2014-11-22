@@ -55,8 +55,17 @@ public:
   QModelIndex parent(const QModelIndex& index) const;
   int rowCount(const QModelIndex& parent = QModelIndex()) const;
 
+public slots:
+  void filter(const QString& pattern);
+
 private:
-  csPdfContentsNode *_root;
+  static void filter(const csPdfContentsNode *node,
+                     csPdfContentsNode *filtered,
+                     const QString& pattern);
+
+  csPdfContentsNode *_contents;
+  csPdfContentsNode *_displayed;
+  csPdfContentsNode *_filtered;
 };
 
 #endif // __CSPDFCONTENTSMODEL_H__

@@ -35,14 +35,20 @@
 
 csPdfContentsModel::csPdfContentsModel(QObject *parent)
   : QAbstractItemModel(parent)
-  , _root(0)
+  , _contents(0)
+  , _displayed(0)
+  , _filtered(0)
 {
-  _root = newRootNode();
+  _contents = newRootNode();
+  _filtered = newRootNode();
+
+  _displayed = _contents;
 }
 
 csPdfContentsModel::~csPdfContentsModel()
 {
-  delete _root;
+  delete _contents;
+  delete _filtered;
 }
 
 csPdfContentsNode *csPdfContentsModel::newRootNode()
@@ -53,12 +59,19 @@ csPdfContentsNode *csPdfContentsModel::newRootNode()
 void csPdfContentsModel::setRootNode(csPdfContentsNode *root)
 {
   beginResetModel();
-  delete _root;
+
+  delete _contents;
+  delete _filtered;
+
   if( root == 0 ) {
-    _root = newRootNode();
+    _contents = newRootNode();
   } else {
-    _root = root;
+    _contents = root;
   }
+  _filtered = newRootNode();
+
+  _displayed = _contents;
+
   endResetModel();
 }
 
@@ -68,7 +81,7 @@ int csPdfContentsModel::columnCount(const QModelIndex& parent) const
     return static_cast<csPdfContentsNode*>(parent.internalPointer())->columnCount();
   }
 
-  return _root->columnCount();
+  return _displayed->columnCount();
 }
 
 QVariant csPdfContentsModel::data(const QModelIndex& index, int role) const
@@ -100,7 +113,7 @@ QVariant csPdfContentsModel::headerData(int section,
                                         int role) const
 {
   if( orientation == Qt::Horizontal  &&  role == Qt::DisplayRole ) {
-    return _root->data(section);
+    return _displayed->data(section);
   }
 
   return QVariant();
@@ -115,7 +128,7 @@ QModelIndex csPdfContentsModel::index(int row, int column,
 
   csPdfContentsNode *parentItem;
   if( !parent.isValid() ) {
-    parentItem = _root;
+    parentItem = _displayed;
   } else {
     parentItem = static_cast<csPdfContentsNode*>(parent.internalPointer());
   }
@@ -137,7 +150,7 @@ QModelIndex csPdfContentsModel::parent(const QModelIndex& index) const
   csPdfContentsNode *childItem  = static_cast<csPdfContentsNode*>(index.internalPointer());
   csPdfContentsNode *parentItem = childItem->parent();
 
-  if( parentItem == _root ) {
+  if( parentItem == _displayed ) {
     return QModelIndex();
   }
 
@@ -152,10 +165,44 @@ int csPdfContentsModel::rowCount(const QModelIndex& parent) const
   }
 
   if( !parent.isValid() ) {
-    parentItem = _root;
+    parentItem = _displayed;
   } else {
     parentItem = static_cast<csPdfContentsNode*>(parent.internalPointer());
   }
 
   return parentItem->childCount();
+}
+
+////// public slots //////////////////////////////////////////////////////////
+
+void csPdfContentsModel::filter(const QString& pattern)
+{
+  beginResetModel();
+
+  delete _filtered;
+  _filtered = newRootNode();
+
+  if( pattern.isEmpty() ) {
+    _displayed = _contents;
+  } else {
+    filter(_contents, _filtered, pattern);
+    _displayed = _filtered;
+  }
+
+  endResetModel();
+}
+
+////// private ///////////////////////////////////////////////////////////////
+
+void csPdfContentsModel::filter(const csPdfContentsNode *node,
+                                csPdfContentsNode *filtered,
+                                const QString& pattern)
+{
+  for(int i = 0; i < node->childCount(); i++) {
+    const csPdfContentsNode *child = node->constChild(i);
+    if( child->title().contains(pattern, Qt::CaseInsensitive) ) {
+      filtered->appendChild(child->title(), child->link());
+    }
+    filter(child, filtered, pattern);
+  }
 }
