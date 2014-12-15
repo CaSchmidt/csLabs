@@ -37,7 +37,7 @@
 #include <QtGui/QPixmap>
 #include <QtCore/QPoint>
 #include <QtWidgets/QWidget>
-#include <QtWidgets/5.3.2/QtWidgets/private/qeffects_p.h>
+#include <QtWidgets/5.4.0/QtWidgets/private/qeffects_p.h>
 
 #include "csQt/csImageTip.h"
 

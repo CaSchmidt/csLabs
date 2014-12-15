@@ -236,7 +236,7 @@ int csPdfDocument::setRenderThreads(const int count)
 }
 
 csPdfDocument csPdfDocument::load(const QString& filename, const bool memory)
-{
+{  
   QByteArray data;
   if( memory ) {
     QFile f(filename);
@@ -265,6 +265,8 @@ csPdfDocument csPdfDocument::load(const QString& filename, const bool memory)
 
     return csPdfDocument();
   }
+
+  fz_register_document_handlers(context);
 
   fz_stream *stream = NULL;
   fz_var(stream);
