@@ -537,4 +537,18 @@ void csPdfUiDocumentView::renderPage()
   setItemId(item, PageId);
 
   setSceneRect(_page.rect());
+
+#if 0
+  // DEBUG
+  QList<QPainterPath> ext = _page.extractPaths();
+  foreach(const QPainterPath& path, ext) {
+    QGraphicsItem *item =
+        _scene->addPath(path,
+                        QPen(QBrush(Qt::red, Qt::SolidPattern),
+                             2.0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin),
+                        QBrush(Qt::NoBrush)/*QBrush(Qt::red, Qt::SolidPattern)*/);
+    item->setZValue(100.0);
+    item->setCursor(Qt::CrossCursor);
+  }
+#endif
 }

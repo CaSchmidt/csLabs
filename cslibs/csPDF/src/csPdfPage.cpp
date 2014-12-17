@@ -38,6 +38,7 @@
 
 #include <csPDF/internal/config.h>
 #include <csPDF/internal/csPdfPageImpl.h>
+#include <csPDF/internal/fz_pathext.h>
 #include <csPDF/internal/fz_render.h>
 #include <csPDF/internal/fz_util.h>
 
@@ -294,4 +295,30 @@ QRectF csPdfPage::rect() const
 QSizeF csPdfPage::size() const
 {
   return rect().size();
+}
+
+QList<QPainterPath> csPdfPage::extractPaths(const bool closed) const
+{
+  if( isEmpty() ) {
+    return QList<QPainterPath>();
+  }
+
+  CSPDF_PAGEIMPL();
+
+  PathExt ext;
+  ext.closed = closed;
+
+  fz_device *dev = fzNewPathExtDevice(impl->pdf->context, &ext);
+  if( dev == NULL ) {
+    return QList<QPainterPath>();
+  }
+
+  fz_matrix I;
+  setIdentity(&I);
+
+  fz_run_page(impl->pdf->document, impl->page, dev, &I, NULL);
+
+  fz_free_device(dev);
+
+  return ext.paths;
 }

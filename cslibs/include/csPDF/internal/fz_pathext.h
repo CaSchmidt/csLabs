@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2014, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,26 +29,28 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-/*
-#if defined(_DEBUG)
-# include <vld.h>
-#endif
-*/
+#ifndef __FZ_PATHEXT_H__
+#define __FZ_PATHEXT_H__
 
-#include <QtWidgets/QApplication>
+#include <QtCore/QList>
+#include <QtGui/QPainterPath>
 
-#include <csPDF/csPdfSearchResult.h>
+extern "C" {
+#include <mupdf/fitz.h>
+};
 
-#include "wmainwindow.h"
+struct PathExt {
+public:
+  PathExt()
+    : closed(false)
+    , paths()
+  {
+  }
 
-int main(int argc, char **argv)
-{
-  QApplication qapp(argc, argv);
+  bool closed;
+  QList<QPainterPath> paths;
+};
 
-  WMainWindow *mainwindow = new WMainWindow();
-  mainwindow->show();
-  const int result = qapp.exec();
-  delete mainwindow;
+fz_device *fzNewPathExtDevice(fz_context *ctx, PathExt *user);
 
-  return result;
-}
+#endif // __FZ_PATHEXT_H__

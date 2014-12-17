@@ -32,7 +32,8 @@ SOURCES += \
     src/csPdfUtil.cpp \
     src/csPdfSearch.cpp \
     src/csPdfSearchResultsModel.cpp \
-    src/fz_render.cpp
+    src/fz_render.cpp \
+    src/fz_pathext.cpp
 
 HEADERS += \
     ../include/csPDF/cspdf_config.h \
@@ -51,4 +52,5 @@ HEADERS += \
     ../include/csPDF/csPdfSearchResult.h \
     ../include/csPDF/csPdfSearchResultsModel.h \
     ../include/csPDF/csPdfTextPage.h \
-    ../include/csPDF/internal/fz_render.h
+    ../include/csPDF/internal/fz_render.h \
+    ../include/csPDF/internal/fz_pathext.h

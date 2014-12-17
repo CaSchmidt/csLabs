@@ -35,6 +35,7 @@
 #include <QtCore/QRectF>
 #include <QtCore/QSharedPointer>
 #include <QtGui/QImage>
+#include <QtGui/QPainterPath>
 #include <QtGui/QTransform>
 
 #include <csPDF/cspdf_config.h>
@@ -57,6 +58,8 @@ public:
   csPdfTexts texts(const QRectF& area = QRectF()) const;
   QRectF rect() const;
   QSizeF size() const;
+
+  QList<QPainterPath> extractPaths(const bool closed = false) const;
 
 private:
   QSharedPointer<csPdfPageImpl> impl;
