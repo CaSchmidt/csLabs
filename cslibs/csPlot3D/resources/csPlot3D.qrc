@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>shader/csplot3d_f.glsl</file>
+        <file>shader/csplot3d_v.glsl</file>
+    </qresource>
+</RCC>
