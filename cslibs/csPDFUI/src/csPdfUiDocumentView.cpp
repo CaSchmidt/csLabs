@@ -205,7 +205,9 @@ int csPdfUiDocumentView::itemId(const QGraphicsItem *item)
 void csPdfUiDocumentView::gotoLinkSource()
 {
   if( !_linkHistory.isEmpty() ) {
-    showPage(_linkHistory.pop());
+    const ReverseLink revLink = _linkHistory.pop();
+    showPage(revLink.page);
+    centerOn(revLink.center);
   }
 }
 
@@ -383,7 +385,7 @@ void csPdfUiDocumentView::keyPressEvent(QKeyEvent *event)
     zoomOut();
     event->accept();
     return;
-  } else if( event->matches(QKeySequence::Undo) ) {
+  } else if( event->matches(QKeySequence::Back) ) {
     gotoLinkSource();
     event->accept();
     return;
@@ -507,7 +509,7 @@ bool csPdfUiDocumentView::followLink(const QPointF& scenePos)
       const int     page = item->data(DATA_LINKPAGE).toInt();
       const QPointF dest = item->data(DATA_LINKDEST).toPointF();
 
-      _linkHistory.push(_page.number()+1);
+      _linkHistory.push(ReverseLink(_page.number()+1, item->boundingRect().center()));
       showPage(page+1);
 #if 0
       centerOn(_page.rect().center().x(), _page.rect().top());

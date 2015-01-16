@@ -100,9 +100,20 @@ protected:
   csPdfPage _page;
 
 private:
+  struct ReverseLink {
+    ReverseLink(const int _page = 0, const QPointF& _center = QPointF())
+      : page(_page)
+      , center(_center)
+    {
+    }
+
+    int page;
+    QPointF center;
+  };
+
   double _zoom; // [%]
   int _pageBounces;
-  QStack<int> _linkHistory; // [1, _doc.pageCount()]
+  QStack<ReverseLink> _linkHistory; // [1, _doc.pageCount()]
 
 signals:
   void pageChanged(int no); // [1, _doc.pageCount()]
