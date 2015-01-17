@@ -56,6 +56,7 @@ const float csCoordinateBox::Size        = 2.0f;
 
 csCoordinateBox::csCoordinateBox()
   : QOpenGLFunctions()
+  , _initRequired(false)
   , _boxData()
   , _box(0)
   , _stripData()
@@ -63,8 +64,6 @@ csCoordinateBox::csCoordinateBox()
   , _axisData()
   , _axis(0)
 {
-  initializeOpenGLFunctions();
-
   // (1) Vertex Data /////////////////////////////////////////////////////////
 
   _boxData.resize(3*8);
@@ -105,12 +104,7 @@ csCoordinateBox::csCoordinateBox()
   _boxData[7*3+1] = Radius + Size / 2.0f;
   _boxData[7*3+2] = -Size / 2.0f;
 
-  // (2) Vertex Array Object /////////////////////////////////////////////////
-
-  _box = csAllocateBuffer(_box,
-                          _boxData.constData(), sizeof(GLfloat)*3*8);
-
-  // (3) Strip Data //////////////////////////////////////////////////////////
+  // (2) Strip Data //////////////////////////////////////////////////////////
 
   _stripData.resize(10);
 
@@ -125,13 +119,7 @@ csCoordinateBox::csCoordinateBox()
   _stripData[8] = TRL;
   _stripData[9] = BRL;
 
-  // (4) Index Array Object //////////////////////////////////////////////////
-
-  _strip = csAllocateBuffer(_strip,
-                            _stripData.constData(), sizeof(GLuint)*10,
-                            QOpenGLBuffer::IndexBuffer);
-
-  // (5) Axis Data ///////////////////////////////////////////////////////////
+  // (3) Axis Data ///////////////////////////////////////////////////////////
 
   _axisData.resize(16);
 
@@ -155,11 +143,9 @@ csCoordinateBox::csCoordinateBox()
   _axisData[14] = TRL;
   _axisData[15] = BRL;
 
-  // (6) Axis ////////////////////////////////////////////////////////////////
+  // (4) Trigger Initialization //////////////////////////////////////////////
 
-  _axis = csAllocateBuffer(_axis,
-                           _axisData.constData(), sizeof(GLuint)*16,
-                           QOpenGLBuffer::IndexBuffer);
+  _initRequired = true;
 }
 
 csCoordinateBox::~csCoordinateBox()
@@ -171,6 +157,10 @@ csCoordinateBox::~csCoordinateBox()
 
 void csCoordinateBox::draw(QOpenGLShaderProgram& program)
 {
+  if( _initRequired ) {
+    initialize();
+  }
+
   glEnable(GL_CULL_FACE);
 
   program.setUniformValue("cs_Model", QMatrix4x4());
@@ -267,4 +257,32 @@ csEdges csCoordinateBox::edges() const
                         QVector3D(0, -1, 0), QVector3D(1, 0, 0)));
 
   return list;
+}
+
+////// private ///////////////////////////////////////////////////////////////
+
+void csCoordinateBox::initialize()
+{
+  initializeOpenGLFunctions();
+
+  // (1) Vertex Array Object /////////////////////////////////////////////////
+
+  _box = csAllocateBuffer(_box,
+                          _boxData.constData(), sizeof(GLfloat)*3*8);
+
+  // (2) Index Array Object //////////////////////////////////////////////////
+
+  _strip = csAllocateBuffer(_strip,
+                            _stripData.constData(), sizeof(GLuint)*10,
+                            QOpenGLBuffer::IndexBuffer);
+
+  // (3) Axis ////////////////////////////////////////////////////////////////
+
+  _axis = csAllocateBuffer(_axis,
+                           _axisData.constData(), sizeof(GLuint)*16,
+                           QOpenGLBuffer::IndexBuffer);
+
+  // Done ////////////////////////////////////////////////////////////////////
+
+  _initRequired = false;
 }

@@ -40,6 +40,7 @@
 
 csSurface::csSurface()
   : QOpenGLFunctions()
+  , _initRequired(false)
   , _paletteAxis()
   , _palette()
   , _meshInfo()
@@ -53,12 +54,14 @@ csSurface::csSurface()
   , _meshY(0)
   , _model()
 {
-  initializeOpenGLFunctions();
-
   // Initialize (a Quite Simple) Palette /////////////////////////////////////
 
   _paletteAxis << 0.0f             << 0.5f              << 1.0f;
   _palette     << QColor(Qt::blue) << QColor(Qt::green) << QColor(Qt::red);
+
+  // Trigger Initialization //////////////////////////////////////////////////
+
+  _initRequired = true;
 }
 
 csSurface::~csSurface()
@@ -71,6 +74,10 @@ csSurface::~csSurface()
 
 void csSurface::draw(QOpenGLShaderProgram& program)
 {
+  if( _initRequired ) {
+    initialize();
+  }
+
   if( _meshInfo.isEmpty() ) {
     return;
   }
@@ -109,6 +116,10 @@ void csSurface::draw(QOpenGLShaderProgram& program)
 
 void csSurface::drawMesh(QOpenGLShaderProgram& program)
 {
+  if( _initRequired ) {
+    initialize();
+  }
+
   if( _meshInfo.isEmpty() ) {
     return;
   }
@@ -170,13 +181,7 @@ void csSurface::setData(const QVector<float>& x,
     _surfaceData[i*3+2] = z[i];
   }
 
-  // (2) Surface's Buffer ////////////////////////////////////////////////////
-
-  _surface = csAllocateBuffer(_surface,
-                              _surfaceData.constData(),
-                              sizeof(GLfloat)*3*_meshInfo.vertexCount());
-
-  // (3) Create Color Data ///////////////////////////////////////////////////
+  // (2) Create Color Data ///////////////////////////////////////////////////
 
   _colorData.resize(3 * _meshInfo.vertexCount());
   for(int i = 0; i < _meshInfo.vertexCount(); i++) {
@@ -210,13 +215,7 @@ void csSurface::setData(const QVector<float>& x,
     _colorData[i*3+2] = qBound(0.0f, b, 1.0f);
   }
 
-  // (4) Color's Buffer //////////////////////////////////////////////////////
-
-  _color = csAllocateBuffer(_color,
-                            _colorData.constData(),
-                            sizeof(GLfloat)*3*_meshInfo.vertexCount());
-
-  // (5) Create Strip Data ///////////////////////////////////////////////////
+  // (3) Create Strip Data ///////////////////////////////////////////////////
 
   const int numStrips       =   _meshInfo.rowCount()   -1;
   const int numVertPerStrip = 2*_meshInfo.columnCount();
@@ -232,14 +231,7 @@ void csSurface::setData(const QVector<float>& x,
     }
   }
 
-  // (6) Strip's Buffer //////////////////////////////////////////////////////
-
-  _strip = csAllocateBuffer(_strip,
-                            _stripData.constData(),
-                            sizeof(GLuint)*_stripData.count(),
-                            QOpenGLBuffer::IndexBuffer);
-
-  // (7) Create Mesh Data (y-Direction) //////////////////////////////////////
+  // (4) Create Mesh Data (y-Direction) //////////////////////////////////////
 
   _meshYData.resize(_meshInfo.vertexCount());
   for(int x = 0; x < _meshInfo.columnCount(); x++) {
@@ -248,19 +240,57 @@ void csSurface::setData(const QVector<float>& x,
     }
   }
 
-  // (8) Mesh's Buffer (y-Direction) /////////////////////////////////////////
+  // (5) Update Model Matrix /////////////////////////////////////////////////
+
+  updateModelMatrix();
+
+  // (6) Trigger Initialization //////////////////////////////////////////////
+
+  _initRequired = true;
+}
+
+////// private ///////////////////////////////////////////////////////////////
+
+void csSurface::initialize()
+{
+  initializeOpenGLFunctions();
+
+  // (0) Sanity Check ////////////////////////////////////////////////////////
+
+  if( _meshInfo.isEmpty() ) {
+    return;
+  }
+
+  // (1) Surface's Buffer ////////////////////////////////////////////////////
+
+  _surface = csAllocateBuffer(_surface,
+                              _surfaceData.constData(),
+                              sizeof(GLfloat)*3*_meshInfo.vertexCount());
+
+  // (2) Color's Buffer //////////////////////////////////////////////////////
+
+  _color = csAllocateBuffer(_color,
+                            _colorData.constData(),
+                            sizeof(GLfloat)*3*_meshInfo.vertexCount());
+
+  // (3) Strip's Buffer //////////////////////////////////////////////////////
+
+  _strip = csAllocateBuffer(_strip,
+                            _stripData.constData(),
+                            sizeof(GLuint)*_stripData.count(),
+                            QOpenGLBuffer::IndexBuffer);
+
+  // (4) Mesh's Buffer (y-Direction) /////////////////////////////////////////
 
   _meshY = csAllocateBuffer(_meshY,
                             _meshYData.constData(),
                             sizeof(GLuint)*_meshYData.size(),
                             QOpenGLBuffer::IndexBuffer);
 
-  // (9) Update Model Matrix /////////////////////////////////////////////////
+  // Done ////////////////////////////////////////////////////////////////////
 
-  updateModelMatrix();
+  _initRequired = false;
 }
-
-////// private ///////////////////////////////////////////////////////////////
 
 void csSurface::updateModelMatrix()
 {

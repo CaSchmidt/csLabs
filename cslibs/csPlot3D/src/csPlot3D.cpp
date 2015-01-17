@@ -74,6 +74,13 @@ csPlot3D::csPlot3D(QWidget *parent, Qt::WindowFlags f)
   csSetLabelText(_yMaxLabel, _L1("yMax"));
   csSetLabelText(_zMinLabel, _L1("zMin"));
   csSetLabelText(_zMaxLabel, _L1("zMax"));
+
+  // Create 3D Assets ////////////////////////////////////////////////////////
+
+  _coordBox  = new csCoordinateBox();
+  _axisEdges = _coordBox->edges();
+
+  _surface = new csSurface();
 }
 
 csPlot3D::~csPlot3D()
@@ -88,9 +95,7 @@ void csPlot3D::setData(const QVector<float>& x,
                        const QVector<float>& y,
                        const QVector<float>& z)
 {
-  makeCurrent();
   _surface->setData(x, y, z);
-  update();
 }
 
 void csPlot3D::setXAxisLabels(const QString& minLabel, const QString& maxLabel)
@@ -116,16 +121,6 @@ void csPlot3D::setZAxisLabels(const QString& minLabel, const QString& maxLabel)
 void csPlot3D::initializeGL()
 {
   initializeOpenGLFunctions();
-
-  // Coordinate Box //////////////////////////////////////////////////////////
-
-  _coordBox = new csCoordinateBox();
-
-  _axisEdges = _coordBox->edges();
-
-  // Surface /////////////////////////////////////////////////////////////////
-
-  _surface = new csSurface();
 
   // GLSL Shader Program /////////////////////////////////////////////////////
 

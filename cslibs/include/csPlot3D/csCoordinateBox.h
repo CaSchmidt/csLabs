@@ -50,6 +50,9 @@ public:
   csEdges edges() const;
 
 private:
+  void initialize();
+
+  bool              _initRequired;
   QVector<GLfloat>  _boxData;
   QOpenGLBuffer    *_box;
   QVector<GLuint>   _stripData;

@@ -53,8 +53,10 @@ public:
                const QVector<float>& z);
 
 private:
+  void initialize();
   void updateModelMatrix();
 
+  bool              _initRequired;
   QVector<float>    _paletteAxis;
   QVector<QColor>   _palette;
   csMeshInfo        _meshInfo;
