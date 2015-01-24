@@ -74,7 +74,7 @@ void csPdfUiTocWidget::setDocument(const class csPdfDocument& doc)
 void csPdfUiTocWidget::activateTocItem(const QModelIndex& index)
 {
   csPdfContentsNode *node = static_cast<csPdfContentsNode*>(index.internalPointer());
-  if( node != 0  &&  node->link().isGoto() ) {
-    emit pageRequested(node->link().page()+1);
+  if( node != 0  &&  node->page() >= 0 ) {
+    emit pageRequested(node->page()+1);
   }
 }

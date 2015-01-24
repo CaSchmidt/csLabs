@@ -42,7 +42,8 @@ void toContentsNode(fz_outline *fz_node, csPdfContentsNode *parent)
   const QString   title = QString::fromUtf8(fz_node->title);
   const csPdfLink link  = toLink(QRectF(), &(fz_node->dest), QTransform());
 
-  csPdfContentsNode *child = new csPdfContentsNode(title, link, parent);
+  csPdfContentsNode *child =
+      new csPdfContentsNode(title, link.isGoto() ? link.page() : -1, parent);
   if( child == 0 ) {
     return;
   }

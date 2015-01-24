@@ -53,7 +53,7 @@ csPdfContentsModel::~csPdfContentsModel()
 
 csPdfContentsNode *csPdfContentsModel::newRootNode()
 {
-  return new csPdfContentsNode(tr("Title"), csPdfLink(), 0);
+  return new csPdfContentsNode(tr("Title"), -1, 0);
 }
 
 void csPdfContentsModel::setRootNode(csPdfContentsNode *root)
@@ -201,7 +201,7 @@ void csPdfContentsModel::filter(const csPdfContentsNode *node,
   for(int i = 0; i < node->childCount(); i++) {
     const csPdfContentsNode *child = node->constChild(i);
     if( child->title().contains(pattern, Qt::CaseInsensitive) ) {
-      filtered->appendChild(child->title(), child->link());
+      filtered->appendChild(child->title(), child->page());
     }
     filter(child, filtered, pattern);
   }

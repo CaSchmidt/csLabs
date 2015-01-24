@@ -34,10 +34,10 @@
 ////// public ////////////////////////////////////////////////////////////////
 
 csPdfContentsNode::csPdfContentsNode(const QString& title,
-                                     const csPdfLink& link,
+                                     const int destPage,
                                      csPdfContentsNode *parent)
   : _title(title)
-  , _link(link)
+  , _page(destPage)
   , _parent(parent)
   , _children()
 {
@@ -53,14 +53,14 @@ QString csPdfContentsNode::title() const
   return _title;
 }
 
-csPdfLink csPdfContentsNode::link() const
+int csPdfContentsNode::page() const
 {
-  return _link;
+  return _page;
 }
 
-void csPdfContentsNode::appendChild(const QString& title, const csPdfLink& link)
+void csPdfContentsNode::appendChild(const QString& title, const int destPage)
 {
-  csPdfContentsNode *c = new csPdfContentsNode(title, link, this);
+  csPdfContentsNode *c = new csPdfContentsNode(title, destPage, this);
   if( c != 0 ) {
     _children.push_back(c);
   }

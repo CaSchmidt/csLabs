@@ -37,19 +37,17 @@
 
 #include <csPDF/cspdf_config.h>
 
-#include <csPDF/csPdfLink.h>
-
 class CS_PDF_EXPORT csPdfContentsNode {
 public:
   csPdfContentsNode(const QString& title,
-                    const csPdfLink& link,
+                    const int destPage,
                     csPdfContentsNode *parent);
   ~csPdfContentsNode();
 
   QString title() const;
-  csPdfLink link() const;
+  int page() const;
 
-  void appendChild(const QString& title, const csPdfLink& link);
+  void appendChild(const QString& title, const int destPage);
   void appendChild(const csPdfContentsNode *child);
   csPdfContentsNode *child(int row);
   int childCount() const;
@@ -61,7 +59,7 @@ public:
 
 private:
   QString _title;
-  csPdfLink _link;
+  int _page;
   csPdfContentsNode *_parent;
   QList<csPdfContentsNode*> _children;
 };
