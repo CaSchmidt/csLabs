@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2014-2015, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,49 +29,16 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSSURFACE_H__
-#define __CSSURFACE_H__
+attribute highp vec4  cs_Vertex;
+uniform   highp mat4  cs_Projection;
+uniform   highp mat4  cs_View;
+uniform   highp mat4  cs_Model;
+uniform   highp float cs_zMin;
+uniform   highp float cs_zInterval;
+varying   highp float height;
 
-#include <QtCore/QVector>
-#include <QtGui/QImage>
-#include <QtGui/QOpenGLBuffer>
-#include <QtGui/QOpenGLFunctions>
-#include <QtGui/QOpenGLShaderProgram>
-#include <QtGui/QOpenGLTexture>
-
-#include <csPlot3D/csplot3d_config.h>
-#include <csPlot3D/csMeshInfo.h>
-
-class CS_PLOT3D_EXPORT csSurface : protected QOpenGLFunctions {
-public:
-  csSurface();
-  ~csSurface();
-
-  void draw(QOpenGLShaderProgram& program);
-  void drawMesh(QOpenGLShaderProgram& program);
-
-  void setData(const QVector<float>& x,
-               const QVector<float>& y,
-               const QVector<float>& z);
-
-private:
-  void initialize();
-  void updateColorImage();
-  void updateModelMatrix();
-
-  bool              _initRequired;
-  QVector<float>    _paletteAxis;
-  QVector<QColor>   _palette;
-  csMeshInfo        _meshInfo;
-  QVector<GLfloat>  _surfaceData;
-  QOpenGLBuffer    *_surface;
-  QVector<GLuint>   _stripData;
-  QOpenGLBuffer    *_strip;
-  QVector<GLuint>   _meshYData;
-  QOpenGLBuffer    *_meshY;
-  QMatrix4x4        _model;
-  QImage            _colorImage;
-  QOpenGLTexture   *_colorTexture;
-};
-
-#endif // __CSSURFACE_H__
+void main(void)
+{
+    gl_Position = cs_Projection * cs_View * cs_Model * cs_Vertex;
+    height      = clamp((cs_Vertex.z-cs_zMin)/cs_zInterval, 0.0, 1.0);
+}

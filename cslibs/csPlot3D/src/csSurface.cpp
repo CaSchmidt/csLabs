@@ -32,12 +32,15 @@
 #include <cstring>
 
 #include <QtGui/QColor>
-#include <QtGui/QImage>
 
 #include <csPlot3D/csSurface.h>
 
 #include <csPlot3D/csCoordinateBox.h>
 #include <csPlot3D/csOpenGLUtil.h>
+
+////// Macros ////////////////////////////////////////////////////////////////
+
+#define TMU_COLORMAP  0
 
 ////// public ////////////////////////////////////////////////////////////////
 
@@ -49,18 +52,19 @@ csSurface::csSurface()
   , _meshInfo()
   , _surfaceData()
   , _surface(0)
-  , _colorData()
-  , _color(0)
   , _stripData()
   , _strip(0)
   , _meshYData()
   , _meshY(0)
   , _model()
+  , _colorImage()
+  , _colorTexture(0)
 {
   // Initialize (a Quite Simple) Palette /////////////////////////////////////
 
   _paletteAxis << 0.0f             << 0.5f              << 1.0f;
   _palette     << QColor(Qt::blue) << QColor(Qt::green) << QColor(Qt::red);
+  updateColorImage();
 
   // Trigger Initialization //////////////////////////////////////////////////
 
@@ -70,9 +74,9 @@ csSurface::csSurface()
 csSurface::~csSurface()
 {
   delete _surface;
-  delete _color;
   delete _strip;
   delete _meshY;
+  delete _colorTexture;
 }
 
 void csSurface::draw(QOpenGLShaderProgram& program)
@@ -87,18 +91,17 @@ void csSurface::draw(QOpenGLShaderProgram& program)
 
   glDisable(GL_CULL_FACE);
 
-  program.setUniformValue("cs_DepthOffset", 0.0f);
   program.setUniformValue("cs_Model", _model);
+  program.setUniformValue("cs_zMin", _meshInfo.zMin());
+  program.setUniformValue("cs_zInterval", _meshInfo.zInterval());
+  program.setUniformValue("cs_ColorMap", TMU_COLORMAP);
 
   _surface->bind();
   const int vertexLoc = program.attributeLocation("cs_Vertex");
   program.enableAttributeArray(vertexLoc);
   program.setAttributeBuffer(vertexLoc, GL_FLOAT, 0, 3);
 
-  _color->bind();
-  const int colorLoc = program.attributeLocation("cs_Color");
-  program.enableAttributeArray(colorLoc);
-  program.setAttributeBuffer(colorLoc, GL_FLOAT, 0, 3);
+  _colorTexture->bind(TMU_COLORMAP, QOpenGLTexture::ResetTextureUnit);
 
   _strip->bind();
   const int numStrips       =   _meshInfo.rowCount()   -1;
@@ -110,8 +113,7 @@ void csSurface::draw(QOpenGLShaderProgram& program)
   }
   _strip->release();
 
-  program.disableAttributeArray(colorLoc);
-  _color->release();
+  _colorTexture->release();
 
   program.disableAttributeArray(vertexLoc);
   _surface->release();
@@ -150,11 +152,6 @@ void csSurface::drawMesh(QOpenGLShaderProgram& program)
     const GLuint  offset  = sizeof(GLuint)*x*_meshInfo.rowCount();
     const GLvoid *indices = (GLvoid*)offset;
     glDrawElements(GL_LINE_STRIP, _meshInfo.rowCount(), GL_UNSIGNED_INT, indices);
-
-    const GLenum error = glGetError();
-    if( error != 0 ) {
-      printf("%d: error=0x%08X\n", x, error);
-    }
   }
   _meshY->release();
 
@@ -184,41 +181,7 @@ void csSurface::setData(const QVector<float>& x,
     _surfaceData[i*3+2] = z[i];
   }
 
-  // (2) Create Color Data ///////////////////////////////////////////////////
-
-  _colorData.resize(3 * _meshInfo.vertexCount());
-  for(int i = 0; i < _meshInfo.vertexCount(); i++) {
-    const float z  = _surfaceData[i*3+2];
-    const float z0 = _meshInfo.zInterval() == 0.0f
-        ? qBound(_paletteAxis.front(), 0.0f, _paletteAxis.back())
-        : qBound(_paletteAxis.front(),
-                 csInter1D(z,
-                           _meshInfo.zMin(), _meshInfo.zMax(),
-                           _paletteAxis.front(), _paletteAxis.back()),
-                 _paletteAxis.back());
-
-    float r(0.0f), g(0.0f), b(0.0f);
-    for(int k = 1; k < _palette.size(); k++) {
-      if( z0 <= _paletteAxis[k] ) {
-        r = csInter1D(z0,
-                      _paletteAxis[k-1], _paletteAxis[k],
-            (float)_palette[k-1].redF(), (float)_palette[k].redF());
-        g = csInter1D(z0,
-                      _paletteAxis[k-1], _paletteAxis[k],
-            (float)_palette[k-1].greenF(), (float)_palette[k].greenF());
-        b = csInter1D(z0,
-                      _paletteAxis[k-1], _paletteAxis[k],
-            (float)_palette[k-1].blueF(), (float)_palette[k].blueF());
-        break;
-      }
-    }
-
-    _colorData[i*3+0] = qBound(0.0f, r, 1.0f);
-    _colorData[i*3+1] = qBound(0.0f, g, 1.0f);
-    _colorData[i*3+2] = qBound(0.0f, b, 1.0f);
-  }
-
-  // (3) Create Strip Data ///////////////////////////////////////////////////
+  // (2) Create Strip Data ///////////////////////////////////////////////////
 
   const int numStrips       =   _meshInfo.rowCount()   -1;
   const int numVertPerStrip = 2*_meshInfo.columnCount();
@@ -234,7 +197,7 @@ void csSurface::setData(const QVector<float>& x,
     }
   }
 
-  // (4) Create Mesh Data (y-Direction) //////////////////////////////////////
+  // (3) Create Mesh Data (y-Direction) //////////////////////////////////////
 
   _meshYData.resize(_meshInfo.vertexCount());
   for(int x = 0; x < _meshInfo.columnCount(); x++) {
@@ -243,11 +206,11 @@ void csSurface::setData(const QVector<float>& x,
     }
   }
 
-  // (5) Update Model Matrix /////////////////////////////////////////////////
+  // (4) Update Model Matrix /////////////////////////////////////////////////
 
   updateModelMatrix();
 
-  // (6) Trigger Initialization //////////////////////////////////////////////
+  // (5) Trigger Initialization //////////////////////////////////////////////
 
   _initRequired = true;
 }
@@ -270,25 +233,32 @@ void csSurface::initialize()
                               _surfaceData.constData(),
                               sizeof(GLfloat)*3*_meshInfo.vertexCount());
 
-  // (2) Color's Buffer //////////////////////////////////////////////////////
-
-  _color = csAllocateBuffer(_color,
-                            _colorData.constData(),
-                            sizeof(GLfloat)*3*_meshInfo.vertexCount());
-
-  // (3) Strip's Buffer //////////////////////////////////////////////////////
+  // (2) Strip's Buffer //////////////////////////////////////////////////////
 
   _strip = csAllocateBuffer(_strip,
                             _stripData.constData(),
                             sizeof(GLuint)*_stripData.count(),
                             QOpenGLBuffer::IndexBuffer);
 
-  // (4) Mesh's Buffer (y-Direction) /////////////////////////////////////////
+  // (3) Mesh's Buffer (y-Direction) /////////////////////////////////////////
 
   _meshY = csAllocateBuffer(_meshY,
                             _meshYData.constData(),
                             sizeof(GLuint)*_meshYData.size(),
                             QOpenGLBuffer::IndexBuffer);
+
+  // (4) Color Map (Texture) /////////////////////////////////////////////////
+
+  if( _colorTexture == 0 ) {
+    _colorTexture = new QOpenGLTexture(QOpenGLTexture::Target2D);
+  }
+  if( !_colorTexture->isCreated() ) {
+    _colorTexture->create();
+  }
+  _colorTexture->setMinificationFilter(QOpenGLTexture::Linear);
+  _colorTexture->setMagnificationFilter(QOpenGLTexture::Linear);
+  _colorTexture->setWrapMode(QOpenGLTexture::ClampToEdge);
+  _colorTexture->setData(_colorImage, QOpenGLTexture::DontGenerateMipMaps);
 
   // Done ////////////////////////////////////////////////////////////////////
 
@@ -302,7 +272,7 @@ void csSurface::updateColorImage()
   const qreal   to  = _paletteAxis.back();
   const qreal delta = qAbs(to-from) / (qreal(SIZE-1));
 
-  QImage _colorImage = QImage(SIZE, SIZE, QImage::Format_RGBA8888);
+  _colorImage = QImage(SIZE, SIZE, QImage::Format_RGBA8888);
   _colorImage.fill(qRgba(0, 0, 0, 255));
 
   for(int x = 0; x < SIZE; x++) {

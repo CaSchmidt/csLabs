@@ -43,6 +43,7 @@ csPlot3D::csPlot3D(QWidget *parent, Qt::WindowFlags f)
   : QOpenGLWidget(parent, f)
   , QOpenGLFunctions()
   , _program(0)
+  , _surfaceShader(0)
   , _projection()
   , _view()
   , _rotZ(-45.0f)
@@ -87,6 +88,7 @@ csPlot3D::~csPlot3D()
 {
   makeCurrent();
   delete _program;
+  delete _surfaceShader;
   delete _coordBox;
   delete _surface;
 }
@@ -130,6 +132,15 @@ void csPlot3D::initializeGL()
   _program->addShaderFromSourceFile(QOpenGLShader::Fragment,
                                     _L1(":/shader/csplot3d_f.glsl"));
   _program->link();
+
+  // Surface Rendering ///////////////////////////////////////////////////////
+
+  _surfaceShader = new QOpenGLShaderProgram(this);
+  _surfaceShader->addShaderFromSourceFile(QOpenGLShader::Vertex,
+                                          _L1(":/shader/cssurface_v.glsl"));
+  _surfaceShader->addShaderFromSourceFile(QOpenGLShader::Fragment,
+                                          _L1(":/shader/cssurface_f.glsl"));
+  _surfaceShader->link();
 
 #if 0
   printf("VENDOR     = %s\n", glGetString(GL_VENDOR));
@@ -179,18 +190,22 @@ void csPlot3D::paintGL()
   glClearColor(cc.redF(), cc.greenF(), cc.blueF(), 1.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  // Render 3D Scene /////////////////////////////////////////////////////////
+  // Render Coordinate Box & Wireframe ///////////////////////////////////////
 
   _program->bind();
-
   _program->setUniformValue("cs_Projection", _projection);
   _program->setUniformValue("cs_View", _view);
-
   _coordBox->draw(*_program);
   _surface->drawMesh(*_program);
-  _surface->draw(*_program);
-
   _program->release();
+
+  // Render 3D Surface ///////////////////////////////////////////////////////
+
+  _surfaceShader->bind();
+  _surfaceShader->setUniformValue("cs_Projection", _projection);
+  _surfaceShader->setUniformValue("cs_View", _view);
+  _surface->draw(*_surfaceShader);
+  _surfaceShader->release();
 
   glDisable(GL_CULL_FACE);
   glDisable(GL_DEPTH_TEST);

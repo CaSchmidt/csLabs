@@ -74,6 +74,7 @@ private:
   void updateViewMatrix();
 
   QOpenGLShaderProgram *_program;
+  QOpenGLShaderProgram *_surfaceShader;
   QMatrix4x4            _projection;
   QMatrix4x4            _view;
   float                 _rotZ;

@@ -45,4 +45,6 @@ RESOURCES += \
 
 DISTFILES += \
     resources/shader/csplot3d_f.glsl \
-    resources/shader/csplot3d_v.glsl
+    resources/shader/csplot3d_v.glsl \
+    resources/shader/cssurface_f.glsl \
+    resources/shader/cssurface_v.glsl
