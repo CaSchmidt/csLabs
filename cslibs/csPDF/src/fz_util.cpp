@@ -37,25 +37,26 @@ extern "C" {
 
 ////// Public ////////////////////////////////////////////////////////////////
 
-void toContentsNode(fz_outline *fz_node, csPdfContentsNode *parent)
+void toContentsNode(fz_outline *outline, csPdfContentsNode *parent)
 {
-  const QString   title = QString::fromUtf8(fz_node->title);
-  const csPdfLink link  = toLink(QRectF(), &(fz_node->dest), QTransform());
-
   csPdfContentsNode *child =
-      new csPdfContentsNode(title, link.isGoto() ? link.page() : -1, parent);
+      new csPdfContentsNode(outline->title,
+                            outline->dest.kind == FZ_LINK_GOTO
+                            ? outline->dest.ld.gotor.page
+                            : -1,
+                            parent);
   if( child == 0 ) {
     return;
   }
 
   parent->appendChild(child);
 
-  if( fz_node->down != NULL ) {
-    toContentsNode(fz_node->down, child);
+  if( outline->down != NULL ) {
+    toContentsNode(outline->down, child);
   }
 
-  if( fz_node->next != NULL ) {
-    toContentsNode(fz_node->next, parent);
+  if( outline->next != NULL ) {
+    toContentsNode(outline->next, parent);
   }
 }
 

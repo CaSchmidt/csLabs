@@ -113,7 +113,7 @@ inline void toMatrix(fz_matrix *matrix, const QTransform& qtransform)
   matrix->f = qtransform.m32(); // dy
 }
 
-void toContentsNode(fz_outline *fz_parent, csPdfContentsNode *parent);
+void toContentsNode(fz_outline *outline, csPdfContentsNode *parent);
 
 csPdfLink toLink(fz_link *link, const QTransform& ctm);
 csPdfLink toLink(const QRectF& sourceRect, void *data, const QTransform& ctm);

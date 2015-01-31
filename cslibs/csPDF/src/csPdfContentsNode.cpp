@@ -29,28 +29,39 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <QtCore/QByteArray>
+
 #include <csPDF/csPdfContentsNode.h>
+
+#include <csPDF/csPdfUtil.h>
 
 ////// public ////////////////////////////////////////////////////////////////
 
-csPdfContentsNode::csPdfContentsNode(const QString& title,
+csPdfContentsNode::csPdfContentsNode(const char *title,
                                      const int destPage,
                                      csPdfContentsNode *parent)
-  : _title(title)
-  , _page(destPage)
+  : _title(0)
   , _parent(parent)
-  , _children()
+  , _children(0)
+  , _page(destPage)
+  , _numChildren(0)
 {
+  _title = qstrdup(title);
 }
 
 csPdfContentsNode::~csPdfContentsNode()
 {
-  qDeleteAll(_children);
+  delete[] _title;
+
+  for(int i = 0; i < _numChildren; i++) {
+    delete _children[i];
+  }
+  delete[] _children;
 }
 
 QString csPdfContentsNode::title() const
 {
-  return _title;
+  return _U8(_title);
 }
 
 int csPdfContentsNode::page() const
@@ -58,29 +69,45 @@ int csPdfContentsNode::page() const
   return _page;
 }
 
-void csPdfContentsNode::appendChild(const QString& title, const int destPage)
+void csPdfContentsNode::appendChild(const char *title, const int destPage)
 {
-  csPdfContentsNode *c = new csPdfContentsNode(title, destPage, this);
-  if( c != 0 ) {
-    _children.push_back(c);
-  }
+  appendChild(new csPdfContentsNode(title, destPage, this));
 }
 
 void csPdfContentsNode::appendChild(const csPdfContentsNode *child)
 {
-  if( child != 0 ) {
-    _children.push_back(const_cast<csPdfContentsNode*>(child));
+  if( child == 0 ) {
+    return;
   }
+
+  csPdfContentsNode **old = _children;
+
+  _children = new csPdfContentsNode*[_numChildren+1];
+  if( _children == 0 ) {
+    _children = old;
+    return;
+  }
+
+  for(int i = 0; i < _numChildren; i++) {
+    _children[i] = old[i];
+  }
+  _children[_numChildren] = const_cast<csPdfContentsNode*>(child);
+
+  delete[] old;
+  _numChildren++;
 }
 
 csPdfContentsNode *csPdfContentsNode::child(int row)
 {
-  return _children.value(row);
+  if( row < 0  ||  row >= _numChildren ) {
+    return 0;
+  }
+  return _children[row];
 }
 
 int csPdfContentsNode::childCount() const
 {
-  return _children.size();
+  return _numChildren;
 }
 
 int csPdfContentsNode::columnCount() const
@@ -90,12 +117,15 @@ int csPdfContentsNode::columnCount() const
 
 const csPdfContentsNode *csPdfContentsNode::constChild(int row) const
 {
-  return _children.value(row);
+  if( row < 0  ||  row >= _numChildren ) {
+    return 0;
+  }
+  return _children[row];
 }
 
 QVariant csPdfContentsNode::data(int /*column*/) const
 {
-  return _title;
+  return _U8(_title);
 }
 
 csPdfContentsNode *csPdfContentsNode::parent()
@@ -106,8 +136,11 @@ csPdfContentsNode *csPdfContentsNode::parent()
 int csPdfContentsNode::row() const
 {
   if( _parent != 0 ) {
-    return _parent->_children.indexOf(const_cast<csPdfContentsNode*>(this));
+    for(int i = 0; i < _parent->_numChildren; i++) {
+      if( _parent->_children[i] == this ) {
+        return i;
+      }
+    }
   }
-
   return 0;
 }

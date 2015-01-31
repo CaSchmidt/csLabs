@@ -33,13 +33,12 @@
 #define __CSPDFCONTENTSNODE_H__
 
 #include <QtCore/QVariant>
-#include <QtCore/QVector>
 
 #include <csPDF/cspdf_config.h>
 
 class CS_PDF_EXPORT csPdfContentsNode {
 public:
-  csPdfContentsNode(const QString& title,
+  csPdfContentsNode(const char *title,
                     const int destPage,
                     csPdfContentsNode *parent);
   ~csPdfContentsNode();
@@ -47,7 +46,7 @@ public:
   QString title() const;
   int page() const;
 
-  void appendChild(const QString& title, const int destPage);
+  void appendChild(const char *title, const int destPage);
   void appendChild(const csPdfContentsNode *child);
   csPdfContentsNode *child(int row);
   int childCount() const;
@@ -58,10 +57,11 @@ public:
   int row() const;
 
 private:
-  QString _title;
-  int _page;
+  char *_title;
   csPdfContentsNode *_parent;
-  QVector<csPdfContentsNode*> _children;
+  csPdfContentsNode **_children;
+  int _page;
+  int _numChildren;
 };
 
 #endif // __CSPDFCONTENTSNODE_H__
