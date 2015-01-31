@@ -31,6 +31,10 @@
 
 #include <QtCore/QFile>
 
+extern "C" {
+#include <mupdf/pdf.h>
+};
+
 #include <csPDF/csPdfDocument.h>
 
 #include <csPDF/internal/config.h>
@@ -38,6 +42,10 @@
 #include <csPDF/internal/csPdfPageImpl.h>
 #include <csPDF/internal/fz_util.h>
 #include <csPDF/csPdfContentsModel.h>
+
+////// Macros ////////////////////////////////////////////////////////////////
+
+#define HAVE_PDF_XREF
 
 ////// public ////////////////////////////////////////////////////////////////
 
@@ -132,6 +140,13 @@ csPdfContentsNode *csPdfDocument::tableOfContents() const
     return 0;
   }
 
+#ifdef HAVE_PDF_XREF
+  pdf_document *pdfdoc = pdf_specifics(impl->document);
+  if( pdfdoc != NULL ) {
+    pdf_mark_xref(pdfdoc);
+  }
+#endif
+
   fz_outline *outline = NULL;
   fz_var(outline);
 
@@ -143,6 +158,12 @@ csPdfContentsNode *csPdfDocument::tableOfContents() const
     outline = NULL;
   } fz_catch(impl->context) {
   }
+
+#ifdef HAVE_PDF_XREF
+  if( pdfdoc != NULL ) {
+    pdf_clear_xref_to_mark(pdfdoc);
+  }
+#endif
 
   return root;
 }
