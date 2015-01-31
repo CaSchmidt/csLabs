@@ -54,6 +54,7 @@ public:
 
 private:
   void initialize();
+  void updateColorImage();
   void updateModelMatrix();
 
   bool              _initRequired;

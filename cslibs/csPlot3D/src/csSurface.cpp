@@ -29,7 +29,10 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <cstring>
+
 #include <QtGui/QColor>
+#include <QtGui/QImage>
 
 #include <csPlot3D/csSurface.h>
 
@@ -290,6 +293,49 @@ void csSurface::initialize()
   // Done ////////////////////////////////////////////////////////////////////
 
   _initRequired = false;
+}
+
+void csSurface::updateColorImage()
+{
+  const int    SIZE = 128;
+  const qreal from  = _paletteAxis.front();
+  const qreal   to  = _paletteAxis.back();
+  const qreal delta = qAbs(to-from) / (qreal(SIZE-1));
+
+  QImage _colorImage = QImage(SIZE, SIZE, QImage::Format_RGBA8888);
+  _colorImage.fill(qRgba(0, 0, 0, 255));
+
+  for(int x = 0; x < SIZE; x++) {
+    const qreal pos = qBound(from, from+qreal(x)*delta, to);
+
+    int r(0), g(0), b(0);
+    for(int i = 0; i < _paletteAxis.size()-1; i++) {
+      const qreal pos0 = _paletteAxis[i];
+      const qreal pos1 = _paletteAxis[i+1];
+
+      if( pos0 <= pos  &&  pos <= pos1 ) {
+        const QColor& c0 = _palette[i];
+        const QColor& c1 = _palette[i+1];
+
+        r = qBound(0,
+                   int(255.0f*csInter1D(pos, pos0, pos1, c0.redF(), c1.redF())),
+                   255);
+        g = qBound(0,
+                   int(255.0f*csInter1D(pos, pos0, pos1, c0.greenF(), c1.greenF())),
+                   255);
+        b = qBound(0,
+                   int(255.0f*csInter1D(pos, pos0, pos1, c0.blueF(), c1.blueF())),
+                   255);
+      }
+    }
+
+    _colorImage.setPixel(x, 0, qRgba(r, g, b, 255));
+  }
+
+  for(int y = 1; y < SIZE; y++) {
+    memcpy(_colorImage.scanLine(y), _colorImage.constScanLine(0),
+           _colorImage.bytesPerLine());
+  }
 }
 
 void csSurface::updateModelMatrix()
