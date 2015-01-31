@@ -32,8 +32,8 @@
 #ifndef __CSPDFCONTENTSNODE_H__
 #define __CSPDFCONTENTSNODE_H__
 
-#include <QtCore/QList>
 #include <QtCore/QVariant>
+#include <QtCore/QVector>
 
 #include <csPDF/cspdf_config.h>
 
@@ -61,7 +61,7 @@ private:
   QString _title;
   int _page;
   csPdfContentsNode *_parent;
-  QList<csPdfContentsNode*> _children;
+  QVector<csPdfContentsNode*> _children;
 };
 
 #endif // __CSPDFCONTENTSNODE_H__
