@@ -152,7 +152,9 @@ csPdfContentsNode *csPdfDocument::tableOfContents() const
 
   fz_try(impl->context) {
     outline = fz_load_outline(impl->document);
-    toContentsNode(outline, root);
+    if( outline != NULL ) {
+      toContentsNode(outline, root);
+    }
   } fz_always(impl->context) {
     fz_free_outline(impl->context, outline);
     outline = NULL;
