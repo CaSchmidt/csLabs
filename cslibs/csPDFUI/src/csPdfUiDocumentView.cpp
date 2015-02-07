@@ -31,6 +31,7 @@
 
 #include <QtCore/QCoreApplication>
 #include <QtGui/QKeyEvent>
+#include <QtGui/QMouseEvent>
 #include <QtWidgets/QGraphicsItem>
 #include <QtWidgets/QGraphicsSceneMouseEvent>
 #include <QtWidgets/QScrollBar>
@@ -125,6 +126,7 @@ csPdfUiDocumentView::csPdfUiDocumentView(QWidget *parent)
   // Event Filter ////////////////////////////////////////////////////////////
 
   _scene->installEventFilter(this);
+  verticalScrollBar()->installEventFilter(this);
 
   // Signals & Slots /////////////////////////////////////////////////////////
 
@@ -345,12 +347,30 @@ void csPdfUiDocumentView::zoomOut()
 
 bool csPdfUiDocumentView::eventFilter(QObject *watched, QEvent *event)
 {
-  if( event->type() == QEvent::GraphicsSceneMousePress ) {
+  if(        event->type() == QEvent::GraphicsSceneMousePress ) {
     QGraphicsSceneMouseEvent *mev =
         dynamic_cast<QGraphicsSceneMouseEvent*>(event);
     if( mev->modifiers() == Qt::NoModifier  &&
         mev->buttons() ==  Qt::LeftButton ) {
       return followLink(mev->scenePos());
+    }
+  } else if( event->type() == QEvent::MouseButtonDblClick ) {
+    QMouseEvent *mev = dynamic_cast<QMouseEvent*>(event);
+    if( mev->button() == Qt::LeftButton ) {
+      const int btnRng = verticalScrollBar()->size().width()-1;
+      const int max    = verticalScrollBar()->maximum();
+      const int maxY   = verticalScrollBar()->height()-1;
+      const int min    = verticalScrollBar()->minimum();
+      const int val    = verticalScrollBar()->value();
+      const int y      = mev->pos().y();
+
+      if(        val == min  &&  0 <= y  &&  y <= btnRng ) {
+        showPreviousPage();
+        return true;
+      } else if( val == max  &&  maxY-btnRng <= y  &&  y <= maxY) {
+        showNextPage();
+        return true;
+      }
     }
   }
 
