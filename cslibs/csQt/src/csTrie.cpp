@@ -271,3 +271,12 @@ int csTrie::size() const
 
   return sizeof(csTrieNode)*numNodes + sizeof(csTrieNode*)*numLinks;
 }
+
+int csTrie::nodeCount() const
+{
+  int numNodes = 0;
+  int numLinks = 0;
+  _root->statistics(numNodes, numLinks);
+
+  return numNodes;
+}

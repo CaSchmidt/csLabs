@@ -60,6 +60,8 @@ public:
 
   int size() const;
 
+  int nodeCount() const;
+
 private:
   csTrie(const csTrie&);
   csTrie& operator=(const csTrie&);
