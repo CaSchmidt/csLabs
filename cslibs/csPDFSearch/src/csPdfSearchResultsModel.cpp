@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2013-2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <csPDF/csPdfSearchResultsModel.h>
+#include <csPDFSearch/csPdfSearchResultsModel.h>
 
 ////// Private ///////////////////////////////////////////////////////////////
 

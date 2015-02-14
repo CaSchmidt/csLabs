@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2013-2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,28 +29,34 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __FZ_PATHEXT_H__
-#define __FZ_PATHEXT_H__
+#ifndef __CSPDFSEARCHUTIL_H__
+#define __CSPDFSEARCHUTIL_H__
 
-#include <QtCore/QList>
-#include <QtGui/QPainterPath>
+#include <QList>
 
-extern "C" {
-#include <mupdf/fitz.h>
-};
+#include <csPDFSearch/cspdfsearch_config.h>
+#include <csPDF/csPdfText.h>
 
-struct PathExt {
-public:
-  PathExt()
-    : closed(false)
-    , paths()
-  {
-  }
+typedef QList<int> csPdfFindResults;
 
-  bool closed;
-  QList<QPainterPath> paths;
-};
+CS_PDFSEARCH_EXPORT int csPdfFind(const csPdfTexts& hay,
+                            const QString& needle,
+                            const int position = 0,
+                            const Qt::CaseSensitivity cs = Qt::CaseSensitive);
 
-fz_device *fzNewPathExtDevice(fz_context *ctx, PathExt *user);
+CS_PDFSEARCH_EXPORT csPdfFindResults csPdfFindAll(const csPdfTexts& hay,
+                                            const QString& needle,
+                                            const Qt::CaseSensitivity cs = Qt::CaseSensitive);
 
-#endif // __FZ_PATHEXT_H__
+CS_PDFSEARCH_EXPORT int csPdfFind(const csPdfTexts& hay,
+                            const QStringList& needles,
+                            const int position = 0,
+                            const Qt::CaseSensitivity cs = Qt::CaseSensitive);
+
+CS_PDFSEARCH_EXPORT csPdfFindResults csPdfFindAll(const csPdfTexts& hay,
+                                            const QStringList& needles,
+                                            const Qt::CaseSensitivity cs = Qt::CaseSensitive);
+
+CS_PDFSEARCH_EXPORT QStringList csPdfPrepareSearch(const QString& text);
+
+#endif // __CSPDFSEARCHUTIL_H__

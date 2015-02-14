@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2013-2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,11 +29,55 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CONFIG_H__
-#define __CONFIG_H__
+#ifndef __CSPDFDOCUMENTIMPL_H__
+#define __CSPDFDOCUMENTIMPL_H__
 
-#define CSPDF_SEARCH_BLOCKSIZE  5
+#include <QtCore/QByteArray>
+#include <QtCore/QMutex>
+#include <QtCore/QMutexLocker>
+#include <QtCore/QString>
 
-#define CSPDF_TEXT_WORDSPACING  5.0
+extern "C" {
+#include <mupdf/fitz.h>
+};
 
-#endif // __CONFIG_H__
+#include "internal/fz_util.h"
+
+#define CSPDF_DOCIMPL() \
+  QMutexLocker locker(&(impl->mutex))
+
+class csPdfDocumentImpl {
+public:
+  csPdfDocumentImpl()
+    : document(NULL)
+    , stream(NULL)
+    , context(NULL)
+    , data()
+    , filename()
+    , mutex()
+    , locks(NULL)
+    , renderThreads(1)
+  {
+  }
+
+  ~csPdfDocumentImpl()
+  {
+    // NOTE: This is called AFTER the last reference to the csPdfPageDocument()
+    //       is released; no other thread can reference *this !
+    fz_close_document(document);
+    fz_close(stream);
+    fz_free_context(context);
+    deleteLocksContext(locks);
+  }
+
+  fz_document *document;
+  fz_stream *stream;
+  fz_context *context;
+  QByteArray data;
+  QString filename;
+  QMutex mutex;
+  fz_locks_context *locks;
+  int renderThreads;
+};
+
+#endif // __CSPDFDOCUMENTIMPL_H__

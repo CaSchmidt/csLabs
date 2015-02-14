@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2013-2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,35 +29,66 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __FZ_RENDER_H__
-#define __FZ_RENDER_H__
+#ifndef __CSPDFSEARCH_H__
+#define __CSPDFSEARCH_H__
 
-extern "C" {
-#include <mupdf/fitz.h>
-};
+#include <QObject>
 
-class FzRenderData {
+#include <csPDFSearch/cspdfsearch_config.h>
+#include <csPDF/csPdfDocument.h>
+#include <csPDFSearch/csPdfSearchResult.h>
+
+class CS_PDFSEARCH_EXPORT csPdfSearch : public QObject {
+  Q_OBJECT
 public:
-  FzRenderData();
-  FzRenderData(fz_context *ctx, fz_display_list *list,
-               fz_pixmap *pix, fz_rect *rect);
-  FzRenderData(const FzRenderData& other);
-  ~FzRenderData();
+  csPdfSearch(QObject *parent = 0);
+  ~csPdfSearch();
 
-  FzRenderData& operator=(const FzRenderData& other);
+  bool isRunning() const;
+  bool start(const csPdfDocument& doc, const QStringList& needles,
+             const int startIndex = 0,
+             const Qt::MatchFlags flags = Qt::MatchFlags(Qt::MatchCaseSensitive | Qt::MatchWrap),
+             const int context = 0);
+
+public slots:
+  void cancel();
+  void clear();
+
+signals:
+  void canceled();
+  void finished();
+  void found(const csPdfSearchResults& results);
+  void processed(int value);
+  void started();
 
 private:
-  void ref();
-  void unref();
+  Q_INVOKABLE void processSearch();
+  void initialize(const int start, const int count);
+  bool isBlocksFinished() const;
+  bool isRemainFinished() const;
+  bool isFinished();
+  void progressUpdate();
+  csPdfSearchResults searchPages(const csPdfTextPages& hay,
+                                 const QStringList& needles,
+                                 const Qt::CaseSensitivity cs,
+                                 const int context);
 
-  fz_context      *context;
-  fz_display_list *displayList;
-  fz_pixmap       *pixmap;
-  fz_rect          renderRect;
-
-  friend void fzRender(FzRenderData&);
+  csPdfDocument _doc;
+  QStringList _needles;
+  Qt::CaseSensitivity _cs;
+  bool _wrap;
+  int _context;
+  volatile bool _cancel;
+  volatile bool _running;
+  int _startIndex;
+  int _numBlocks;
+  int _numRemain;
+  int _cntBlocks;
+  int _cntRemain;
+  int _cntIndex;
+  int _numToDo;
+  int _cntDone;
+  int _lastProgress;
 };
 
-void fzRender(FzRenderData& data);
-
-#endif // __FZ_RENDER_H__
+#endif // __CSPDFSEARCH_H__

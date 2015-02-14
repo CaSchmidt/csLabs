@@ -35,7 +35,7 @@
 
 #include <QtWidgets/QApplication>
 
-#include <csPDF/csPdfSearchResult.h>
+#include <csPDFSearch/csPdfSearchResult.h>
 
 #include "wmainwindow.h"
 

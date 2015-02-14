@@ -39,6 +39,7 @@
 #include <csPDFUI/csPdfUiDocumentView.h>
 
 #include <csPDF/csPdfUtil.h>
+#include <csPDFSearch/csPdfSearchUtil.h>
 
 ////// Macros ////////////////////////////////////////////////////////////////
 

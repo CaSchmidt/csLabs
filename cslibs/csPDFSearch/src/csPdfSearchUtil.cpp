@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2013-2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -31,9 +31,11 @@
 
 #include <QStringList>
 
+#include <csPDFSearch/csPdfSearchUtil.h>
+
 #include <csPDF/csPdfUtil.h>
 
-CS_PDF_EXPORT int csPdfFind(const csPdfTexts& hay,
+CS_PDFSEARCH_EXPORT int csPdfFind(const csPdfTexts& hay,
                             const QString& needle,
                             const int position,
                             const Qt::CaseSensitivity cs)
@@ -52,7 +54,7 @@ CS_PDF_EXPORT int csPdfFind(const csPdfTexts& hay,
   return -1;
 }
 
-CS_PDF_EXPORT csPdfFindResults csPdfFindAll(const csPdfTexts& hay,
+CS_PDFSEARCH_EXPORT csPdfFindResults csPdfFindAll(const csPdfTexts& hay,
                                             const QString& needle,
                                             const Qt::CaseSensitivity cs)
 {
@@ -70,7 +72,7 @@ CS_PDF_EXPORT csPdfFindResults csPdfFindAll(const csPdfTexts& hay,
   return results;
 }
 
-CS_PDF_EXPORT int csPdfFind(const csPdfTexts& hay,
+CS_PDFSEARCH_EXPORT int csPdfFind(const csPdfTexts& hay,
                             const QStringList& needles,
                             const int position,
                             const Qt::CaseSensitivity cs)
@@ -112,7 +114,7 @@ CS_PDF_EXPORT int csPdfFind(const csPdfTexts& hay,
   return -1;
 }
 
-CS_PDF_EXPORT csPdfFindResults csPdfFindAll(const csPdfTexts& hay,
+CS_PDFSEARCH_EXPORT csPdfFindResults csPdfFindAll(const csPdfTexts& hay,
                                             const QStringList& needles,
                                             const Qt::CaseSensitivity cs)
 {
@@ -153,7 +155,7 @@ CS_PDF_EXPORT csPdfFindResults csPdfFindAll(const csPdfTexts& hay,
   return results;
 }
 
-CS_PDF_EXPORT QStringList csPdfPrepareSearch(const QString& text)
+CS_PDFSEARCH_EXPORT QStringList csPdfPrepareSearch(const QString& text)
 {
   return text.split(QRegExp(_L1("\\s+")), QString::SkipEmptyParts);
 }

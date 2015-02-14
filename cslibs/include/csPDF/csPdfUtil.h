@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2013-2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -32,11 +32,6 @@
 #ifndef __CSPDFUTIL_H__
 #define __CSPDFUTIL_H__
 
-#include <QList>
-
-#include <csPDF/cspdf_config.h>
-#include <csPDF/csPdfText.h>
-
 #ifndef _L1
 # define _L1(s)  QString::fromLatin1(s)
 #endif
@@ -48,27 +43,5 @@
 #ifndef _U8
 # define _U8(s)  QString::fromUtf8(s)
 #endif
-
-typedef QList<int> csPdfFindResults;
-
-CS_PDF_EXPORT int csPdfFind(const csPdfTexts& hay,
-                            const QString& needle,
-                            const int position = 0,
-                            const Qt::CaseSensitivity cs = Qt::CaseSensitive);
-
-CS_PDF_EXPORT csPdfFindResults csPdfFindAll(const csPdfTexts& hay,
-                                            const QString& needle,
-                                            const Qt::CaseSensitivity cs = Qt::CaseSensitive);
-
-CS_PDF_EXPORT int csPdfFind(const csPdfTexts& hay,
-                            const QStringList& needles,
-                            const int position = 0,
-                            const Qt::CaseSensitivity cs = Qt::CaseSensitive);
-
-CS_PDF_EXPORT csPdfFindResults csPdfFindAll(const csPdfTexts& hay,
-                                            const QStringList& needles,
-                                            const Qt::CaseSensitivity cs = Qt::CaseSensitive);
-
-CS_PDF_EXPORT QStringList csPdfPrepareSearch(const QString& text);
 
 #endif // __CSPDFUTIL_H__

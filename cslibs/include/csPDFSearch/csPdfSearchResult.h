@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2013-2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,38 +29,69 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSPDFPAGEIMPL_H__
-#define __CSPDFPAGEIMPL_H__
+#ifndef __CSPDFSEARCHRESULT_H__
+#define __CSPDFSEARCHRESULT_H__
 
-#include <QSharedPointer>
+#include <QStringList>
 
-#include <csPDF/internal/csPdfDocumentImpl.h>
-#include <csPDF/csPdfText.h>
+#include <csPDF/csPdfUtil.h>
 
-#define CSPDF_PAGEIMPL() \
-  QMutexLocker locker(&(impl->pdf->mutex))
-
-class csPdfPageImpl {
+class csPdfSearchResult {
 public:
-  csPdfPageImpl()
-    : page(NULL)
-    , no(-1)
-    , pdf()
-    , textsCache()
+  inline csPdfSearchResult(const int pg = -1, const int idx = -1,
+                           const QStringList& ctx = QStringList())
+    : _page(pg)
+    , _index(idx)
+    , _context(ctx)
   {
   }
 
-  ~csPdfPageImpl()
+  inline ~csPdfSearchResult()
   {
-    QMutexLocker locker(&(pdf->mutex));
-
-    fz_free_page(pdf->document, page);
   }
 
-  fz_page *page;
-  int no;
-  QSharedPointer<csPdfDocumentImpl> pdf;
-  csPdfTexts textsCache;
+  inline bool isEmpty() const
+  {
+    return _page < 0  ||  _index < 0  ||  _context.isEmpty();
+  }
+
+  inline int page() const
+  {
+    return _page;
+  }
+
+  inline int index() const
+  {
+    return _index;
+  }
+
+  inline const QStringList context() const
+  {
+    return _context;
+  }
+
+  inline const QString contextString() const
+  {
+    return _context.join(_L1C(' '));
+  }
+
+  inline bool operator<(const csPdfSearchResult& other) const
+  {
+    return
+        _page <  other._page  ||
+        (_page == other._page  &&  _index < other._index);
+  }
+
+private:
+  int _page;
+  int _index;
+  QStringList _context;
 };
 
-#endif // __CSPDFPAGEIMPL_H__
+typedef QList<csPdfSearchResult>                       csPdfSearchResults;
+typedef QList<csPdfSearchResult>::iterator             csPdfSearchResultIter;
+typedef QList<csPdfSearchResult>::const_iterator  csConstPdfSearchResultIter;
+
+Q_DECLARE_METATYPE(csPdfSearchResults)
+
+#endif // __CSPDFSEARCHRESULT_H__

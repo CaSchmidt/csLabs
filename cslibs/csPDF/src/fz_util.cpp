@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2013-2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@ extern "C" {
 #include <mupdf/pdf.h>
 };
 
-#include <csPDF/internal/fz_util.h>
+#include "internal/fz_util.h"
 
 ////// Public ////////////////////////////////////////////////////////////////
 

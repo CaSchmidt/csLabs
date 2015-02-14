@@ -35,8 +35,9 @@
 #include <QtWidgets/QDockWidget>
 #include <QtWidgets/QMainWindow>
 
-#include <csPDF/csPdfSearch.h>
-#include <csPDF/csPdfSearchResultsModel.h>
+#include <csPDFSearch/csPdfSearch.h>
+#include <csPDFSearch/csPdfSearchResultsModel.h>
+#include <csPDFSearch/csPdfSearchUtil.h>
 #include <csPDF/csPdfUtil.h>
 #include <csQt/csHighlightingDelegate.h>
 #include <csQt/csImageTip.h>

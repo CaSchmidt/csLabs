@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2013-2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,33 +29,9 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSPDFSEARCHRESULTSMODEL_H__
-#define __CSPDFSEARCHRESULTSMODEL_H__
+#ifndef __CONFIG_H__
+#define __CONFIG_H__
 
-#include <QAbstractTableModel>
+#define CSPDF_SEARCH_BLOCKSIZE  5
 
-#include <csPDF/cspdf_config.h>
-#include <csPDF/csPdfSearchResult.h>
-
-class CS_PDF_EXPORT csPdfSearchResultsModel : public QAbstractTableModel {
-  Q_OBJECT
-public:
-  csPdfSearchResultsModel(QObject *parent = 0);
-  ~csPdfSearchResultsModel();
-
-  int columnCount(const QModelIndex& parent = QModelIndex()) const;
-  // NOTE: Display of Page Numbers is 1-based!
-  QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
-  Qt::ItemFlags flags(const QModelIndex& index) const;
-  QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-  int rowCount(const QModelIndex& parent = QModelIndex()) const;
-
-public slots:
-  void clear();
-  void insertResults(const csPdfSearchResults& incoming);
-
-private:
-  csPdfSearchResults _results;
-};
-
-#endif // __CSPDFSEARCHRESULTSMODEL_H__
+#endif // __CONFIG_H__

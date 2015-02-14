@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2013-2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,65 +29,33 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSPDFSEARCH_H__
-#define __CSPDFSEARCH_H__
+#ifndef __CSPDFSEARCHRESULTSMODEL_H__
+#define __CSPDFSEARCHRESULTSMODEL_H__
 
-#include <QObject>
+#include <QAbstractTableModel>
 
-#include <csPDF/cspdf_config.h>
-#include <csPDF/csPdfDocument.h>
+#include <csPDFSearch/cspdfsearch_config.h>
+#include <csPDFSearch/csPdfSearchResult.h>
 
-class CS_PDF_EXPORT csPdfSearch : public QObject {
+class CS_PDFSEARCH_EXPORT csPdfSearchResultsModel : public QAbstractTableModel {
   Q_OBJECT
 public:
-  csPdfSearch(QObject *parent = 0);
-  ~csPdfSearch();
+  csPdfSearchResultsModel(QObject *parent = 0);
+  ~csPdfSearchResultsModel();
 
-  bool isRunning() const;
-  bool start(const csPdfDocument& doc, const QStringList& needles,
-             const int startIndex = 0,
-             const Qt::MatchFlags flags = Qt::MatchFlags(Qt::MatchCaseSensitive | Qt::MatchWrap),
-             const int context = 0);
+  int columnCount(const QModelIndex& parent = QModelIndex()) const;
+  // NOTE: Display of Page Numbers is 1-based!
+  QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
+  Qt::ItemFlags flags(const QModelIndex& index) const;
+  QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+  int rowCount(const QModelIndex& parent = QModelIndex()) const;
 
 public slots:
-  void cancel();
   void clear();
-
-signals:
-  void canceled();
-  void finished();
-  void found(const csPdfSearchResults& results);
-  void processed(int value);
-  void started();
+  void insertResults(const csPdfSearchResults& incoming);
 
 private:
-  Q_INVOKABLE void processSearch();
-  void initialize(const int start, const int count);
-  bool isBlocksFinished() const;
-  bool isRemainFinished() const;
-  bool isFinished();
-  void progressUpdate();
-  csPdfSearchResults searchPages(const csPdfTextPages& hay,
-                                 const QStringList& needles,
-                                 const Qt::CaseSensitivity cs,
-                                 const int context);
-
-  csPdfDocument _doc;
-  QStringList _needles;
-  Qt::CaseSensitivity _cs;
-  bool _wrap;
-  int _context;
-  volatile bool _cancel;
-  volatile bool _running;
-  int _startIndex;
-  int _numBlocks;
-  int _numRemain;
-  int _cntBlocks;
-  int _cntRemain;
-  int _cntIndex;
-  int _numToDo;
-  int _cntDone;
-  int _lastProgress;
+  csPdfSearchResults _results;
 };
 
-#endif // __CSPDFSEARCH_H__
+#endif // __CSPDFSEARCHRESULTSMODEL_H__

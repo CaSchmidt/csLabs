@@ -29,116 +29,15 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSPDFLINK_H__
-#define __CSPDFLINK_H__
+#ifndef __CSPDFSEARCH_CONFIG_H__
+#define __CSPDFSEARCH_CONFIG_H__
 
-#include <QtCore/QList>
-#include <QtCore/QPointF>
-#include <QtCore/QRectF>
+#include <QtCore/QtGlobal>
 
-class csPdfLink {
-public:
-  enum Type {
-    Invalid = 0,
-    Goto
-  };
+#if defined(CS_BUILD_PDFSEARCH_LIB)
+# define CS_PDFSEARCH_EXPORT  Q_DECL_EXPORT
+#else
+# define CS_PDFSEARCH_EXPORT  Q_DECL_IMPORT
+#endif
 
-  inline csPdfLink()
-    : _type(Invalid)
-    , _srcRect()
-    , _page(-1)
-    , _destTL()
-    , _destBR()
-    , _is_fit_h()
-    , _is_fit_v()
-    , _is_zoom()
-    , _is_new_window()
-  {
-  }
-
-  inline ~csPdfLink()
-  {
-  }
-
-  inline Type type() const
-  {
-    return _type;
-  }
-
-  inline bool isInvalid() const
-  {
-    return _type == Invalid;
-  }
-
-  inline bool isGoto() const
-  {
-    return _type == Goto;
-  }
-
-  inline QRectF sourceRect() const
-  {
-    return _srcRect;
-  }
-
-  inline int page() const
-  {
-    return _page;
-  }
-
-  inline QPointF destTopLeft() const
-  {
-    return _destTL;
-  }
-
-  inline QPointF destBottomRight() const
-  {
-    return _destBR;
-  }
-
-  inline bool isFitHorizontally() const
-  {
-    return _is_fit_h;
-  }
-
-  inline bool isFitVertically() const
-  {
-    return _is_fit_v;
-  }
-
-  inline bool isZoom() const
-  {
-    return _is_zoom;
-  }
-
-  inline double zoomRatio() const
-  {
-    if( isZoom() ) {
-      return _destBR.x();
-    }
-    return 0.0;
-  }
-
-  inline bool isNewWindow() const
-  {
-    return _is_new_window;
-  }
-
-private:
-  Type _type;
-  QRectF _srcRect;
-  int _page;
-  QPointF _destTL;
-  QPointF _destBR;
-  bool _is_fit_h;
-  bool _is_fit_v;
-  bool _is_zoom;
-  bool _is_new_window;
-
-  friend csPdfLink toLink(const QRectF&, void *, const class QTransform&);
-};
-
-typedef QList<csPdfLink>                      csPdfLinks;
-typedef QList<csPdfLink>::iterator            csPdfLinkIter;
-typedef QList<csPdfLink>::const_iterator csConstPdfLinkIter;
-
-#endif // __CSPDFLINK_H__
+#endif // __CSPDFSEARCH_CONFIG_H__
