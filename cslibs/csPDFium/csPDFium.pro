@@ -36,4 +36,7 @@ HEADERS += \
     ../include/csPDFium/csPDFium.h \
     ../include/csPDFium/csPDFiumUtil.h \
     ../include/csPDFium/csPDFiumContentsModel.h \
-    ../include/csPDFium/csPDFiumContentsNode.h
+    ../include/csPDFium/csPDFiumContentsNode.h \
+    ../include/csPDFium/csPDFiumLink.h \
+    ../include/csPDFium/csPDFiumText.h \
+    ../include/csPDFium/csPDFiumTextPage.h
