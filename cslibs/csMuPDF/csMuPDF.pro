@@ -7,7 +7,7 @@
 TEMPLATE = lib
 
 include(../../global.pri)
-TARGET = csPDF$${TARGET_POSTFIX}
+TARGET = csMuPDF$${TARGET_POSTFIX}
 
 QT += core gui concurrent
 

@@ -29,3 +29,28 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#ifndef __CSPDFIUM_H__
+#define __CSPDFIUM_H__
+
+#include <QtCore/QFlags>
+
+#include <csPDFium/cspdfium_config.h>
+
+namespace csPDFium {
+
+  enum PathExtractionFlag {
+    NoPathExtractionFlags = 0,
+    ExtractClosed         = 1,
+    ExtractFilled         = 2
+  };
+  Q_DECLARE_FLAGS(PathExtractionFlags, PathExtractionFlag)
+
+  CS_PDFIUM_EXPORT void initialize();
+
+  CS_PDFIUM_EXPORT void destroy();
+
+}; // namespace csPDFium
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(csPDFium::PathExtractionFlags)
+
+#endif // __CSPDFIUM_H__

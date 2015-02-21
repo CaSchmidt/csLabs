@@ -29,3 +29,41 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#ifndef __CSPDFUTIL_H__
+#define __CSPDFUTIL_H__
+
+#include <QtCore/QRectF>
+
+#ifndef _L1
+# define _L1(s)  QString::fromLatin1(s)
+#endif
+
+#ifndef _L1C
+# define _L1C(c)  QChar::fromLatin1(c)
+#endif
+
+#ifndef _U8
+# define _U8(s)  QString::fromUtf8(s)
+#endif
+
+namespace csPDFium {
+
+  inline bool overlapsH(const QRectF& a, const QRectF& b)
+  {
+    const bool left  = a.left() <= b.left()   &&  b.left()  <= a.right();
+    const bool right = a.left() <= b.right()  &&  b.right() <= a.right();
+
+    return left  ||  right;
+  }
+
+  inline bool overlapsV(const QRectF& a, const QRectF& b)
+  {
+    const bool top    = a.top() <= b.top()     &&  b.top()    <= a.bottom();
+    const bool bottom = a.top() <= b.bottom()  &&  b.bottom() <= a.bottom();
+
+    return top  ||  bottom;
+  }
+
+}; // namespace csPDFium
+
+#endif // __CSPDFUTIL_H__

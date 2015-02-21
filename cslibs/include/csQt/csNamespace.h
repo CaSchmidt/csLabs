@@ -37,9 +37,9 @@
 namespace cs {
 
   enum TableExtractionFlag {
-    NoExtractionFlags = 0x00,
-    ExtractHHeader    = 0x01,
-    ExtractVHeader    = 0x02
+    NoTableExtractionFlags = 0,
+    ExtractHHeader         = 1,
+    ExtractVHeader         = 2
   };
   Q_DECLARE_FLAGS(TableExtractionFlags, TableExtractionFlag)
 

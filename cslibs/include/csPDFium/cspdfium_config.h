@@ -29,3 +29,15 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#ifndef __CSPDFIUM_CONFIG_H__
+#define __CSPDFIUM_CONFIG_H__
+
+#include <QtCore/QtGlobal>
+
+#if defined(CS_BUILD_PDFIUM_LIB)
+# define CS_PDFIUM_EXPORT  Q_DECL_EXPORT
+#else
+# define CS_PDFIUM_EXPORT  Q_DECL_IMPORT
+#endif
+
+#endif // __CSPDFIUM_CONFIG_H__

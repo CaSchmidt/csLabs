@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2015, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2013-2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,3 +29,43 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#ifndef __CSPDFIUMCONTENTSMODEL_H__
+#define __CSPDFIUMCONTENTSMODEL_H__
+
+#include <QtCore/QAbstractItemModel>
+
+#include <csPDFium/csPDFiumContentsNode.h>
+
+class CS_PDFIUM_EXPORT csPDFiumContentsModel : public QAbstractItemModel {
+  Q_OBJECT
+public:
+  csPDFiumContentsModel(QObject *parent = 0);
+  ~csPDFiumContentsModel();
+
+  static csPDFiumContentsNode *newRootNode();
+  void setRootNode(csPDFiumContentsNode *root);
+
+  int columnCount(const QModelIndex& parent = QModelIndex()) const;
+  QVariant data(const QModelIndex& index, int role) const;
+  Qt::ItemFlags flags(const QModelIndex& index) const;
+  QVariant headerData(int section, Qt::Orientation orientation,
+                      int role = Qt::DisplayRole) const;
+  QModelIndex index(int row, int column,
+                    const QModelIndex& parent = QModelIndex()) const;
+  QModelIndex parent(const QModelIndex& index) const;
+  int rowCount(const QModelIndex& parent = QModelIndex()) const;
+
+public slots:
+  void filter(const QString& pattern);
+
+private:
+  static void filter(const csPDFiumContentsNode *node,
+                     csPDFiumContentsNode *filtered,
+                     const QString& pattern);
+
+  csPDFiumContentsNode *_contents;
+  csPDFiumContentsNode *_displayed;
+  csPDFiumContentsNode *_filtered;
+};
+
+#endif // __CSPDFIUMCONTENTSMODEL_H__

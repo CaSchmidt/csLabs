@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2015, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2013-2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,3 +29,39 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#ifndef __CSPDFIUMCONTENTSNODE_H__
+#define __CSPDFIUMCONTENTSNODE_H__
+
+#include <QtCore/QVariant>
+
+#include <csPDFium/cspdfium_config.h>
+
+class CS_PDFIUM_EXPORT csPDFiumContentsNode {
+public:
+  csPDFiumContentsNode(const ushort *title,
+                       const int destPage,
+                       csPDFiumContentsNode *parent);
+  ~csPDFiumContentsNode();
+
+  QString title() const;
+  int page() const;
+
+  void appendChild(const ushort *title, const int destPage);
+  void appendChild(const csPDFiumContentsNode *child);
+  csPDFiumContentsNode *child(int row);
+  int childCount() const;
+  int columnCount() const;
+  const csPDFiumContentsNode *constChild(int row) const;
+  QVariant data(int column) const;
+  csPDFiumContentsNode *parent();
+  int row() const;
+
+private:
+  ushort *_title;
+  csPDFiumContentsNode *_parent;
+  csPDFiumContentsNode **_children;
+  int _page;
+  int _numChildren;
+};
+
+#endif // __CSPDFIUMCONTENTSNODE_H__

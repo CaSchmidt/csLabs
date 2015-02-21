@@ -29,3 +29,20 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <fpdfview.h>
+
+#include <csPDFium/csPDFium.h>
+
+namespace csPDFium {
+
+  CS_PDFIUM_EXPORT void initialize()
+  {
+    FPDF_InitLibrary();
+  }
+
+  CS_PDFIUM_EXPORT void destroy()
+  {
+    FPDF_DestroyLibrary();
+  }
+
+}; // namespace csPDFium
