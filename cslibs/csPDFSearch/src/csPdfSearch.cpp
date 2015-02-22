@@ -66,7 +66,7 @@ bool csPdfSearch::isRunning() const
   return _running;
 }
 
-bool csPdfSearch::start(const csPdfDocument& doc, const QStringList& needles,
+bool csPdfSearch::start(const csPDFiumDocument& doc, const QStringList& needles,
                         const int startIndex, const Qt::MatchFlags flags,
                         const int context)
 {
@@ -202,13 +202,13 @@ void csPdfSearch::progressUpdate()
   _lastProgress = p;
 }
 
-csPdfSearchResults csPdfSearch::searchPages(const csPdfTextPages& hay,
+csPdfSearchResults csPdfSearch::searchPages(const csPDFiumTextPages& hay,
                                             const QStringList& needles,
                                             const Qt::CaseSensitivity cs,
                                             const int context)
 {
   csPdfSearchResults results;
-  foreach(const csPdfTextPage textPage, hay) {
+  foreach(const csPDFiumTextPage textPage, hay) {
     const csPdfFindResults found = needles.size() == 1
         ? csPdfFindAll(textPage.texts(), needles.front(), cs)
         : csPdfFindAll(textPage.texts(), needles, cs);
@@ -220,10 +220,10 @@ csPdfSearchResults csPdfSearch::searchPages(const csPdfTextPages& hay,
         n  += index-context; // index-context < 0 !!!
       }
       QStringList sl;
-      foreach(const csPdfText t, textPage.texts().mid(pos, n)) {
+      foreach(const csPDFiumText t, textPage.texts().mid(pos, n)) {
         sl.push_back(t.text());
       }
-      results.push_back(csPdfSearchResult(textPage.no(), index, sl));
+      results.push_back(csPdfSearchResult(textPage.pageNo(), index, sl));
     }
   } // For Each Text Page
 

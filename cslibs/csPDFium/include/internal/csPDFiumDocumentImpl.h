@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,29 +29,41 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#if defined(_DEBUG)
-# include <vld.h>
-#endif
+#ifndef __CSPDFIUMDOCUMENTIMPL_H__
+#define __CSPDFIUMDOCUMENTIMPL_H__
 
-#include <QtWidgets/QApplication>
+#include <QtCore/QByteArray>
+#include <QtCore/QMutex>
+#include <QtCore/QMutexLocker>
+#include <QtCore/QString>
 
-#include <csPDFium/csPDFium.h>
-#include <csPDFSearch/csPdfSearchResult.h>
+#include <fpdfview.h>
 
-#include "wmainwindow.h"
+#define CSPDFIUM_DOCIMPL() \
+  QMutexLocker locker(&(impl->mutex))
 
-int main(int argc, char **argv)
-{
-  QApplication qapp(argc, argv);
+class csPDFiumDocumentImpl {
+public:
+  csPDFiumDocumentImpl()
+    : data()
+    , document(NULL)
+    , fileName()
+    , mutex()
+  {
+  }
 
-  csPDFium::initialize();
+  ~csPDFiumDocumentImpl()
+  {
+    if( document != NULL ) {
+      FPDF_CloseDocument(document);
+      document = NULL;
+    }
+  }
 
-  WMainWindow *mainwindow = new WMainWindow();
-  mainwindow->show();
-  const int result = qapp.exec();
-  delete mainwindow;
+  QByteArray    data;
+  FPDF_DOCUMENT document;
+  QString       fileName;
+  QMutex        mutex;
+};
 
-  csPDFium::destroy();
-
-  return result;
-}
+#endif // __CSPDFIUMDOCUMENTIMPL_H__

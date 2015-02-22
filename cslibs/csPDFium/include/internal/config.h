@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,29 +29,9 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#if defined(_DEBUG)
-# include <vld.h>
-#endif
+#ifndef __CONFIG_H__
+#define __CONFIG_H__
 
-#include <QtWidgets/QApplication>
+#define MERGE_TOL  2.0
 
-#include <csPDFium/csPDFium.h>
-#include <csPDFSearch/csPdfSearchResult.h>
-
-#include "wmainwindow.h"
-
-int main(int argc, char **argv)
-{
-  QApplication qapp(argc, argv);
-
-  csPDFium::initialize();
-
-  WMainWindow *mainwindow = new WMainWindow();
-  mainwindow->show();
-  const int result = qapp.exec();
-  delete mainwindow;
-
-  csPDFium::destroy();
-
-  return result;
-}
+#endif // __CONFIG_H__

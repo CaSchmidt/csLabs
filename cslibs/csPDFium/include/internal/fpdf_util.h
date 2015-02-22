@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,29 +29,21 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#if defined(_DEBUG)
-# include <vld.h>
-#endif
+#ifndef __FPDF_UTIL_H__
+#define __FPDF_UTIL_H__
 
-#include <QtWidgets/QApplication>
+#include <fpdfview.h>
+#include <fpdfedit.h>
+#include <fpdftext.h>
 
-#include <csPDFium/csPDFium.h>
-#include <csPDFSearch/csPdfSearchResult.h>
+#include <QtGui/QMatrix>
 
-#include "wmainwindow.h"
+#include <csPDFium/csPDFiumText.h>
 
-int main(int argc, char **argv)
-{
-  QApplication qapp(argc, argv);
+namespace util {
 
-  csPDFium::initialize();
+  csPDFiumTexts extractTexts(const FPDF_PAGE page, const QMatrix& ctm);
 
-  WMainWindow *mainwindow = new WMainWindow();
-  mainwindow->show();
-  const int result = qapp.exec();
-  delete mainwindow;
+}; // namespace util
 
-  csPDFium::destroy();
-
-  return result;
-}
+#endif // __FPDF_UTIL_H__

@@ -30,14 +30,13 @@
 *****************************************************************************/
 
 #include <QtCore/QMimeData>
-#include <QtCore/QThread>
 #include <QtGui/QClipboard>
 #include <QtGui/QKeyEvent>
 #include <QtWidgets/QActionGroup>
 #include <QtWidgets/QFileDialog>
 
-#include <csPDF/csPdfDocument.h>
-#include <csPDF/csPdfContentsModel.h>
+#include <csPDFium/csPDFiumDocument.h>
+#include <csPDFium/csPDFiumContentsModel.h>
 
 #include "wmainwindow.h"
 #include "ui_wmainwindow.h"
@@ -201,8 +200,7 @@ void WMainWindow::keyPressEvent(QKeyEvent *event)
 
 void WMainWindow::openFile(const QString& filename)
 {
-  csPdfDocument doc = csPdfDocument::load(filename);
-  doc.setRenderThreads(QThread::idealThreadCount());
+  csPDFiumDocument doc = csPDFiumDocument::load(filename);
   ui->pdfView->setDocument(doc);
   ui->contentsWidget->setDocument(doc);
   ui->searchWidget->setDocument(doc);

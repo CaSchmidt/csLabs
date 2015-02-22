@@ -50,6 +50,18 @@ public:
   {
   }
 
+  csPDFiumText& operator=(const QRectF& r)
+  {
+    _rect = r;
+    return *this;
+  }
+
+  csPDFiumText& operator=(const QString& t)
+  {
+    _text = t;
+    return *this;
+  }
+
   inline bool isEmpty() const
   {
     // NOTE:

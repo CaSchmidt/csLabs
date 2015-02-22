@@ -33,12 +33,12 @@
 
 #include <csPDFSearch/csPdfSearchUtil.h>
 
-#include <csPDF/csPdfUtil.h>
+#include <csPDFium/csPDFiumUtil.h>
 
-CS_PDFSEARCH_EXPORT int csPdfFind(const csPdfTexts& hay,
-                            const QString& needle,
-                            const int position,
-                            const Qt::CaseSensitivity cs)
+CS_PDFSEARCH_EXPORT int csPdfFind(const csPDFiumTexts& hay,
+                                  const QString& needle,
+                                  const int position,
+                                  const Qt::CaseSensitivity cs)
 {
   if( hay.isEmpty()  ||  needle.isEmpty()  ||
       position < 0  ||  position >= hay.size() ) {
@@ -54,9 +54,9 @@ CS_PDFSEARCH_EXPORT int csPdfFind(const csPdfTexts& hay,
   return -1;
 }
 
-CS_PDFSEARCH_EXPORT csPdfFindResults csPdfFindAll(const csPdfTexts& hay,
-                                            const QString& needle,
-                                            const Qt::CaseSensitivity cs)
+CS_PDFSEARCH_EXPORT csPdfFindResults csPdfFindAll(const csPDFiumTexts& hay,
+                                                  const QString& needle,
+                                                  const Qt::CaseSensitivity cs)
 {
   if( hay.isEmpty()  ||  needle.isEmpty() ) {
     return csPdfFindResults();
@@ -72,10 +72,10 @@ CS_PDFSEARCH_EXPORT csPdfFindResults csPdfFindAll(const csPdfTexts& hay,
   return results;
 }
 
-CS_PDFSEARCH_EXPORT int csPdfFind(const csPdfTexts& hay,
-                            const QStringList& needles,
-                            const int position,
-                            const Qt::CaseSensitivity cs)
+CS_PDFSEARCH_EXPORT int csPdfFind(const csPDFiumTexts& hay,
+                                  const QStringList& needles,
+                                  const int position,
+                                  const Qt::CaseSensitivity cs)
 {
   if( hay.isEmpty()  ||  needles.isEmpty()  ||
       needles.size() < 2  ||  needles.size() > hay.size()  ||
@@ -114,9 +114,9 @@ CS_PDFSEARCH_EXPORT int csPdfFind(const csPdfTexts& hay,
   return -1;
 }
 
-CS_PDFSEARCH_EXPORT csPdfFindResults csPdfFindAll(const csPdfTexts& hay,
-                                            const QStringList& needles,
-                                            const Qt::CaseSensitivity cs)
+CS_PDFSEARCH_EXPORT csPdfFindResults csPdfFindAll(const csPDFiumTexts& hay,
+                                                  const QStringList& needles,
+                                                  const Qt::CaseSensitivity cs)
 {
   if( hay.isEmpty()  ||  needles.isEmpty()  ||
       needles.size() < 2  ||  needles.size() > hay.size() ) {

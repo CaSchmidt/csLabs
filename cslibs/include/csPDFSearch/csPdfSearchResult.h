@@ -34,7 +34,7 @@
 
 #include <QStringList>
 
-#include <csPDF/csPdfUtil.h>
+#include <csPDFium/csPDFiumUtil.h>
 
 class csPdfSearchResult {
 public:

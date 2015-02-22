@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <csPDF/csPdfDocument.h>
-#include <csPDF/csPdfContentsModel.h>
+#include <csPDFium/csPDFiumDocument.h>
+#include <csPDFium/csPDFiumContentsModel.h>
 
 #include <csPDFUI/csPdfUiTocWidget.h>
 #include "ui_csPdfUiTocWidget.h"
@@ -46,7 +46,7 @@ csPdfUiTocWidget::csPdfUiTocWidget(QWidget *parent, Qt::WindowFlags f)
 
   // Contents Model //////////////////////////////////////////////////////////
 
-  _contentsModel = new csPdfContentsModel(ui->contentsView);
+  _contentsModel = new csPDFiumContentsModel(ui->contentsView);
   ui->contentsView->setModel(_contentsModel);
 
   connect(ui->contentsView, SIGNAL(activated(const QModelIndex&)),
@@ -63,7 +63,7 @@ csPdfUiTocWidget::~csPdfUiTocWidget()
   delete ui;
 }
 
-void csPdfUiTocWidget::setDocument(const class csPdfDocument& doc)
+void csPdfUiTocWidget::setDocument(const class csPDFiumDocument& doc)
 {
   ui->filterEdit->clear();
   _contentsModel->setRootNode(doc.tableOfContents());
@@ -73,7 +73,7 @@ void csPdfUiTocWidget::setDocument(const class csPdfDocument& doc)
 
 void csPdfUiTocWidget::activateTocItem(const QModelIndex& index)
 {
-  csPdfContentsNode *node = static_cast<csPdfContentsNode*>(index.internalPointer());
+  csPDFiumContentsNode *node = static_cast<csPDFiumContentsNode*>(index.internalPointer());
   if( node != 0  &&  node->page() >= 0 ) {
     emit pageRequested(node->page()+1);
   }

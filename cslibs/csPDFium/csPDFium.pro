@@ -29,7 +29,10 @@ LIBS += -lPDFium$${TARGET_ARCH}
 SOURCES += \
     src/csPDFium.cpp \
     src/csPDFiumContentsModel.cpp \
-    src/csPDFiumContentsNode.cpp
+    src/csPDFiumContentsNode.cpp \
+    src/csPDFiumDocument.cpp \
+    src/csPDFiumPage.cpp \
+    src/util_text.cpp
 
 HEADERS += \
     ../include/csPDFium/cspdfium_config.h \
@@ -39,4 +42,10 @@ HEADERS += \
     ../include/csPDFium/csPDFiumContentsNode.h \
     ../include/csPDFium/csPDFiumLink.h \
     ../include/csPDFium/csPDFiumText.h \
-    ../include/csPDFium/csPDFiumTextPage.h
+    ../include/csPDFium/csPDFiumTextPage.h \
+    ../include/csPDFium/csPDFiumPage.h \
+    ../include/csPDFium/csPDFiumDocument.h \
+    include/internal/csPDFiumDocumentImpl.h \
+    include/internal/csPDFiumPageImpl.h \
+    include/internal/fpdf_util.h \
+    include/internal/config.h

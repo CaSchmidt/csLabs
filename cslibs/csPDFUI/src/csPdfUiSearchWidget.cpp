@@ -38,7 +38,7 @@
 #include <csPDFSearch/csPdfSearch.h>
 #include <csPDFSearch/csPdfSearchResultsModel.h>
 #include <csPDFSearch/csPdfSearchUtil.h>
-#include <csPDF/csPdfUtil.h>
+#include <csPDFium/csPDFiumUtil.h>
 #include <csQt/csHighlightingDelegate.h>
 #include <csQt/csImageTip.h>
 #include <csQt/csQtUtil.h>
@@ -100,7 +100,7 @@ csPdfUiSearchWidget::~csPdfUiSearchWidget()
   delete ui;
 }
 
-void csPdfUiSearchWidget::setDocument(const csPdfDocument& doc)
+void csPdfUiSearchWidget::setDocument(const csPDFiumDocument& doc)
 {
   cancel();
   clear();
@@ -195,7 +195,7 @@ bool csPdfUiSearchWidget::event(QEvent *event)
       const int pageNo = _results->data(pageIndex, Qt::DisplayRole).toInt(); // 1-based!
       if( pageNo > 0 ) {
         // Image of Page
-        const csPdfPage helpPage = _doc.page(pageNo-1);
+        const csPDFiumPage helpPage = _doc.page(pageNo-1);
         const double s = qMin((double)height() / helpPage.size().width(),
                               (double)height() / helpPage.size().height());
         const QImage helpImage = helpPage.renderToImage(s);

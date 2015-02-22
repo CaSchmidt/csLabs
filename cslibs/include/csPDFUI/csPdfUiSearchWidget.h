@@ -35,7 +35,7 @@
 #include <QtWidgets/QWidget>
 
 #include <csPDFUI/cspdfui_config.h>
-#include <csPDF/csPdfDocument.h>
+#include <csPDFium/csPDFiumDocument.h>
 
 namespace Ui {
   class csPdfUiSearchWidget;
@@ -47,7 +47,7 @@ public:
   csPdfUiSearchWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
   ~csPdfUiSearchWidget();
 
-  void setDocument(const csPdfDocument& doc);
+  void setDocument(const csPDFiumDocument& doc);
 
 public slots:
   void cancel();
@@ -71,7 +71,7 @@ private:
 
   Ui::csPdfUiSearchWidget *ui;
   class csHighlightingDelegate *_delegate;
-  csPdfDocument _doc;
+  csPDFiumDocument _doc;
   class csPdfSearchResultsModel *_results;
   class csPdfSearch *_search;
   class QThread *_thread;

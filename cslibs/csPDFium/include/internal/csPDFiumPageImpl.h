@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,29 +29,43 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#if defined(_DEBUG)
-# include <vld.h>
-#endif
+#ifndef __CSPDFIUMPAGEIMPL_H__
+#define __CSPDFIUMPAGEIMPL_H__
 
-#include <QtWidgets/QApplication>
+#include <QtCore/QSharedPointer>
+#include <QtGui/QMatrix>
 
-#include <csPDFium/csPDFium.h>
-#include <csPDFSearch/csPdfSearchResult.h>
+#include <csPDFium/csPDFiumText.h>
 
-#include "wmainwindow.h"
+#include "internal/csPDFiumDocumentImpl.h"
 
-int main(int argc, char **argv)
-{
-  QApplication qapp(argc, argv);
+#define CSPDFIUM_PAGEIMPL() \
+  QMutexLocker locker(&(impl->doc->mutex))
 
-  csPDFium::initialize();
+class csPDFiumPageImpl {
+public:
+  csPDFiumPageImpl()
+    : ctm()
+    , doc()
+    , no(-1)
+    , page(NULL)
+    , textCache()
+  {
+  }
 
-  WMainWindow *mainwindow = new WMainWindow();
-  mainwindow->show();
-  const int result = qapp.exec();
-  delete mainwindow;
+  ~csPDFiumPageImpl()
+  {
+    if( !doc.isNull()  &&  page != NULL ) {
+      FPDF_ClosePage(page);
+      page = NULL;
+    }
+  }
 
-  csPDFium::destroy();
+  QMatrix ctm;
+  QSharedPointer<csPDFiumDocumentImpl> doc;
+  int no;
+  FPDF_PAGE page;
+  csPDFiumTexts textCache;
+};
 
-  return result;
-}
+#endif // __CSPDFIUMPAGEIMPL_H__

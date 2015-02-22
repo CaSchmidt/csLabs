@@ -36,7 +36,7 @@
 #include <QtWidgets/QGraphicsView>
 
 #include <csPDFUI/cspdfui_config.h>
-#include <csPDF/csPdfDocument.h>
+#include <csPDFium/csPDFiumDocument.h>
 
 class  CS_PDFUI_EXPORT csPdfUiDocumentView : public QGraphicsView {
   Q_OBJECT
@@ -61,7 +61,7 @@ public:
   ~csPdfUiDocumentView();
 
   QString selectedText() const;
-  void setDocument(const csPdfDocument& doc);
+  void setDocument(const csPDFiumDocument& doc);
 
   static void setItemId(QGraphicsItem *item, const int id);
   static int itemId(const QGraphicsItem *item);
@@ -96,8 +96,8 @@ private:
 
 protected:
   QGraphicsScene *_scene;
-  csPdfDocument _doc;
-  csPdfPage _page;
+  csPDFiumDocument _doc;
+  csPDFiumPage _page;
 
 private:
   struct ReverseLink {

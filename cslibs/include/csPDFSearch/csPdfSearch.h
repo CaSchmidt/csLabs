@@ -35,7 +35,7 @@
 #include <QObject>
 
 #include <csPDFSearch/cspdfsearch_config.h>
-#include <csPDF/csPdfDocument.h>
+#include <csPDFium/csPDFiumDocument.h>
 #include <csPDFSearch/csPdfSearchResult.h>
 
 class CS_PDFSEARCH_EXPORT csPdfSearch : public QObject {
@@ -45,7 +45,7 @@ public:
   ~csPdfSearch();
 
   bool isRunning() const;
-  bool start(const csPdfDocument& doc, const QStringList& needles,
+  bool start(const csPDFiumDocument& doc, const QStringList& needles,
              const int startIndex = 0,
              const Qt::MatchFlags flags = Qt::MatchFlags(Qt::MatchCaseSensitive | Qt::MatchWrap),
              const int context = 0);
@@ -68,12 +68,12 @@ private:
   bool isRemainFinished() const;
   bool isFinished();
   void progressUpdate();
-  csPdfSearchResults searchPages(const csPdfTextPages& hay,
+  csPdfSearchResults searchPages(const csPDFiumTextPages& hay,
                                  const QStringList& needles,
                                  const Qt::CaseSensitivity cs,
                                  const int context);
 
-  csPdfDocument _doc;
+  csPDFiumDocument _doc;
   QStringList _needles;
   Qt::CaseSensitivity _cs;
   bool _wrap;

@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,29 +29,37 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#if defined(_DEBUG)
-# include <vld.h>
-#endif
+#ifndef __CSPDFIUMPAGE_H__
+#define __CSPDFIUMPAGE_H__
 
-#include <QtWidgets/QApplication>
+#include <QtCore/QRectF>
+#include <QtCore/QSharedPointer>
+#include <QtCore/QSizeF>
+#include <QtGui/QImage>
 
-#include <csPDFium/csPDFium.h>
-#include <csPDFSearch/csPdfSearchResult.h>
+#include <csPDFium/cspdfium_config.h>
+#include <csPDFium/csPDFiumLink.h>
+#include <csPDFium/csPDFiumText.h>
 
-#include "wmainwindow.h"
+class csPDFiumPageImpl;
 
-int main(int argc, char **argv)
-{
-  QApplication qapp(argc, argv);
+class CS_PDFIUM_EXPORT csPDFiumPage {
+public:
+  csPDFiumPage();
+  ~csPDFiumPage();
 
-  csPDFium::initialize();
+  bool isEmpty() const;
+  void clear();
+  int number() const;
+  QImage renderToImage(const double scale = 1.0) const;
+  csPDFiumLinks links() const;
+  csPDFiumTexts texts(const QRectF& area = QRectF()) const;
+  QRectF rect() const;
+  QSizeF size() const;
 
-  WMainWindow *mainwindow = new WMainWindow();
-  mainwindow->show();
-  const int result = qapp.exec();
-  delete mainwindow;
+private:
+  QSharedPointer<csPDFiumPageImpl> impl;
+  friend class csPDFiumDocument;
+};
 
-  csPDFium::destroy();
-
-  return result;
-}
+#endif // __CSPDFIUMPAGE_H__

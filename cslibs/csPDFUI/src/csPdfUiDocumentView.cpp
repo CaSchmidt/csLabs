@@ -38,7 +38,7 @@
 
 #include <csPDFUI/csPdfUiDocumentView.h>
 
-#include <csPDF/csPdfUtil.h>
+#include <csPDFium/csPDFiumUtil.h>
 #include <csPDFSearch/csPdfSearchUtil.h>
 
 ////// Macros ////////////////////////////////////////////////////////////////
@@ -74,20 +74,20 @@ namespace priv {
     return item;
   }
 
-  static QGraphicsItem *addLink(QGraphicsScene *scene, const csPdfLink& link)
+  static QGraphicsItem *addLink(QGraphicsScene *scene, const csPDFiumLink& link)
   {
-    QGraphicsItem *item = scene->addRect(link.sourceRect());
+    QGraphicsItem *item = scene->addRect(link.srcRect());
     item->setFlag(QGraphicsItem::ItemHasNoContents, true);
     item->setCursor(Qt::PointingHandCursor);
     item->setZValue(csPdfUiDocumentView::LinkLayer);
     csPdfUiDocumentView::setItemId(item, csPdfUiDocumentView::LinkId);
-    item->setData(DATA_LINKPAGE, link.page());
-    item->setData(DATA_LINKDEST, link.destTopLeft());
+    item->setData(DATA_LINKPAGE, link.destPage());
+    item->setData(DATA_LINKDEST, QPointF()); // TODO: Link destination
 
     return item;
   }
 
-  static QGraphicsItem *addSelection(QGraphicsScene *scene, const csPdfText& pdfText)
+  static QGraphicsItem *addSelection(QGraphicsScene *scene, const csPDFiumText& pdfText)
   {
     QColor selColor(Qt::blue);
     selColor.setAlphaF(0.4);
@@ -143,11 +143,11 @@ csPdfUiDocumentView::~csPdfUiDocumentView()
 
 QString csPdfUiDocumentView::selectedText() const
 {
-  csPdfTexts texts;
+  csPDFiumTexts texts;
   foreach(QGraphicsItem *item, _scene->items()) {
     if( itemId(item) == SelectionId ) {
       QGraphicsRectItem *ri = dynamic_cast<QGraphicsRectItem*>(item);
-      texts.push_back(csPdfText(ri->rect(),
+      texts.push_back(csPDFiumText(ri->rect(),
                                 item->data(DATA_SELECTIONTEXT).toString()));
     }
   }
@@ -177,7 +177,7 @@ QString csPdfUiDocumentView::selectedText() const
   return text;
 }
 
-void csPdfUiDocumentView::setDocument(const csPdfDocument& doc)
+void csPdfUiDocumentView::setDocument(const csPDFiumDocument& doc)
 {
   _scene->clear();
   _doc.clear();
@@ -222,7 +222,7 @@ void csPdfUiDocumentView::highlightText(const QString& text)
     return;
   }
 
-  const csPdfTexts texts = _page.texts();
+  const csPDFiumTexts texts = _page.texts();
   const QStringList needles = csPdfPrepareSearch(text);
   if( needles.size() == 1 ) {
     foreach(const int pos,
@@ -296,8 +296,8 @@ void csPdfUiDocumentView::showPage(int no)
   _page = _doc.page(pageNo);
   renderPage();
 
-  foreach(const csPdfLink link, _page.links()) {
-    if( link.isGoto() ) {
+  foreach(const csPDFiumLink link, _page.links()) {
+    if( !link.isEmpty() ) {
       priv::addLink(_scene, link);
     }
   }
@@ -482,7 +482,7 @@ void csPdfUiDocumentView::selectArea(QRect rect, QPointF fromScene, QPointF toSc
   const double h = qAbs(fromScene.y() - toScene.y());
 
   removeItems(SelectionId);
-  foreach(const csPdfText t, _page.texts(QRectF(x, y, w, h))) {
+  foreach(const csPDFiumText t, _page.texts(QRectF(x, y, w, h))) {
     priv::addSelection(_scene, t);
   }
 }
@@ -532,11 +532,11 @@ bool csPdfUiDocumentView::followLink(const QPointF& scenePos)
 
       _linkHistory.push(ReverseLink(_page.number()+1, item->boundingRect().center()));
       showPage(page+1);
-#if 0
-      centerOn(_page.rect().center().x(), _page.rect().top());
-#else
-      centerOn(dest);
-#endif
+      if( dest.isNull() ) {
+        centerOn(_page.rect().center().x(), _page.rect().top());
+      } else {
+        centerOn(dest);
+      }
 
       return true;
     }

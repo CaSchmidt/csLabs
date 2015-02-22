@@ -21,7 +21,7 @@ INCLUDEPATH += ../include
 DEPENDPATH  += ../include
 
 LIBS += -L../../lib
-LIBS += -lcsPDF$${TARGET_POSTFIX} -lcsPDFSearch$${TARGET_POSTFIX} -lcsQt$${TARGET_POSTFIX}
+LIBS += -lcsPDFium$${TARGET_POSTFIX} -lcsPDFSearch$${TARGET_POSTFIX} -lcsQt$${TARGET_POSTFIX}
 
 
 SOURCES += \

@@ -64,7 +64,7 @@ CS_QT_EXPORT QString csTableToString(const QTableView *table,
                                      const QModelIndex& topLeft = QModelIndex(),
                                      const QModelIndex& bottomRight = QModelIndex(),
                                      const int role = Qt::DisplayRole,
-                                     const cs::TableExtractionFlags flags = cs::NoExtractionFlags);
+                                     const cs::TableExtractionFlags flags = cs::NoTableExtractionFlags);
 
 CS_QT_EXPORT QString csVariantToString(const QVariant& variant,
                                        const QLocale& locale = QLocale(),

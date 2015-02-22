@@ -35,27 +35,27 @@
 #include <QList>
 
 #include <csPDFSearch/cspdfsearch_config.h>
-#include <csPDF/csPdfText.h>
+#include <csPDFium/csPDFiumText.h>
 
 typedef QList<int> csPdfFindResults;
 
-CS_PDFSEARCH_EXPORT int csPdfFind(const csPdfTexts& hay,
-                            const QString& needle,
-                            const int position = 0,
-                            const Qt::CaseSensitivity cs = Qt::CaseSensitive);
+CS_PDFSEARCH_EXPORT int csPdfFind(const csPDFiumTexts& hay,
+                                  const QString& needle,
+                                  const int position = 0,
+                                  const Qt::CaseSensitivity cs = Qt::CaseSensitive);
 
-CS_PDFSEARCH_EXPORT csPdfFindResults csPdfFindAll(const csPdfTexts& hay,
-                                            const QString& needle,
-                                            const Qt::CaseSensitivity cs = Qt::CaseSensitive);
+CS_PDFSEARCH_EXPORT csPdfFindResults csPdfFindAll(const csPDFiumTexts& hay,
+                                                  const QString& needle,
+                                                  const Qt::CaseSensitivity cs = Qt::CaseSensitive);
 
-CS_PDFSEARCH_EXPORT int csPdfFind(const csPdfTexts& hay,
-                            const QStringList& needles,
-                            const int position = 0,
-                            const Qt::CaseSensitivity cs = Qt::CaseSensitive);
+CS_PDFSEARCH_EXPORT int csPdfFind(const csPDFiumTexts& hay,
+                                  const QStringList& needles,
+                                  const int position = 0,
+                                  const Qt::CaseSensitivity cs = Qt::CaseSensitive);
 
-CS_PDFSEARCH_EXPORT csPdfFindResults csPdfFindAll(const csPdfTexts& hay,
-                                            const QStringList& needles,
-                                            const Qt::CaseSensitivity cs = Qt::CaseSensitive);
+CS_PDFSEARCH_EXPORT csPdfFindResults csPdfFindAll(const csPDFiumTexts& hay,
+                                                  const QStringList& needles,
+                                                  const Qt::CaseSensitivity cs = Qt::CaseSensitive);
 
 CS_PDFSEARCH_EXPORT QStringList csPdfPrepareSearch(const QString& text);
 

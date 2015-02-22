@@ -46,7 +46,7 @@ public:
   csPdfUiTocWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
   ~csPdfUiTocWidget();
 
-  void setDocument(const class csPdfDocument& doc);
+  void setDocument(const class csPDFiumDocument& doc);
 
 private slots:
   void activateTocItem(const QModelIndex& index);
@@ -56,7 +56,7 @@ signals:
 
 private:
   Ui::csPdfUiTocWidget *ui;
-  class csPdfContentsModel *_contentsModel;
+  class csPDFiumContentsModel *_contentsModel;
 };
 
 #endif // __CSPDFUITOCWIDGET_H__

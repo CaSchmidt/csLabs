@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,29 +29,37 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#if defined(_DEBUG)
-# include <vld.h>
-#endif
+#ifndef __CSPDFIUMDOCUMENT_H__
+#define __CSPDFIUMDOCUMENT_H__
 
-#include <QtWidgets/QApplication>
+#include <QtCore/QSharedPointer>
+#include <QtCore/QString>
 
-#include <csPDFium/csPDFium.h>
-#include <csPDFSearch/csPdfSearchResult.h>
+#include <csPDFium/cspdfium_config.h>
+#include <csPDFium/csPDFiumContentsNode.h>
+#include <csPDFium/csPDFiumPage.h>
+#include <csPDFium/csPDFiumTextPage.h>
 
-#include "wmainwindow.h"
+class csPDFiumDocumentImpl;
 
-int main(int argc, char **argv)
-{
-  QApplication qapp(argc, argv);
+class CS_PDFIUM_EXPORT csPDFiumDocument {
+public:
+  csPDFiumDocument();
+  ~csPDFiumDocument();
 
-  csPDFium::initialize();
+  bool isEmpty() const;
+  void clear();
+  QString fileName() const;
+  int pageCount() const;
+  csPDFiumPage page(const int no) const; // no == [0, pageCount()-1]
+  csPDFiumContentsNode *tableOfContents() const;
+  csPDFiumTextPages textPages(const int first, const int count = -1) const;
 
-  WMainWindow *mainwindow = new WMainWindow();
-  mainwindow->show();
-  const int result = qapp.exec();
-  delete mainwindow;
+  static csPDFiumDocument load(const QString& filename,
+                               const bool memory = false);
 
-  csPDFium::destroy();
+private:
+  QSharedPointer<csPDFiumDocumentImpl> impl;
+};
 
-  return result;
-}
+#endif // __CSPDFIUMDOCUMENT_H__

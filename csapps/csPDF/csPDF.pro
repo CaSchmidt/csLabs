@@ -22,7 +22,7 @@ DEPENDPATH += ../../cslibs/include
 
 LIBS += -L../../lib
 LIBS += -lcsQt$${TARGET_POSTFIX}
-LIBS += -lcsPDF$${TARGET_POSTFIX}
+LIBS += -lcsPDFium$${TARGET_POSTFIX}
 LIBS += -lcsPDFUI$${TARGET_POSTFIX}
 
 

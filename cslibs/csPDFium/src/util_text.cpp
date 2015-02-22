@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,29 +29,72 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#if defined(_DEBUG)
-# include <vld.h>
-#endif
+#include "internal/fpdf_util.h"
 
-#include <QtWidgets/QApplication>
+#include <csPDFium/csPDFiumUtil.h>
 
-#include <csPDFium/csPDFium.h>
-#include <csPDFSearch/csPdfSearchResult.h>
+#include "internal/config.h"
 
-#include "wmainwindow.h"
+#define TEXT_COMMIT()       \
+  if( !text.isEmpty() ) {   \
+    texts.push_back(text);  \
+    text.clear();           \
+  }
 
-int main(int argc, char **argv)
-{
-  QApplication qapp(argc, argv);
+namespace util {
 
-  csPDFium::initialize();
+  namespace priv {
 
-  WMainWindow *mainwindow = new WMainWindow();
-  mainwindow->show();
-  const int result = qapp.exec();
-  delete mainwindow;
+    bool touches(const QRectF& a, const QRectF& b, const qreal tol)
+    {
+      return csPDFium::overlapsH(a, b, tol) && csPDFium::overlapsV(a, b, tol);
+    }
 
-  csPDFium::destroy();
+  }; // namespace priv
 
-  return result;
-}
+  csPDFiumTexts extractTexts(const FPDF_PAGE page, const QMatrix& ctm)
+  {
+    const FPDF_TEXTPAGE textPage = FPDFText_LoadPage(page);
+    if( textPage == NULL ) {
+      return csPDFiumTexts();
+    }
+
+    csPDFiumTexts texts;
+    csPDFiumText text;
+    for(int i = 0; i < FPDFText_CountChars(textPage); i++) {
+      const QChar c = QChar(FPDFText_GetUnicode(textPage, i));
+      if( c.isSpace() ) {
+        TEXT_COMMIT();
+        continue;
+      }
+
+      double left, top, right, bottom;
+      FPDFText_GetCharBox(textPage, i, &left, &right, &bottom, &top);
+
+      const QPointF topLeft     = QPointF(left,  top)   *ctm;
+      const QPointF bottomRight = QPointF(right, bottom)*ctm;
+      const QRectF r(topLeft, bottomRight);
+
+      if( text.isEmpty() ) {
+        text = r;
+        text = c;
+        continue;
+      }
+
+      if( priv::touches(text.rect(), r, MERGE_TOL) ) {
+        text.merge(r, c);
+      } else {
+        TEXT_COMMIT();
+        text = r;
+        text = c;
+      }
+    }
+    TEXT_COMMIT();
+    qSort(texts);
+
+    FPDFText_ClosePage(textPage);
+
+    return texts;
+  }
+
+}; // namespace util
