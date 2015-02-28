@@ -53,7 +53,7 @@ csPDFiumContentsModel::~csPDFiumContentsModel()
 
 csPDFiumContentsNode *csPDFiumContentsModel::newRootNode()
 {
-  return new csPDFiumContentsNode((const ushort*)L"<Root>", -1, 0);
+  return new csPDFiumContentsNode((const ushort*)L"<Root>", 0, 0);
 }
 
 void csPDFiumContentsModel::setRootNode(csPDFiumContentsNode *root)
@@ -201,7 +201,7 @@ void csPDFiumContentsModel::filter(const csPDFiumContentsNode *node,
   for(int i = 0; i < node->childCount(); i++) {
     const csPDFiumContentsNode *child = node->constChild(i);
     if( child->title().contains(pattern, Qt::CaseInsensitive) ) {
-      filtered->appendChild(child->title().utf16(), child->page());
+      filtered->appendChild(child->title().utf16(), child->node());
     }
     filter(child, filtered, pattern);
   }

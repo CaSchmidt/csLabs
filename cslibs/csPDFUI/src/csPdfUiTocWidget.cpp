@@ -41,6 +41,7 @@ csPdfUiTocWidget::csPdfUiTocWidget(QWidget *parent, Qt::WindowFlags f)
   : QWidget(parent, f)
   , ui(new Ui::csPdfUiTocWidget)
   , _contentsModel(0)
+  , _doc()
 {
   ui->setupUi(this);
 
@@ -67,6 +68,7 @@ void csPdfUiTocWidget::setDocument(const class csPDFiumDocument& doc)
 {
   ui->filterEdit->clear();
   _contentsModel->setRootNode(doc.tableOfContents());
+  _doc = doc;
 }
 
 ////// private slots /////////////////////////////////////////////////////////
@@ -74,7 +76,11 @@ void csPdfUiTocWidget::setDocument(const class csPDFiumDocument& doc)
 void csPdfUiTocWidget::activateTocItem(const QModelIndex& index)
 {
   csPDFiumContentsNode *node = static_cast<csPDFiumContentsNode*>(index.internalPointer());
-  if( node != 0  &&  node->page() >= 0 ) {
-    emit pageRequested(node->page()+1);
+  if( node == 0 ) {
+    return;
+  }
+  const int pageNo = _doc.resolveContentsNode(node->node());
+  if( pageNo >= 0 ) {
+    emit pageRequested(pageNo+1);
   }
 }

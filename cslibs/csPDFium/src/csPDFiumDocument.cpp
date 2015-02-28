@@ -33,8 +33,11 @@
 
 #include <csPDFium/csPDFiumDocument.h>
 
+#include <csPDFium/csPDFiumContentsModel.h>
+
 #include "internal/csPDFiumDocumentImpl.h"
 #include "internal/csPDFiumPageImpl.h"
+#include "internal/fpdf_util.h"
 
 csPDFiumDocument::csPDFiumDocument()
   : impl()
@@ -119,12 +122,84 @@ csPDFiumPage csPDFiumDocument::page(const int no) const
 
 csPDFiumContentsNode *csPDFiumDocument::tableOfContents() const
 {
-  return 0;
+  if( isEmpty() ) {
+    return 0;
+  }
+
+  CSPDFIUM_DOCIMPL();
+
+  csPDFiumContentsNode *root = csPDFiumContentsModel::newRootNode();
+  if( root != 0 ) {
+    util::parseContents(FPDFBookmark_GetFirstChild(impl->document, NULL),
+                        impl->document, root);
+  }
+
+  return root;
 }
 
 csPDFiumTextPages csPDFiumDocument::textPages(const int first, const int count) const
 {
-  return csPDFiumTextPages();
+  if( isEmpty() ) {
+    return csPDFiumTextPages();
+  }
+
+  CSPDFIUM_DOCIMPL();
+
+  const int pageCount = FPDF_GetPageCount(impl->document);
+  if( first < 0  ||  first >= pageCount ) {
+    return csPDFiumTextPages();
+  }
+
+  const int last = count <= 0
+      ? pageCount-1
+      : qBound(0, first+count-1, pageCount-1);
+
+  csPDFiumTextPages results;
+  for(int pageNo = first; pageNo <= last; pageNo++) {
+    const FPDF_PAGE page = FPDF_LoadPage(impl->document, pageNo);
+    if( page == NULL ) {
+      continue;
+    }
+
+    const double    h = FPDF_GetPageHeight(page);
+    const QMatrix ctm = QMatrix(1, 0, 0, -1, 0, h);
+
+    results.push_back(csPDFiumTextPage(pageNo,
+                                       util::extractTexts(page, ctm)));
+
+    FPDF_ClosePage(page);
+  }
+
+  return results;
+}
+
+int csPDFiumDocument::resolveContentsNode(const void *node) const
+{
+  if( isEmpty() ) {
+    return -1;
+  }
+
+  CSPDFIUM_DOCIMPL();
+
+  if( node == 0 ) {
+    return -1;
+  }
+
+  const FPDF_BOOKMARK bookmark = (const FPDF_BOOKMARK)node;
+
+  FPDF_DEST dest = FPDFBookmark_GetDest(impl->document, bookmark);
+  if( dest == NULL ) {
+    const FPDF_ACTION action = FPDFBookmark_GetAction(bookmark);
+    if( action != NULL  &&  FPDFAction_GetType(action) == PDFACTION_GOTO ) {
+      dest = FPDFAction_GetDest(impl->document, action);
+    }
+  }
+
+  if( dest == NULL ) {
+    return -1;
+  }
+
+  return FPDFDest_GetPageIndex(impl->document, dest);
 }
 
 csPDFiumDocument csPDFiumDocument::load(const QString& filename,

@@ -33,16 +33,23 @@
 #define __FPDF_UTIL_H__
 
 #include <fpdfview.h>
+#include <fpdfdoc.h>
 #include <fpdfedit.h>
+#include <fpdfmissing.h>
 #include <fpdftext.h>
 
 #include <QtGui/QMatrix>
 
+#include <csPDFium/csPDFium.h>
+#include <csPDFium/csPDFiumContentsNode.h>
 #include <csPDFium/csPDFiumText.h>
 
 namespace util {
 
   csPDFiumTexts extractTexts(const FPDF_PAGE page, const QMatrix& ctm);
+
+  void parseContents(const FPDF_BOOKMARK bookmark, const FPDF_DOCUMENT doc,
+                     csPDFiumContentsNode *parent);
 
 }; // namespace util
 

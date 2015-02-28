@@ -36,6 +36,8 @@
 
 #include <csPDFUI/cspdfui_config.h>
 
+#include <csPDFium/csPDFiumDocument.h>
+
 namespace Ui {
   class csPdfUiTocWidget;
 };
@@ -57,6 +59,7 @@ signals:
 private:
   Ui::csPdfUiTocWidget *ui;
   class csPDFiumContentsModel *_contentsModel;
+  csPDFiumDocument _doc;
 };
 
 #endif // __CSPDFUITOCWIDGET_H__

@@ -29,38 +29,37 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSPDFIUMDOCUMENT_H__
-#define __CSPDFIUMDOCUMENT_H__
+#include "internal/fpdf_util.h"
 
-#include <QtCore/QSharedPointer>
-#include <QtCore/QString>
+namespace util {
 
-#include <csPDFium/cspdfium_config.h>
-#include <csPDFium/csPDFiumContentsNode.h>
-#include <csPDFium/csPDFiumPage.h>
-#include <csPDFium/csPDFiumTextPage.h>
+  void parseContents(const FPDF_BOOKMARK bookmark, const FPDF_DOCUMENT doc,
+                     csPDFiumContentsNode *parent)
+  {
+    if( bookmark == NULL ) {
+      return;
+    }
 
-class csPDFiumDocumentImpl;
+    const ulong sz = FPDFBookmark_GetTitle(bookmark, NULL, 0);
+    QByteArray buffer(sz, 0);
+    if( buffer.size() != sz ) {
+      return;
+    }
+    FPDFBookmark_GetTitle(bookmark, buffer.data(), buffer.size());
 
-class CS_PDFIUM_EXPORT csPDFiumDocument {
-public:
-  csPDFiumDocument();
-  ~csPDFiumDocument();
+    csPDFiumContentsNode *child =
+        new csPDFiumContentsNode((const ushort*)buffer.constData(), bookmark,
+                                 parent);
+    if( child == 0 ) {
+      return;
+    }
+    parent->appendChild(child);
 
-  bool isEmpty() const;
-  void clear();
-  QString fileName() const;
-  int pageCount() const;
-  csPDFiumPage page(const int no) const; // no == [0, pageCount()-1]
-  csPDFiumContentsNode *tableOfContents() const;
-  csPDFiumTextPages textPages(const int first, const int count = -1) const;
-  int resolveContentsNode(const void *node) const;
+    const FPDF_BOOKMARK down = FPDFBookmark_GetFirstChild(doc, bookmark);
+    parseContents(down, doc, child);
 
-  static csPDFiumDocument load(const QString& filename,
-                               const bool memory = false);
+    const FPDF_BOOKMARK next = FPDFBookmark_GetNextSibling(doc, bookmark);
+    parseContents(next, doc, parent);
+  }
 
-private:
-  QSharedPointer<csPDFiumDocumentImpl> impl;
-};
-
-#endif // __CSPDFIUMDOCUMENT_H__
+}; // namespace util
