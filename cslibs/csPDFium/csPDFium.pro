@@ -33,7 +33,8 @@ SOURCES += \
     src/csPDFiumDocument.cpp \
     src/csPDFiumPage.cpp \
     src/util_text.cpp \
-    src/util_contents.cpp
+    src/util_contents.cpp \
+    src/util_paths.cpp
 
 HEADERS += \
     ../include/csPDFium/cspdfium_config.h \

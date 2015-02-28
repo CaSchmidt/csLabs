@@ -36,8 +36,10 @@
 #include <QtCore/QSharedPointer>
 #include <QtCore/QSizeF>
 #include <QtGui/QImage>
+#include <QtGui/QPainterPath>
 
 #include <csPDFium/cspdfium_config.h>
+#include <csPDFium/csPDFium.h>
 #include <csPDFium/csPDFiumLink.h>
 #include <csPDFium/csPDFiumText.h>
 
@@ -56,6 +58,8 @@ public:
   csPDFiumTexts texts(const QRectF& area = QRectF()) const;
   QRectF rect() const;
   QSizeF size() const;
+
+  QList<QPainterPath> extractPaths(const csPDFium::PathExtractionFlags flags = 0) const;
 
 private:
   QSharedPointer<csPDFiumPageImpl> impl;

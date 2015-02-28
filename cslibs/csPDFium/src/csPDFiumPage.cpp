@@ -207,3 +207,14 @@ QSizeF csPDFiumPage::size() const
 
   return QSizeF(w, h);
 }
+
+QList<QPainterPath> csPDFiumPage::extractPaths(const csPDFium::PathExtractionFlags flags) const
+{
+  if( isEmpty() ) {
+    return QList<QPainterPath>();
+  }
+
+  CSPDFIUM_PAGEIMPL();
+
+  return util::extractPaths(impl->page, impl->ctm, flags);
+}

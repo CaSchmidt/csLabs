@@ -44,12 +44,22 @@
 #include <csPDFium/csPDFiumContentsNode.h>
 #include <csPDFium/csPDFiumText.h>
 
+// cf. "fx_ge.h" for FXPT_* aka. FPDF_PATH_* Definitions
+// cf. "fx_ge.h" for FXFILL_* aka. FPDF_FILL_* Definitions
+// cf. "fx_agg_driver.cpp" for CAgg_PathData::BuildPath() aka. Path Construction
+// cf. "PDF Reference v1.7", "4.2.3 Transformation Matrices" for CTM Concatenation
+// cf. "fx_agg_path_storage.[cpp|h]" for Path Construction
+// cf. "fpdf_page[obj].h" for Page Objects
+
 namespace util {
 
   csPDFiumTexts extractTexts(const FPDF_PAGE page, const QMatrix& ctm);
 
   void parseContents(const FPDF_BOOKMARK bookmark, const FPDF_DOCUMENT doc,
                      csPDFiumContentsNode *parent);
+
+  QList<QPainterPath> extractPaths(const FPDF_PAGE page, const QMatrix& ctm,
+                                   const csPDFium::PathExtractionFlags flags);
 
 }; // namespace util
 
