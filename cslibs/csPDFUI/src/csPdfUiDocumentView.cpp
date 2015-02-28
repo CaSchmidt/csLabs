@@ -159,19 +159,13 @@ QString csPdfUiDocumentView::selectedText() const
   qSort(texts);
 
   QString text(texts[0].text());
-  QRectF  lastRect(texts[0].rect());
   for(int i = 1; i < texts.size(); i++) {
-    const QRectF curRect = texts[i].rect();
-
-    if( lastRect.top() <= curRect.center().y()  &&
-        curRect.center().y() <= lastRect.bottom() ) {
+    if( csPDFium::overlapsV(texts[i-1].rect(), texts[i].rect()) ) {
       text += _L1C(' ');
     } else {
       text += _L1C('\n');
     }
     text += texts[i].text();
-
-    lastRect = curRect;
   }
 
   return text;

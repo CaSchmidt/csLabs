@@ -48,46 +48,20 @@
 
 namespace csPDFium {
 
-  inline bool overlapsH(const QRectF& a, const QRectF& b)
+  inline bool overlapsH(const QRectF& a, const QRectF& b, const qreal tolA = 0.0)
   {
-    const bool left   = a.left() <= b.left()       && b.left()       <= a.right();
-    const bool center = a.left() <= b.center().x() && b.center().x() <= a.right();
-    const bool right  = a.left() <= b.right()      && b.right()      <= a.right();
+    const qreal min = qMax(a.left() -tolA, b.left());
+    const qreal max = qMin(a.right()+tolA, b.right());
 
-    return left || center || right;
+    return min <= max;
   }
 
-  inline bool overlapsH(const QRectF& a, const QRectF& b, const qreal tol)
+  inline bool overlapsV(const QRectF& a, const QRectF& b, const qreal tolA = 0.0)
   {
-    const qreal l0 = a.left() -tol;
-    const qreal r0 = a.right()+tol;
+    const qreal min = qMax(a.top()   -tolA, b.top());
+    const qreal max = qMin(a.bottom()+tolA, b.bottom());
 
-    const bool left   = l0 <= b.left()       && b.left()       <= r0;
-    const bool center = l0 <= b.center().x() && b.center().x() <= r0;
-    const bool right  = l0 <= b.right()      && b.right()      <= r0;
-
-    return left || center || right;
-  }
-
-  inline bool overlapsV(const QRectF& a, const QRectF& b)
-  {
-    const bool center = a.top() <= b.center().y() && b.center().y() <= a.bottom();
-    const bool top    = a.top() <= b.top()        && b.top()        <= a.bottom();
-    const bool bottom = a.top() <= b.bottom()     && b.bottom()     <= a.bottom();
-
-    return center || top || bottom;
-  }
-
-  inline bool overlapsV(const QRectF& a, const QRectF& b, const qreal tol)
-  {
-    const qreal t0 = a.top()   -tol;
-    const qreal b0 = a.bottom()+tol;
-
-    const bool center = t0 <= b.center().y() && b.center().y() <= b0;
-    const bool top    = t0 <= b.top()        && b.top()        <= b0;
-    const bool bottom = t0 <= b.bottom()     && b.bottom()     <= b0;
-
-    return center || top || bottom;
+    return min <= max;
   }
 
 }; // namespace csPDFium

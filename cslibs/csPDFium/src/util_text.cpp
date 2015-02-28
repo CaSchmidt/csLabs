@@ -63,7 +63,7 @@ namespace util {
     csPDFiumText text;
     for(int i = 0; i < FPDFText_CountChars(textPage); i++) {
       const QChar c = QChar(FPDFText_GetUnicode(textPage, i));
-      if( c.isSpace() ) {
+      if( c.isNull() || c.isSpace() ) {
         TEXT_COMMIT();
         continue;
       }
