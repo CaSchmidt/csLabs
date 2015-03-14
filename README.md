@@ -18,7 +18,8 @@ Contents
 cslibs (base libraries):
 
 * csQt: Some classes frequently needed but sorely missing in the official Qt library.
-* csPDF: A PDF rendering library wrapping [MuPDF](http://www.mupdf.com/) and targeting Qt's QImage.
+* csPDFium: A PDF rendering library wrapping [PDFium](https://code.google.com/p/pdfium/) and targeting Qt's QImage.
+* csPDFSearch: Full text search framework supporting csPDFium.
 * csPDFUI: Qt compatible widgets to support the above PDF rendering library.
 
 csapps:
