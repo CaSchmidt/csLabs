@@ -201,6 +201,10 @@ int csPdfUiDocumentView::itemId(const QGraphicsItem *item)
 
 void csPdfUiDocumentView::gotoLinkSource()
 {
+  if( !isVisible() ) {
+    return;
+  }
+
   if( !_linkHistory.isEmpty() ) {
     const ReverseLink revLink = _linkHistory.pop();
     showPage(revLink.page);
@@ -210,6 +214,10 @@ void csPdfUiDocumentView::gotoLinkSource()
 
 void csPdfUiDocumentView::highlightText(const QString& text)
 {
+  if( !isVisible() ) {
+    return;
+  }
+
   removeItems(HighlightId);
 
   if( _page.isEmpty() ) {
@@ -241,22 +249,38 @@ void csPdfUiDocumentView::highlightText(const QString& text)
 
 void csPdfUiDocumentView::removeMarks()
 {
+  if( !isVisible() ) {
+    return;
+  }
+
   removeItems(HighlightId);
   removeItems(SelectionId);
 }
 
 void csPdfUiDocumentView::showFirstPage()
 {
+  if( !isVisible() ) {
+    return;
+  }
+
   showPage(1);
 }
 
 void csPdfUiDocumentView::showLastPage()
 {
+  if( !isVisible() ) {
+    return;
+  }
+
   showPage(_doc.pageCount());
 }
 
 void csPdfUiDocumentView::showNextPage()
 {
+  if( !isVisible() ) {
+    return;
+  }
+
   if( _doc.isEmpty()  ||  _page.isEmpty() ) {
     emit pageChanged(1);
     return;
@@ -273,6 +297,10 @@ void csPdfUiDocumentView::showNextPage()
 
 void csPdfUiDocumentView::showPage(int no)
 {
+  if( !isVisible() ) {
+    return;
+  }
+
   _pageBounces = 0;
 
   if( _doc.isEmpty() ) {
@@ -301,6 +329,10 @@ void csPdfUiDocumentView::showPage(int no)
 
 void csPdfUiDocumentView::showPreviousPage()
 {
+  if( !isVisible() ) {
+    return;
+  }
+
   if( _doc.isEmpty()  ||  _page.isEmpty() ) {
     emit pageChanged(1);
     return;
@@ -317,6 +349,10 @@ void csPdfUiDocumentView::showPreviousPage()
 
 void csPdfUiDocumentView::zoom(double level)
 {
+  if( !isVisible() ) {
+    return;
+  }
+
   const double oldZoom = _zoom;
   _zoom = qMax(ZOOM_MIN, level);
 
@@ -330,11 +366,19 @@ void csPdfUiDocumentView::zoom(double level)
 
 void csPdfUiDocumentView::zoomIn()
 {
+  if( !isVisible() ) {
+    return;
+  }
+
   zoom(_zoom+ZOOM_STEP);
 }
 
 void csPdfUiDocumentView::zoomOut()
 {
+  if( !isVisible() ) {
+    return;
+  }
+
   zoom(_zoom-ZOOM_STEP);
 }
 
