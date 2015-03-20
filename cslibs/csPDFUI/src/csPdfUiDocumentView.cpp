@@ -110,6 +110,7 @@ csPdfUiDocumentView::csPdfUiDocumentView(QWidget *parent)
   , _scene(0)
   , _doc()
   , _page()
+  , _multiView(false)
   , _zoom(ZOOM_INIT)
   , _pageBounces(0)
   , _linkHistory()
@@ -187,6 +188,11 @@ void csPdfUiDocumentView::setDocument(const csPDFiumDocument& doc)
   showFirstPage();
 }
 
+void csPdfUiDocumentView::setMultiView(const bool on)
+{
+  _multiView = on;
+}
+
 void csPdfUiDocumentView::setItemId(QGraphicsItem *item, const int id)
 {
   item->setData(DATA_ID, id);
@@ -201,7 +207,7 @@ int csPdfUiDocumentView::itemId(const QGraphicsItem *item)
 
 void csPdfUiDocumentView::gotoLinkSource()
 {
-  if( !isVisible() ) {
+  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
     return;
   }
 
@@ -214,7 +220,7 @@ void csPdfUiDocumentView::gotoLinkSource()
 
 void csPdfUiDocumentView::highlightText(const QString& text)
 {
-  if( !isVisible() ) {
+  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
     return;
   }
 
@@ -249,7 +255,7 @@ void csPdfUiDocumentView::highlightText(const QString& text)
 
 void csPdfUiDocumentView::removeMarks()
 {
-  if( !isVisible() ) {
+  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
     return;
   }
 
@@ -259,7 +265,7 @@ void csPdfUiDocumentView::removeMarks()
 
 void csPdfUiDocumentView::showFirstPage()
 {
-  if( !isVisible() ) {
+  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
     return;
   }
 
@@ -268,7 +274,7 @@ void csPdfUiDocumentView::showFirstPage()
 
 void csPdfUiDocumentView::showLastPage()
 {
-  if( !isVisible() ) {
+  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
     return;
   }
 
@@ -277,7 +283,7 @@ void csPdfUiDocumentView::showLastPage()
 
 void csPdfUiDocumentView::showNextPage()
 {
-  if( !isVisible() ) {
+  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
     return;
   }
 
@@ -297,7 +303,7 @@ void csPdfUiDocumentView::showNextPage()
 
 void csPdfUiDocumentView::showPage(int no)
 {
-  if( !isVisible() ) {
+  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
     return;
   }
 
@@ -329,7 +335,7 @@ void csPdfUiDocumentView::showPage(int no)
 
 void csPdfUiDocumentView::showPreviousPage()
 {
-  if( !isVisible() ) {
+  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
     return;
   }
 
@@ -349,7 +355,7 @@ void csPdfUiDocumentView::showPreviousPage()
 
 void csPdfUiDocumentView::zoom(double level)
 {
-  if( !isVisible() ) {
+  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
     return;
   }
 
@@ -366,7 +372,7 @@ void csPdfUiDocumentView::zoom(double level)
 
 void csPdfUiDocumentView::zoomIn()
 {
-  if( !isVisible() ) {
+  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
     return;
   }
 
@@ -375,7 +381,7 @@ void csPdfUiDocumentView::zoomIn()
 
 void csPdfUiDocumentView::zoomOut()
 {
-  if( !isVisible() ) {
+  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
     return;
   }
 

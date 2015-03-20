@@ -63,6 +63,8 @@ public:
   QString selectedText() const;
   void setDocument(const csPDFiumDocument& doc);
 
+  void setMultiView(const bool on);
+
   static void setItemId(QGraphicsItem *item, const int id);
   static int itemId(const QGraphicsItem *item);
 
@@ -98,6 +100,7 @@ protected:
   QGraphicsScene *_scene;
   csPDFiumDocument _doc;
   csPDFiumPage _page;
+  bool _multiView;
 
 private:
   struct ReverseLink {
