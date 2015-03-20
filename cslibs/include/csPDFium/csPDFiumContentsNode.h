@@ -39,14 +39,14 @@
 class CS_PDFIUM_EXPORT csPDFiumContentsNode {
 public:
   csPDFiumContentsNode(const ushort *title,
-                       const void *node,
+                       const void *pointer,
                        csPDFiumContentsNode *parent);
   ~csPDFiumContentsNode();
 
   QString title() const;
-  const void *node() const;
+  const void *pointer() const;
 
-  void appendChild(const ushort *title, const void *node);
+  void appendChild(const ushort *title, const void *pointer);
   void appendChild(const csPDFiumContentsNode *child);
   csPDFiumContentsNode *child(int row);
   int childCount() const;
@@ -60,7 +60,7 @@ private:
   ushort *_title;
   csPDFiumContentsNode *_parent;
   csPDFiumContentsNode **_children;
-  const void *_node;
+  const void *_pointer;
   int _numChildren;
 };
 

@@ -54,7 +54,8 @@ public:
   csPDFiumPage page(const int no) const; // no == [0, pageCount()-1]
   csPDFiumContentsNode *tableOfContents() const;
   csPDFiumTextPages textPages(const int first, const int count = -1) const;
-  int resolveContentsNode(const void *node) const;
+  int resolveBookmark(const void *pointer) const;
+  int resolveLink(const void *pointer) const;
 
   static csPDFiumDocument load(const QString& filename,
                                const bool memory = false);

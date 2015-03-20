@@ -126,20 +126,6 @@ csPDFiumLinks csPDFiumPage::links() const
   int pos(0);
   FPDF_LINK link;
   while( FPDFLink_Enumerate(impl->page, &pos, &link) ) {
-    FPDF_DEST dest = FPDFLink_GetDest(impl->doc->document, link);
-    if( dest == NULL ) {
-      const FPDF_ACTION action = FPDFLink_GetAction(link);
-      if( action == NULL  ||  FPDFAction_GetType(action) != PDFACTION_GOTO ) {
-        continue;
-      }
-      dest = FPDFAction_GetDest(impl->doc->document, action);
-      if( dest == NULL ) {
-        continue;
-      }
-    }
-
-    const unsigned long destPage = FPDFDest_GetPageIndex(impl->doc->document, dest);
-
     FS_RECTF linkRect;
     if( !FPDFLink_GetAnnotRect(link, &linkRect) ) {
       continue;
@@ -148,7 +134,7 @@ csPDFiumLinks csPDFiumPage::links() const
     const QPointF topLeft     = QPointF(linkRect.left,  linkRect.top)   *impl->ctm;
     const QPointF bottomRight = QPointF(linkRect.right, linkRect.bottom)*impl->ctm;
 
-    links.push_back(csPDFiumLink(QRectF(topLeft, bottomRight), destPage));
+    links.push_back(csPDFiumLink(QRectF(topLeft, bottomRight), link));
   }
 
   return links;

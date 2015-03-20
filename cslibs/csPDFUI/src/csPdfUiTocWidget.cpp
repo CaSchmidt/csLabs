@@ -79,7 +79,7 @@ void csPdfUiTocWidget::activateTocItem(const QModelIndex& index)
   if( node == 0 ) {
     return;
   }
-  const int pageNo = _doc.resolveContentsNode(node->node());
+  const int pageNo = _doc.resolveBookmark(node->pointer());
   if( pageNo >= 0 ) {
     emit pageRequested(pageNo+1);
   }

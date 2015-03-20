@@ -201,7 +201,7 @@ void csPDFiumContentsModel::filter(const csPDFiumContentsNode *node,
   for(int i = 0; i < node->childCount(); i++) {
     const csPDFiumContentsNode *child = node->constChild(i);
     if( child->title().contains(pattern, Qt::CaseInsensitive) ) {
-      filtered->appendChild(child->title().utf16(), child->node());
+      filtered->appendChild(child->title().utf16(), child->pointer());
     }
     filter(child, filtered, pattern);
   }

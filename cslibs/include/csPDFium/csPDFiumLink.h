@@ -37,8 +37,8 @@
 
 class csPDFiumLink {
 public:
-  csPDFiumLink(const QRectF& srcRect = QRectF(), const int destPage = -1)
-    : _destPage(destPage)
+  csPDFiumLink(const QRectF& srcRect = QRectF(), const void *pointer = 0)
+    : _pointer(const_cast<void*>(pointer))
     , _srcRect(srcRect)
   {
   }
@@ -49,12 +49,12 @@ public:
 
   inline bool isEmpty() const
   {
-    return _destPage < 0  ||  _srcRect.isEmpty();
+    return _pointer == 0  ||  _srcRect.isEmpty();
   }
 
-  inline int destPage() const
+  inline const void *pointer() const
   {
-    return _destPage;
+    return _pointer;
   }
 
   inline const QRectF& srcRect() const
@@ -63,7 +63,7 @@ public:
   }
 
 private:
-  int    _destPage;
+  void  *_pointer;
   QRectF _srcRect;
 };
 

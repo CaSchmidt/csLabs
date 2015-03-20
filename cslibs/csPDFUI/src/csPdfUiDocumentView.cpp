@@ -45,7 +45,7 @@
 
 // Item Data
 #define DATA_ID             0
-#define DATA_LINKPAGE       1
+#define DATA_LINKPOINTER    1
 #define DATA_LINKDEST       2
 #define DATA_SELECTIONTEXT  3
 
@@ -81,7 +81,7 @@ namespace priv {
     item->setCursor(Qt::PointingHandCursor);
     item->setZValue(csPdfUiDocumentView::LinkLayer);
     csPdfUiDocumentView::setItemId(item, csPdfUiDocumentView::LinkId);
-    item->setData(DATA_LINKPAGE, link.destPage());
+    item->setData(DATA_LINKPOINTER, QVariant::fromValue(const_cast<void*>(link.pointer())));
     item->setData(DATA_LINKDEST, QPointF()); // TODO: Link destination
 
     return item;
@@ -571,8 +571,12 @@ bool csPdfUiDocumentView::followLink(const QPointF& scenePos)
 {
   foreach(QGraphicsItem *item, _scene->items(scenePos)) {
     if( item != 0  &&  itemId(item) == LinkId ) {
-      const int     page = item->data(DATA_LINKPAGE).toInt();
-      const QPointF dest = item->data(DATA_LINKDEST).toPointF();
+      const void *pointer = item->data(DATA_LINKPOINTER).value<void*>();
+      const QPointF  dest = item->data(DATA_LINKDEST).toPointF();
+      const int      page = _doc.resolveLink(pointer);
+      if( page < 0 ) {
+        continue;
+      }
 
       _linkHistory.push(ReverseLink(_page.number()+1, item->boundingRect().center()));
       showPage(page+1);

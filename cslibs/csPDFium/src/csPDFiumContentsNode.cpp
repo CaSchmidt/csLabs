@@ -74,12 +74,12 @@ namespace priv {
 ////// public ////////////////////////////////////////////////////////////////
 
 csPDFiumContentsNode::csPDFiumContentsNode(const ushort *title,
-                                           const void *node,
+                                           const void *pointer,
                                            csPDFiumContentsNode *parent)
   : _title(0)
   , _parent(parent)
   , _children(0)
-  , _node(node)
+  , _pointer(pointer)
   , _numChildren(0)
 {
   _title = priv::utf16dup(title);
@@ -100,14 +100,14 @@ QString csPDFiumContentsNode::title() const
   return QString::fromUtf16(_title);
 }
 
-const void *csPDFiumContentsNode::node() const
+const void *csPDFiumContentsNode::pointer() const
 {
-  return _node;
+  return _pointer;
 }
 
-void csPDFiumContentsNode::appendChild(const ushort *title, const void *node)
+void csPDFiumContentsNode::appendChild(const ushort *title, const void *pointer)
 {
-  appendChild(new csPDFiumContentsNode(title, node, this));
+  appendChild(new csPDFiumContentsNode(title, pointer, this));
 }
 
 void csPDFiumContentsNode::appendChild(const csPDFiumContentsNode *child)

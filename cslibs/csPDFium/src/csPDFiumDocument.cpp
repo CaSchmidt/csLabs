@@ -173,7 +173,7 @@ csPDFiumTextPages csPDFiumDocument::textPages(const int first, const int count) 
   return results;
 }
 
-int csPDFiumDocument::resolveContentsNode(const void *node) const
+int csPDFiumDocument::resolveBookmark(const void *pointer) const
 {
   if( isEmpty() ) {
     return -1;
@@ -181,15 +181,44 @@ int csPDFiumDocument::resolveContentsNode(const void *node) const
 
   CSPDFIUM_DOCIMPL();
 
-  if( node == 0 ) {
+  if( pointer == 0 ) {
     return -1;
   }
 
-  const FPDF_BOOKMARK bookmark = (const FPDF_BOOKMARK)node;
+  const FPDF_BOOKMARK bookmark = (const FPDF_BOOKMARK)pointer;
 
   FPDF_DEST dest = FPDFBookmark_GetDest(impl->document, bookmark);
   if( dest == NULL ) {
     const FPDF_ACTION action = FPDFBookmark_GetAction(bookmark);
+    if( action != NULL  &&  FPDFAction_GetType(action) == PDFACTION_GOTO ) {
+      dest = FPDFAction_GetDest(impl->document, action);
+    }
+  }
+
+  if( dest == NULL ) {
+    return -1;
+  }
+
+  return FPDFDest_GetPageIndex(impl->document, dest);
+}
+
+int csPDFiumDocument::resolveLink(const void *pointer) const
+{
+  if( isEmpty() ) {
+    return -1;
+  }
+
+  CSPDFIUM_DOCIMPL();
+
+  if( pointer == 0 ) {
+    return -1;
+  }
+
+  const FPDF_LINK link = (const FPDF_LINK)pointer;
+
+  FPDF_DEST dest = FPDFLink_GetDest(impl->document, link);
+  if( dest == NULL ) {
+    const FPDF_ACTION action = FPDFLink_GetAction(link);
     if( action != NULL  &&  FPDFAction_GetType(action) == PDFACTION_GOTO ) {
       dest = FPDFAction_GetDest(impl->document, action);
     }
