@@ -1,0 +1,16 @@
+o  Windows API Index (Windows)‎
+
+o  Menus and Other Resources (Windows)‎
+-> BITMAPs, ICONs
+-> Version Information
+-> Resource Compiler
+
+o  DefaultIcon (COM)‎
+
+o  Error Handling in COM (COM)‎
+
+o  Registering Shell Extension Handlers (Windows)‎
+
+o  EFNet #Winprog
+
+-> http://winprog.org/
