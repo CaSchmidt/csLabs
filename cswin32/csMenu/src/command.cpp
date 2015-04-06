@@ -48,27 +48,12 @@ bool executeCommand(const UINT cmd, const csStringList& files)
              cmd == Cmd_ListWithPathTabular ) {
     int size = 0;
     for(int i = 0; i < files.count(); i++) {
-#if 1
       wchar_t *uncName = 0;
       if( isUnc  &&  (uncName = resolveUNC(files[i])) != 0 ) {
         size += lenFN(csString(uncName, false), cmd);
       } else {
         size += lenFN(files[i], cmd);
       }
-#else
-      const int len    = files[i].length();
-      const int tag    = files[i].lastIndexOf(L'\\');
-      const int tagPos = tag < 0 || cmd != Cmd_List  ?  0 : tag+1;
-
-      size += len - tagPos;
-      if( cmd == Cmd_ListWithPathTabular ) {
-        size++; // separating '\t'
-      }
-      if( isDirectory(files[i]) ) {
-        size++; // trailing  '\\'
-      }
-      size += 2; // "\r\n"
-#endif
     }
 
     wchar_t *text = (wchar_t*)csAlloc((size+1)*sizeof(wchar_t));
@@ -78,38 +63,12 @@ bool executeCommand(const UINT cmd, const csStringList& files)
 
     int pos = 0;
     for(int i = 0; i < files.count(); i++) {
-#if 1
       wchar_t *uncName = 0;
       if( isUnc  &&  (uncName = resolveUNC(files[i])) != 0 ) {
         catFN(text, pos, csString(uncName, false), cmd);
       } else {
         catFN(text, pos, files[i], cmd);
       }
-#else
-      const int len    = files[i].length();
-      const int tag    = files[i].lastIndexOf(L'\\');
-      const int tagPos = tag < 0  ?  0 : tag+1;
-
-      if( cmd != Cmd_List  &&  tagPos > 0 ) {
-        csStringNCpy(&text[pos], files[i], tagPos);
-        pos += tagPos;
-      }
-
-      // QUESTION: What to do in case of missing '\\'?
-      if( cmd == Cmd_ListWithPathTabular ) {
-        text[pos++] = L'\t';
-      }
-
-      csStringNCpy(&text[pos], &(files[i])[tagPos], len-tagPos);
-      pos += len - tagPos;
-
-      if( isDirectory(files[i]) ) {
-        text[pos++] = L'\\';
-      }
-
-      text[pos++] = L'\r';
-      text[pos++] = L'\n';
-#endif
     }
     text[size] = L'\0';
 

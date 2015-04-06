@@ -61,33 +61,11 @@ ULONG csMenuFactory::AddRef()
 
 HRESULT csMenuFactory::QueryInterface(const IID& riid, void **ppvObject)
 {
-#if 1
   static const QITAB qit[] = {
     QITABENT(csMenuFactory, IClassFactory),
     { 0 }
   };
   return QISearch(this, qit, riid, ppvObject);
-#else
-  if( IsBadWritePtr(ppvObject, sizeof(void*)) ) {
-    return E_POINTER;
-  }
-  *ppvObject = NULL;
-
-  HRESULT hrRet = S_OK;
-  if(        IsEqualIID(riid, IID_IUnknown) ) {
-    *ppvObject = (IUnknown*)this;
-  } else if( IsEqualIID(riid, IID_IClassFactory) ) {
-    *ppvObject = (IClassFactory*)this;
-  } else {
-    hrRet = E_NOINTERFACE;
-  }
-
-  if( hrRet == S_OK ) {
-    ((IUnknown*)*ppvObject)->AddRef();
-  }
-
-  return hrRet;
-#endif
 }
 
 ULONG csMenuFactory::Release()
