@@ -29,26 +29,154 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <OleCtl.h>
+#include <csCore/csString.h>
+#include <csCore/csStringLib.h>
+
 #include "reg.h"
+
+namespace priv_reg {
+
+  HRESULT setValue(HKEY key, const wchar_t *name, const DWORD value)
+  {
+    return HRESULT_FROM_WIN32(RegSetValueExW(key, name, 0, REG_DWORD,
+                                             (const BYTE*)&value,
+                                             sizeof(DWORD)));
+  }
+
+  HRESULT setValue(HKEY key, const wchar_t *name, const wchar_t *value)
+  {
+    const size_t len = csStringLen(value);
+    if( len < 1 ) {
+      return E_POINTER;
+    }
+    return HRESULT_FROM_WIN32(RegSetValueExW(key, name, 0, REG_SZ,
+                                             (const BYTE*)value,
+                                             (len+1)*sizeof(wchar_t)));
+  }
+
+}; // namespace priv_reg
+
+HRESULT registerWithFiles(const wchar_t *clsId)
+{
+  HKEY key;
+  HRESULT hr;
+
+  csString keyPath(L"*\\shellex\\ContextMenuHandlers\\");
+  keyPath += clsId;
+  hr = HRESULT_FROM_WIN32(RegCreateKeyExW(HKEY_CLASSES_ROOT, keyPath.c_str(),
+                                          0, NULL, REG_OPTION_NON_VOLATILE,
+                                          KEY_WRITE, NULL, &key, NULL));
+  if( FAILED(hr) ) {
+    return SELFREG_E_CLASS;
+  }
+
+  hr = priv_reg::setValue(key, NULL, L"CS::Menu");
+  if( FAILED(hr) ) {
+    RegCloseKey(key);
+    return SELFREG_E_CLASS;
+  }
+
+  RegCloseKey(key);
+
+  return S_OK;
+}
+
+HRESULT registerWithDirectories(const wchar_t *clsId)
+{
+  HKEY key;
+  HRESULT hr;
+
+  csString keyPath(L"Directory\\shellex\\ContextMenuHandlers\\");
+  keyPath += clsId;
+  hr = HRESULT_FROM_WIN32(RegCreateKeyExW(HKEY_CLASSES_ROOT, keyPath.c_str(),
+                                          0, NULL, REG_OPTION_NON_VOLATILE,
+                                          KEY_WRITE, NULL, &key, NULL));
+  if( FAILED(hr) ) {
+    return SELFREG_E_CLASS;
+  }
+
+  hr = priv_reg::setValue(key, NULL, L"CS::Menu");
+  if( FAILED(hr) ) {
+    RegCloseKey(key);
+    return SELFREG_E_CLASS;
+  }
+
+  RegCloseKey(key);
+
+  return S_OK;
+}
+
+HRESULT registerWithCLSID(const wchar_t *clsId,
+                      const wchar_t *moduleFilename)
+{
+  HKEY key;
+  HRESULT hr;
+
+  csString keyPath(L"CLSID\\");
+  keyPath += clsId;
+  hr = HRESULT_FROM_WIN32(RegCreateKeyExW(HKEY_CLASSES_ROOT, keyPath.c_str(),
+                                          0, NULL, REG_OPTION_NON_VOLATILE,
+                                          KEY_WRITE, NULL, &key, NULL));
+  if( FAILED(hr) ) {
+    return SELFREG_E_CLASS;
+  }
+
+  hr = priv_reg::setValue(key, NULL, L"CS::Menu");
+  if( FAILED(hr) ) {
+    RegCloseKey(key);
+    return SELFREG_E_CLASS;
+  }
+
+  // InprocServer32 //////////////////////////////////////////////////////////
+
+  HKEY is32Key;
+  hr = HRESULT_FROM_WIN32(RegCreateKeyExW(key, L"InprocServer32",
+                                          0, NULL, REG_OPTION_NON_VOLATILE,
+                                          KEY_WRITE, NULL, &is32Key, NULL));
+  if( FAILED(hr) ) {
+    RegCloseKey(key);
+    return SELFREG_E_CLASS;
+  }
+
+  hr = priv_reg::setValue(is32Key, NULL, moduleFilename);
+  if( FAILED(hr) ) {
+    RegCloseKey(is32Key);
+    RegCloseKey(key);
+    return SELFREG_E_CLASS;
+  }
+
+  hr = priv_reg::setValue(is32Key, L"ThreadingModel", L"Apartment");
+  if( FAILED(hr) ) {
+    RegCloseKey(is32Key);
+    RegCloseKey(key);
+    return SELFREG_E_CLASS;
+  }
+
+  RegCloseKey(is32Key);
+  RegCloseKey(key);
+
+  return S_OK;
+}
 
 DWORD regReadFlags()
 {
-  HKEY    hkey;
+  HKEY    key;
   HRESULT hr;
 
   hr = HRESULT_FROM_WIN32(RegCreateKeyExW(HKEY_CURRENT_USER, L"Software\\csLabs\\csMenu",
                                           0, NULL, REG_OPTION_NON_VOLATILE,
-                                          KEY_READ, NULL, &hkey, NULL));
+                                          KEY_READ, NULL, &key, NULL));
   if( FAILED(hr) ) {
     return 0;
   }
 
   DWORD flags = 0;
   DWORD size  = sizeof(DWORD);
-  hr = HRESULT_FROM_WIN32(RegGetValueW(hkey, NULL, L"Flags",
+  hr = HRESULT_FROM_WIN32(RegGetValueW(key, NULL, L"Flags",
                                        RRF_RT_REG_DWORD, NULL,
                                        &flags, &size));
-  RegCloseKey(hkey);
+  RegCloseKey(key);
   if( FAILED(hr) ) {
     return 0;
   }
@@ -58,17 +186,16 @@ DWORD regReadFlags()
 
 void regWriteFlags(const DWORD flags)
 {
-  HKEY    hkey;
+  HKEY    key;
   HRESULT hr;
 
   hr = HRESULT_FROM_WIN32(RegCreateKeyExW(HKEY_CURRENT_USER, L"Software\\csLabs\\csMenu",
                                           0, NULL, REG_OPTION_NON_VOLATILE,
-                                          KEY_WRITE, NULL, &hkey, NULL));
+                                          KEY_WRITE, NULL, &key, NULL));
   if( FAILED(hr) ) {
     return;
   }
 
-  hr = HRESULT_FROM_WIN32(RegSetValueExW(hkey, L"Flags", 0, REG_DWORD,
-                                         (const BYTE*)&flags, sizeof(DWORD)));
-  RegCloseKey(hkey);
+  hr = priv_reg::setValue(key, L"Flags", flags);
+  RegCloseKey(key);
 }

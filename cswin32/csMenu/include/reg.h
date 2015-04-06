@@ -34,6 +34,11 @@
 
 #include <Windows.h>
 
+HRESULT registerWithFiles(const wchar_t *clsId);
+HRESULT registerWithDirectories(const wchar_t *clsId);
+HRESULT registerWithCLSID(const wchar_t *clsId,
+                          const wchar_t *moduleFilename);
+
 DWORD regReadFlags();
 void  regWriteFlags(const DWORD flags);
 
