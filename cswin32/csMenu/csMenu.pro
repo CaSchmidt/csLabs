@@ -21,9 +21,11 @@ DESTDIR = ../../bin
 
 
 INCLUDEPATH += ./include
+INCLUDEPATH += ./resource
 INCLUDEPATH += ../../cslibs/include
 
 DEPENDPATH += ./include
+DEPENDPATH += ./resource
 DEPENDPATH += ../../cslibs/include
 
 LIBS += -L../../lib -lcsCore$${TARGET_POSTFIX}
@@ -47,9 +49,13 @@ HEADERS += \
     include/menu.h \
     include/command.h \
     include/reg.h \
-    include/util.hpp
+    include/util.hpp \
+    resource/resource.h
 
 DEF_FILE = csMenu.def
 
+RC_FILE = ./resource/csMenu.rc
+
 DISTFILES += \
-    csMenu.def
+    csMenu.def \
+    resource/csMenu.rc
