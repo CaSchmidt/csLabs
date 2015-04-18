@@ -14,3 +14,11 @@ o  Registering Shell Extension Handlers (Windows)‎
 o  EFNet #Winprog
 
 -> http://winprog.org/
+
+o  Reliable Software - Windows API Tutorial
+
+-> http://www.relisoft.com/win32/index.htm
+
+o  FunctionX - Win32 Programming
+
+-> http://www.functionx.com/win32/index.htm

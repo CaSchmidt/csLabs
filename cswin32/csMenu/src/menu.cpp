@@ -77,7 +77,8 @@ void insertSeparatorMenuItem(HMENU menu,
 }
 
 void insertSubMenuItem(HMENU menu, HMENU submenu,
-                       const UINT pos, const UINT id, const wchar_t *text)
+                       const UINT pos, const UINT id, const wchar_t *text,
+                       const HBITMAP bitmap)
 {
   MENUITEMINFOW mii;
   SecureZeroMemory(&mii, sizeof(MENUITEMINFOW));
@@ -89,4 +90,8 @@ void insertSubMenuItem(HMENU menu, HMENU submenu,
   mii.hSubMenu   = submenu;
 
   InsertMenuItemW(menu, pos, TRUE, &mii);
+
+  if( bitmap != NULL ) {
+    SetMenuItemBitmaps(menu, pos, MF_BYPOSITION, bitmap, NULL);
+  }
 }

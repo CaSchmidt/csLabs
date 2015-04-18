@@ -149,3 +149,41 @@ wchar_t *resolveUNC(const wchar_t *filename)
 
   return uncName;
 }
+
+HBITMAP createBitmapFromIcon(const HICON icon, const int smx, const int smy)
+{
+  const int  width = GetSystemMetrics(smx);
+  const int height = GetSystemMetrics(smy);
+  if( icon == NULL  ||  width == 0  ||  height == 0 ) {
+    return NULL;
+  }
+
+  HDC screen = GetDC(NULL);
+  if( screen == NULL ) {
+    return NULL;
+  }
+
+  // Create a DC compatible with the screen's DC
+  HDC dc = CreateCompatibleDC(screen);
+  if( dc == NULL ) {
+    ReleaseDC(NULL, screen);
+    return NULL;
+  }
+
+  // Create a BITMAP compatible with the screen's DC
+  HBITMAP bitmap = CreateCompatibleBitmap(screen, width, height);
+  if( bitmap == NULL ) {
+    DeleteDC(dc);
+    ReleaseDC(NULL, screen);
+    return NULL;
+  }
+
+  HBITMAP old = (HBITMAP)SelectObject(dc, bitmap);
+  DrawIconEx(dc, 0, 0, icon, width, height, 0, NULL, DI_NORMAL);
+  SelectObject(dc, old);
+
+  DeleteDC(dc);
+  ReleaseDC(NULL, screen);
+
+  return bitmap;
+}

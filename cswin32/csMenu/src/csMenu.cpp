@@ -38,11 +38,13 @@
 #include "command.h"
 #include "menu.h"
 #include "reg.h"
+#include "resource.h"
 #include "util.hpp"
 
 ////// Global ////////////////////////////////////////////////////////////////
 
-extern LONG g_lDllRefCount;
+extern HINSTANCE g_hDllInst;
+extern LONG      g_lDllRefCount;
 
 ////// GUID //////////////////////////////////////////////////////////////////
 
@@ -58,12 +60,25 @@ const GUID GUID_csMenu = { /* 1A2306A9-DC34-46F0-84CA-7FEE7387CA37 */
 csMenu::csMenu()
   : m_lRefCount()
   , _files()
+  , _menuBitmap(NULL)
 {
   InterlockedIncrement(&g_lDllRefCount);
+
+  HICON icon = (HICON)LoadImageW(g_hDllInst,
+                                 MAKEINTRESOURCEW(IDI_csMenu), IMAGE_ICON,
+                                 GetSystemMetrics(SM_CXSMICON),
+                                 GetSystemMetrics(SM_CYSMICON), 0);
+  if( icon != NULL ) {
+    _menuBitmap = createBitmapFromIcon(icon, SM_CXSMICON, SM_CYSMICON);
+    DestroyIcon(icon);
+  }
 }
 
 csMenu::~csMenu()
 {
+  if( _menuBitmap != NULL ) {
+    DeleteObject(_menuBitmap);
+  }
   InterlockedDecrement(&g_lDllRefCount);
 }
 
@@ -190,7 +205,7 @@ HRESULT csMenu::QueryContextMenu(HMENU hmenu, UINT indexMenu, UINT idCmdFirst,
   insertCheckableMenuItem(submenu, 6, uCmdID++, L"UN*X path separators",
                           testFlags(flags, CMD_FLAG_UNIX));
 
-  insertSubMenuItem(hmenu, submenu, indexMenu, uCmdID++, L"CS::Menu");
+  insertSubMenuItem(hmenu, submenu, indexMenu, uCmdID++, L"CS::Menu", _menuBitmap);
 
   return MAKE_HRESULT(SEVERITY_SUCCESS, FACILITY_NULL, uCmdID-idCmdFirst);
 }

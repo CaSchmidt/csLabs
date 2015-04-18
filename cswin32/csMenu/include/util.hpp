@@ -52,4 +52,6 @@ void catFN(wchar_t *text, int& pos,
 
 wchar_t *resolveUNC(const wchar_t *filename);
 
+HBITMAP createBitmapFromIcon(const HICON icon, const int smx, const int smy);
+
 #endif // __UTIL_HPP__

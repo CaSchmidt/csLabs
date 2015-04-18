@@ -63,6 +63,7 @@ public:
 private:
   LONG m_lRefCount;
   csStringList _files;
+  HBITMAP _menuBitmap;
 };
 
 class __declspec(uuid("{1A2306A9-DC34-46F0-84CA-7FEE7387CA37}")) csMenu;

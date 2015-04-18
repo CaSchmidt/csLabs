@@ -45,6 +45,7 @@ void insertSeparatorMenuItem(HMENU menu,
                              const UINT pos);
 
 void insertSubMenuItem(HMENU menu, HMENU submenu,
-                       const UINT pos, const UINT id, const wchar_t *text);
+                       const UINT pos, const UINT id, const wchar_t *text,
+                       const HBITMAP bitmap);
 
 #endif // __MENU_H__

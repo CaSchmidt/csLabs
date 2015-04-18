@@ -29,7 +29,7 @@ DEPENDPATH += ./resource
 DEPENDPATH += ../../cslibs/include
 
 LIBS += -L../../lib -lcsCore$${TARGET_POSTFIX}
-LIBS += advapi32.lib mpr.lib ole32.lib shell32.lib shlwapi.lib user32.lib
+LIBS += advapi32.lib gdi32.lib mpr.lib ole32.lib shell32.lib shlwapi.lib user32.lib
 
 
 SOURCES += \
