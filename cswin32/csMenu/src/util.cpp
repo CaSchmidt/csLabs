@@ -150,11 +150,9 @@ wchar_t *resolveUNC(const wchar_t *filename)
   return uncName;
 }
 
-HBITMAP createBitmapFromIcon(const HICON icon, const int smx, const int smy)
+HBITMAP createBitmapFromIcon(const HICON icon, const int width, const int height)
 {
-  const int  width = GetSystemMetrics(smx);
-  const int height = GetSystemMetrics(smy);
-  if( icon == NULL  ||  width == 0  ||  height == 0 ) {
+  if( icon == NULL  ||  width < 1  ||  height < 1 ) {
     return NULL;
   }
 

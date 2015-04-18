@@ -64,12 +64,13 @@ csMenu::csMenu()
 {
   InterlockedIncrement(&g_lDllRefCount);
 
+  const int iconWidth  = GetSystemMetrics(SM_CXMENUCHECK);
+  const int iconHeight = GetSystemMetrics(SM_CYMENUCHECK);
   HICON icon = (HICON)LoadImageW(g_hDllInst,
                                  MAKEINTRESOURCEW(IDI_csMenu), IMAGE_ICON,
-                                 GetSystemMetrics(SM_CXSMICON),
-                                 GetSystemMetrics(SM_CYSMICON), 0);
+                                 iconWidth, iconHeight, 0);
   if( icon != NULL ) {
-    _menuBitmap = createBitmapFromIcon(icon, SM_CXSMICON, SM_CYSMICON);
+    _menuBitmap = createBitmapFromIcon(icon, iconWidth, iconHeight);
     DestroyIcon(icon);
   }
 }
