@@ -63,7 +63,7 @@ namespace util {
     csPDFiumText text;
     for(int i = 0; i < FPDFText_CountChars(textPage); i++) {
       const QChar c = QChar(FPDFText_GetUnicode(textPage, i));
-      if( c.isNull() || c.isSpace() ) {
+      if( c.isNull()  ||  c.isSpace() ) {
         TEXT_COMMIT();
         continue;
       }
@@ -75,6 +75,9 @@ namespace util {
       const QPointF bottomRight = QPointF(right, bottom)*ctm;
       const QRectF r(topLeft, bottomRight);
 
+#ifndef OLD_EXTRACT
+      text.merge(r, c);
+#else
       if( text.isEmpty() ) {
         text = r;
         text = c;
@@ -88,9 +91,13 @@ namespace util {
         text = r;
         text = c;
       }
+#endif
     }
     TEXT_COMMIT();
+
+#ifdef OLD_EXTRACT
     qSort(texts);
+#endif
 
     FPDFText_ClosePage(textPage);
 
