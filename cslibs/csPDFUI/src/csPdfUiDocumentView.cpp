@@ -48,6 +48,7 @@
 #define DATA_LINKPOINTER    1
 #define DATA_LINKDEST       2
 #define DATA_SELECTIONTEXT  3
+#define DATA_SELECTIONPOS   4
 
 // Zoom
 
@@ -97,6 +98,7 @@ namespace priv {
     item->setZValue(csPdfUiDocumentView::SelectionLayer);
     csPdfUiDocumentView::setItemId(item, csPdfUiDocumentView::SelectionId);
     item->setData(DATA_SELECTIONTEXT, pdfText.text());
+    item->setData(DATA_SELECTIONPOS,  pdfText.pos());
 
     return item;
   }
@@ -149,7 +151,8 @@ QString csPdfUiDocumentView::selectedText() const
     if( itemId(item) == SelectionId ) {
       QGraphicsRectItem *ri = dynamic_cast<QGraphicsRectItem*>(item);
       texts.push_back(csPDFiumText(ri->rect(),
-                                item->data(DATA_SELECTIONTEXT).toString()));
+                                   item->data(DATA_SELECTIONTEXT).toString(),
+                                   item->data(DATA_SELECTIONPOS).toInt()));
     }
   }
 

@@ -40,9 +40,11 @@
 
 class csPDFiumText {
 public:
-  csPDFiumText(const QRectF& rect = QRectF(), const QString& text = QString())
+  csPDFiumText(const QRectF& rect = QRectF(), const QString& text = QString(),
+               const int pos = -1)
     : _rect(rect)
     , _text(text)
+    , _pos(pos)
   {
   }
 
@@ -72,8 +74,19 @@ public:
 
   inline void clear()
   {
+    _pos  = -1;
     _rect = QRectF();
     _text.clear();
+  }
+
+  inline int pos() const
+  {
+    return _pos;
+  }
+
+  inline void setPos(const int pos)
+  {
+    _pos = pos;
   }
 
   inline const QRectF& rect() const
@@ -94,6 +107,9 @@ public:
 
   inline bool operator<(const csPDFiumText& other) const
   {
+#if 1
+    return _pos < other._pos;
+#else
     // NOTE: The comparison below favors Top-Down/Left-Right scripts!
     const QRectF& a = _rect;
     const QRectF& b = other._rect;
@@ -109,9 +125,11 @@ public:
     }
 
     return false;
+#endif
   }
 
 private:
+  int     _pos;
   QRectF  _rect;
   QString _text;
 };

@@ -35,10 +35,11 @@
 
 #include "internal/config.h"
 
-#define TEXT_COMMIT()       \
-  if( !text.isEmpty() ) {   \
-    texts.push_back(text);  \
-    text.clear();           \
+#define TEXT_COMMIT()           \
+  if( !text.isEmpty() ) {       \
+    texts.push_back(text);      \
+    text.clear();               \
+    text.setPos(texts.size());  \
   }
 
 namespace util {
@@ -61,6 +62,7 @@ namespace util {
 
     csPDFiumTexts texts;
     csPDFiumText text;
+    text.setPos(texts.size());
     for(int i = 0; i < FPDFText_CountChars(textPage); i++) {
       const QChar c = QChar(FPDFText_GetUnicode(textPage, i));
       if( c.isNull()  ||  c.isSpace() ) {
