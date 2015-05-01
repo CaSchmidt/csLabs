@@ -36,15 +36,10 @@
 #include <QtCore/QStringList>
 
 #include <csQt/csqt_config.h>
+#include <csQt/csNamespace.h>
 
 class CS_QT_EXPORT csTrie {
 public:
-  enum MatchResult {
-    NoMatch = 0,
-    PartialMatch,
-    ExactMatch
-  };
-
   csTrie();
   ~csTrie();
 
@@ -52,7 +47,7 @@ public:
 
   QStringList complete(const QString& base) const;
 
-  MatchResult find(const QString& str) const;
+  cs::TrieMatch find(const QString& str) const;
 
   void insert(const QString& str);
 

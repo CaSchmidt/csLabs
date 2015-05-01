@@ -41,11 +41,9 @@
 
 ////// Private ///////////////////////////////////////////////////////////////
 
-typedef ushort csUtf16;
-
 class csTrieNode {
 public:
-  csTrieNode(const csUtf16 _letter)
+  csTrieNode(const ushort _letter)
     : _status(0)
     , _children(0)
   {
@@ -75,20 +73,20 @@ public:
     return child->base(idxStr+1, str);
   }
 
-  csTrie::MatchResult find(const int idxStr, const QString& str) const
+  cs::TrieMatch find(const int idxStr, const QString& str) const
   {
     if( idxStr == str.size() ) {
       if( isMatch() ) {
-        return csTrie::ExactMatch;
+        return cs::ExactMatch;
       } else {
-        return csTrie::PartialMatch;
+        return cs::PartialMatch;
       }
     }
 
     csTrieNode *idxMatch = findLetter(str[idxStr].unicode());
 
     if( idxMatch == 0 ) {
-      return csTrie::NoMatch;
+      return cs::NoMatch;
     }
 
     return idxMatch->find(idxStr+1, str);
@@ -101,7 +99,7 @@ public:
       return;
     }
 
-    const csUtf16 curLetter = str[idxStr].unicode();
+    const ushort curLetter = str[idxStr].unicode();
     csTrieNode *idxMatch = findLetter(curLetter);
 
     if( idxMatch == 0 ) {
@@ -153,23 +151,21 @@ public:
     }
   }
 
-  void statistics(int& numNodes, int& numLinks) const
+  void statistics(int& numNodes) const
   {
     numNodes++;
-    numLinks += childCount();
 
     for(int i = 0; i < childCount(); i++) {
-      _children[i]->statistics(numNodes, numLinks);
+      _children[i]->statistics(numNodes);
     }
   }
 
-private:
   inline int childCount() const
   {
     return (int)(_status & STATUS_MASK_CHILDREN);
   }
 
-  csTrieNode *findLetter(const csUtf16 l) const
+  csTrieNode *findLetter(const ushort l) const
   {
     for(int i = 0; i < childCount(); i++) {
       if( _children[i]->letter() == l ) {
@@ -180,9 +176,9 @@ private:
     return 0;
   }
 
-  inline csUtf16 letter() const
+  inline ushort letter() const
   {
-    return (csUtf16)(_status >> STATUS_SHIFT_LETTER);
+    return (ushort)(_status >> STATUS_SHIFT_LETTER);
   }
 
   inline bool isMatch() const
@@ -190,6 +186,7 @@ private:
     return (_status & STATUS_MASK_MATCH) != 0;
   }
 
+private:
   quint32 _status;
   csTrieNode **_children;
 };
@@ -234,10 +231,10 @@ QStringList csTrie::complete(const QString& base) const
   return words;
 }
 
-csTrie::MatchResult csTrie::find(const QString& str) const
+cs::TrieMatch csTrie::find(const QString& str) const
 {
   if( str.isEmpty() ) {
-    return csTrie::NoMatch;
+    return cs::NoMatch;
   }
 
   return _root->find(0, str);
@@ -266,17 +263,15 @@ QStringList csTrie::list() const
 int csTrie::size() const
 {
   int numNodes = 0;
-  int numLinks = 0;
-  _root->statistics(numNodes, numLinks);
+  _root->statistics(numNodes);
 
-  return sizeof(csTrieNode)*numNodes + sizeof(csTrieNode*)*numLinks;
+  return sizeof(csTrieNode)*numNodes + sizeof(csTrieNode*)*numNodes;
 }
 
 int csTrie::nodeCount() const
 {
   int numNodes = 0;
-  int numLinks = 0;
-  _root->statistics(numNodes, numLinks);
+  _root->statistics(numNodes);
 
   return numNodes;
 }
