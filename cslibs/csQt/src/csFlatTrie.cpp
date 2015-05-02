@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,42 +29,53 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSTRIE_H__
-#define __CSTRIE_H__
-
-#include <QtCore/QString>
-#include <QtCore/QStringList>
-
-#include <csQt/csqt_config.h>
 #include <csQt/csFlatTrie.h>
-#include <csQt/csNamespace.h>
 
-class CS_QT_EXPORT csTrie {
-public:
-  csTrie();
-  ~csTrie();
+#include "private/csFlatTriePrivate.h"
 
-  void clear();
+////// public ////////////////////////////////////////////////////////////////
 
-  QStringList complete(const QString& base) const;
+csFlatTrie::csFlatTrie()
+  : _link()
+  , _data()
+{
+}
 
-  cs::TrieMatch find(const QString& str) const;
+csFlatTrie::~csFlatTrie()
+{
+}
 
-  csFlatTrie flattened() const;
+void csFlatTrie::clear()
+{
+  _link.clear();
+  _data.clear();
+}
 
-  void insert(const QString& str);
+bool csFlatTrie::isEmpty() const
+{
+  return _link.size() != _data.size()  ||  _link.isEmpty()  ||  _data.isEmpty();
+}
 
-  QStringList list() const;
+int csFlatTrie::nodeCount() const
+{
+  if( isEmpty() ) {
+    return 0;
+  }
+  return _link.size();
+}
 
-  int nodeCount() const;
+int csFlatTrie::size() const
+{
+  if( isEmpty() ) {
+    return 0;
+  }
+  return sizeof(quint32)*_link.size() + sizeof(ushort)*_data.size();
+}
 
-  int size() const;
+////// private ///////////////////////////////////////////////////////////////
 
-private:
-  csTrie(const csTrie&);
-  csTrie& operator=(const csTrie&);
-
-  class csTrieNode *_root;
-};
-
-#endif // __CSTRIE_H__
+csFlatTrie::csFlatTrie(const QVector<quint32>& link, const QVector<ushort>& data)
+  : _link(link)
+  , _data(data)
+{
+}

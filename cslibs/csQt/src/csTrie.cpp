@@ -29,7 +29,11 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <QtCore/QVector>
+
 #include "csQt/csTrie.h"
+
+#include "private/csFlatTriePrivate.h"
 
 ////// Macros ////////////////////////////////////////////////////////////////
 
@@ -44,8 +48,8 @@
 class csTrieNode {
 public:
   csTrieNode(const ushort _letter)
-    : _status(0)
-    , _children(0)
+    : _children(0)
+    , _status(0)
   {
     _status   = _letter;
     _status <<= STATUS_SHIFT_LETTER;
@@ -90,6 +94,34 @@ public:
     }
 
     return idxMatch->find(idxStr+1, str);
+  }
+
+  void flattened(QVector<quint32>& link, QVector<ushort>& data,
+                 int& cntNodes, const int baseIndex) const
+  {
+    if( childCount() < 1 ) {
+      return;
+    }
+
+    cntNodes += childCount();
+
+    for(int i = 0; i < childCount(); i++) {
+      data[baseIndex+i] = _children[i]->letter();
+
+      if( _children[i]->childCount() > 0 ) {
+        link[baseIndex+i] = cntNodes;
+      } else {
+        link[baseIndex+i] = 0;
+      }
+
+      if( _children[i]->isMatch() ) {
+        link[baseIndex+i] |= LINK_MASK_EOW;
+      }
+
+      _children[i]->flattened(link, data, cntNodes, cntNodes);
+    }
+
+    link[baseIndex+childCount()-1] |= LINK_MASK_EOL;
   }
 
   void insert(const int idxStr, const QString& str)
@@ -160,6 +192,7 @@ public:
     }
   }
 
+private:
   inline int childCount() const
   {
     return (int)(_status & STATUS_MASK_CHILDREN);
@@ -186,9 +219,8 @@ public:
     return (_status & STATUS_MASK_MATCH) != 0;
   }
 
-private:
-  quint32 _status;
   csTrieNode **_children;
+  quint32 _status;
 };
 
 ////// public ////////////////////////////////////////////////////////////////
@@ -240,6 +272,22 @@ cs::TrieMatch csTrie::find(const QString& str) const
   return _root->find(0, str);
 }
 
+csFlatTrie csTrie::flattened() const
+{
+  const int numNodes = nodeCount()-1; // Don't count 'root'!
+  if( numNodes < 1 ) {
+    return csFlatTrie();
+  }
+
+  QVector<quint32> link(numNodes);
+  QVector<ushort>  data(numNodes);
+
+  int cntNodes = 0;
+  _root->flattened(link, data, cntNodes, 0);
+
+  return csFlatTrie(link, data);
+}
+
 void csTrie::insert(const QString& str)
 {
   if( str.isEmpty() ) {
@@ -260,18 +308,18 @@ QStringList csTrie::list() const
   return words;
 }
 
-int csTrie::size() const
-{
-  int numNodes = 0;
-  _root->statistics(numNodes);
-
-  return sizeof(csTrieNode)*numNodes + sizeof(csTrieNode*)*numNodes;
-}
-
 int csTrie::nodeCount() const
 {
   int numNodes = 0;
   _root->statistics(numNodes);
 
   return numNodes;
+}
+
+int csTrie::size() const
+{
+  int numNodes = 0;
+  _root->statistics(numNodes);
+
+  return sizeof(csTrieNode)*numNodes + sizeof(csTrieNode*)*numNodes;
 }

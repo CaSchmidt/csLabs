@@ -17,6 +17,9 @@ DLLDESTDIR = ../../bin
 DEFINES += CS_BUILD_QT_LIB QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII
 
 
+INCLUDEPATH += ./include
+DEPENDPATH  += ./include
+
 INCLUDEPATH += ../include
 DEPENDPATH  += ../include
 
@@ -31,7 +34,8 @@ SOURCES += \
     src/csSubstringHighlighter.cpp \
     src/csHighlightingDelegate.cpp \
     src/csTrie.cpp \
-    src/csTreeItem.cpp
+    src/csTreeItem.cpp \
+    src/csFlatTrie.cpp
 
 HEADERS += \
     ../include/csQt/csTableCopier.h \
@@ -45,4 +49,6 @@ HEADERS += \
     ../include/csQt/csHighlightingDelegate.h \
     ../include/csQt/csTrie.h \
     ../include/csQt/csNamespace.h \
-    ../include/csQt/csTreeItem.h
+    ../include/csQt/csTreeItem.h \
+    include/private/csFlatTriePrivate.h \
+    ../include/csQt/csFlatTrie.h

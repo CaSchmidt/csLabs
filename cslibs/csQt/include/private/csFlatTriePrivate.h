@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,42 +29,28 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSTRIE_H__
-#define __CSTRIE_H__
+#ifndef __CSFLATTRIEPRIVATE_H__
+#define __CSFLATTRIEPRIVATE_H__
 
-#include <QtCore/QString>
-#include <QtCore/QStringList>
+#include <QtCore/QtGlobal>
 
-#include <csQt/csqt_config.h>
-#include <csQt/csFlatTrie.h>
-#include <csQt/csNamespace.h>
+#define LINK_MASK_EOL  ((quint32)0x80000000) // End-of-List
+#define LINK_MASK_EOW  ((quint32)0x40000000) // End-of-Word
+#define LINK_MASK_IDX  ((quint32)0x3FFFFFFF) // Index
 
-class CS_QT_EXPORT csTrie {
-public:
-  csTrie();
-  ~csTrie();
+inline bool isEndOfList(const quint32& link)
+{
+  return (link & LINK_MASK_EOL) != 0;
+}
 
-  void clear();
+inline bool isEndOfWord(const quint32& link)
+{
+  return (link & LINK_MASK_EOW) != 0;
+}
 
-  QStringList complete(const QString& base) const;
+inline int linkIndex(const quint32& link)
+{
+  return (int)(link & LINK_MASK_IDX);
+}
 
-  cs::TrieMatch find(const QString& str) const;
-
-  csFlatTrie flattened() const;
-
-  void insert(const QString& str);
-
-  QStringList list() const;
-
-  int nodeCount() const;
-
-  int size() const;
-
-private:
-  csTrie(const csTrie&);
-  csTrie& operator=(const csTrie&);
-
-  class csTrieNode *_root;
-};
-
-#endif // __CSTRIE_H__
+#endif // __CSFLATTRIEPRIVATE_H__

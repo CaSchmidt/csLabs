@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,42 +29,33 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSTRIE_H__
-#define __CSTRIE_H__
+#ifndef __CSFLATTRIE_H__
+#define __CSFLATTRIE_H__
 
-#include <QtCore/QString>
-#include <QtCore/QStringList>
+#include <QtCore/QVector>
 
 #include <csQt/csqt_config.h>
-#include <csQt/csFlatTrie.h>
-#include <csQt/csNamespace.h>
 
-class CS_QT_EXPORT csTrie {
+class CS_QT_EXPORT csFlatTrie {
 public:
-  csTrie();
-  ~csTrie();
+  csFlatTrie();
+  ~csFlatTrie();
 
   void clear();
 
-  QStringList complete(const QString& base) const;
-
-  cs::TrieMatch find(const QString& str) const;
-
-  csFlatTrie flattened() const;
-
-  void insert(const QString& str);
-
-  QStringList list() const;
+  bool isEmpty() const;
 
   int nodeCount() const;
 
   int size() const;
 
 private:
-  csTrie(const csTrie&);
-  csTrie& operator=(const csTrie&);
+  csFlatTrie(const QVector<quint32>& link, const QVector<ushort>& data);
 
-  class csTrieNode *_root;
+  friend class csTrie;
+
+  QVector<quint32> _link;
+  QVector<ushort>  _data;
 };
 
-#endif // __CSTRIE_H__
+#endif // __CSFLATTRIE_H__
