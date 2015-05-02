@@ -32,9 +32,11 @@
 #ifndef __CSFLATTRIE_H__
 #define __CSFLATTRIE_H__
 
+#include <QtCore/QStringList>
 #include <QtCore/QVector>
 
 #include <csQt/csqt_config.h>
+#include <csQt/csNamespace.h>
 
 class CS_QT_EXPORT csFlatTrie {
 public:
@@ -43,7 +45,13 @@ public:
 
   void clear();
 
+  QStringList complete(const QString& str) const;
+
+  cs::TrieMatch find(const QString& str) const;
+
   bool isEmpty() const;
+
+  QStringList list() const;
 
   int nodeCount() const;
 
@@ -51,6 +59,12 @@ public:
 
 private:
   csFlatTrie(const QVector<quint32>& link, const QVector<ushort>& data);
+
+  int base(const int idxStr, const QString& str, const int baseIndex) const;
+
+  cs::TrieMatch find(const int idxStr, const QString& str, const int baseIndex) const;
+
+  void list(QStringList& words, QString& str, const int baseIndex) const;
 
   friend class csTrie;
 
