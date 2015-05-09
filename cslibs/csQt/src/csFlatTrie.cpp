@@ -62,6 +62,10 @@ QStringList csFlatTrie::complete(const QString& baseStr) const
   QStringList words;
 
   const int baseIndex = base(0, baseStr, 0);
+  if( baseIndex < 0 ) {
+    return QStringList();
+  }
+
   if( isEndOfWord(_link[baseIndex]) ) {
     words.push_back(baseStr);
   }
