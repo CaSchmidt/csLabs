@@ -32,7 +32,4 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
-#define MERGE_TOL  2.0
-#undef  OLD_EXTRACT
-
 #endif // __CONFIG_H__

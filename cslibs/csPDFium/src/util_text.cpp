@@ -37,21 +37,12 @@
 
 #define TEXT_COMMIT()           \
   if( !text.isEmpty() ) {       \
+    text.setPos(texts.size());  \
     texts.push_back(text);      \
     text.clear();               \
-    text.setPos(texts.size());  \
   }
 
 namespace util {
-
-  namespace priv {
-
-    bool touches(const QRectF& a, const QRectF& b, const qreal tol)
-    {
-      return csPDFium::overlapsH(a, b, tol) && csPDFium::overlapsV(a, b, tol);
-    }
-
-  }; // namespace priv
 
   csPDFiumTexts extractTexts(const FPDF_PAGE page, const QMatrix& ctm)
   {
@@ -62,7 +53,6 @@ namespace util {
 
     csPDFiumTexts texts;
     csPDFiumText text;
-    text.setPos(texts.size());
     for(int i = 0; i < FPDFText_CountChars(textPage); i++) {
       const QChar c = QChar(FPDFText_GetUnicode(textPage, i));
       if( c.isNull()  ||  c.isSpace() ) {
@@ -77,29 +67,9 @@ namespace util {
       const QPointF bottomRight = QPointF(right, bottom)*ctm;
       const QRectF r(topLeft, bottomRight);
 
-#ifndef OLD_EXTRACT
       text.merge(r, c);
-#else
-      if( text.isEmpty() ) {
-        text = r;
-        text = c;
-        continue;
-      }
-
-      if( priv::touches(text.rect(), r, MERGE_TOL) ) {
-        text.merge(r, c);
-      } else {
-        TEXT_COMMIT();
-        text = r;
-        text = c;
-      }
-#endif
     }
     TEXT_COMMIT();
-
-#ifdef OLD_EXTRACT
-    qSort(texts);
-#endif
 
     FPDFText_ClosePage(textPage);
 

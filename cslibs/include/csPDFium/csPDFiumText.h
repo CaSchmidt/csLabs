@@ -107,25 +107,7 @@ public:
 
   inline bool operator<(const csPDFiumText& other) const
   {
-#if 1
     return _pos < other._pos;
-#else
-    // NOTE: The comparison below favors Top-Down/Left-Right scripts!
-    const QRectF& a = _rect;
-    const QRectF& b = other._rect;
-
-    // 'a' is above 'b'.
-    if( a.bottom() < b.top() ) {
-      return true;
-    }
-
-    // 'a' and 'b' are on the same line, but 'a' is left of 'b'.
-    if( csPDFium::overlapsV(a, b)  &&  a.left() < b.left() ) {
-      return true;
-    }
-
-    return false;
-#endif
   }
 
 private:
