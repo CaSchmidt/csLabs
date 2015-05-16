@@ -23,19 +23,22 @@ DEPENDPATH  += ./include
 INCLUDEPATH += ../include
 DEPENDPATH  += ../include
 
-win32:LIBS += kernel32.lib oleaut32.lib
+win32:LIBS += kernel32.lib oleaut32.lib shell32.lib
 
 
 SOURCES += \
     src/csLimits.cpp \
     src/csString.cpp \
     src/csStringLib.cpp \
-    src/csStringList.cpp
+    src/csStringList.cpp \
+    src/csMemory.cpp
 
 win32 {
 SOURCES += \
     src/csAlloc_win32.cpp \
-    src/csMain_win32.cpp
+    src/csFile_win32.cpp \
+    src/csMain_win32.cpp \
+    src/csProcess_win32.cpp
 }
 
 HEADERS += \
@@ -49,4 +52,7 @@ HEADERS += \
     ../include/csCore/csString.h \
     ../include/csCore/csStringLib.h \
     ../include/csCore/csStringList.h \
-    ../include/csCore/csUtil.h
+    ../include/csCore/csUtil.h \
+    ../include/csCore/csFile.h \
+    ../include/csCore/csMemory.h \
+    ../include/csCore/csProcess.h

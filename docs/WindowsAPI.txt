@@ -11,6 +11,8 @@ o  Error Handling in COM (COM)‎
 
 o  Registering Shell Extension Handlers (Windows)‎
 
+o  Using Window Procedures
+
 o  EFNet #Winprog
 
 -> http://winprog.org/
