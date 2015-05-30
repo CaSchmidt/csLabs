@@ -399,8 +399,9 @@ bool csPdfUiDocumentView::eventFilter(QObject *watched, QEvent *event)
     QGraphicsSceneMouseEvent *mev =
         dynamic_cast<QGraphicsSceneMouseEvent*>(event);
     if( mev->modifiers() == Qt::NoModifier  &&
-        mev->buttons() ==  Qt::LeftButton ) {
-      return followLink(mev->scenePos());
+        mev->buttons()   ==  Qt::LeftButton &&
+        followLink(mev->scenePos()) ) {
+      return true;
     }
   } else if( event->type() == QEvent::MouseButtonDblClick ) {
     QMouseEvent *mev = dynamic_cast<QMouseEvent*>(event);
@@ -572,25 +573,24 @@ void csPdfUiDocumentView::watchVScroll(int value)
 
 bool csPdfUiDocumentView::followLink(const QPointF& scenePos)
 {
-  foreach(QGraphicsItem *item, _scene->items(scenePos)) {
-    if( item != 0  &&  itemId(item) == LinkId ) {
-      const void *pointer = item->data(DATA_LINKPOINTER).value<void*>();
-      const QPointF  dest = item->data(DATA_LINKDEST).toPointF();
-      const int      page = _doc.resolveLink(pointer);
-      if( page < 0 ) {
-        continue;
-      }
-
-      _linkHistory.push(ReverseLink(_page.number()+1, item->boundingRect().center()));
-      showPage(page+1);
-      if( dest.isNull() ) {
-        centerOn(_page.rect().center().x(), _page.rect().top());
-      } else {
-        centerOn(dest);
-      }
-
-      return true;
+  const QGraphicsItem *item = _scene->itemAt(scenePos, QTransform());
+  if( item != 0  &&  itemId(item) == LinkId ) {
+    const void *pointer = item->data(DATA_LINKPOINTER).value<void*>();
+    const QPointF  dest = item->data(DATA_LINKDEST).toPointF();
+    const int      page = _doc.resolveLink(pointer);
+    if( page < 0 ) {
+      return false;
     }
+
+    _linkHistory.push(ReverseLink(_page.number()+1, item->boundingRect().center()));
+    showPage(page+1);
+    if( dest.isNull() ) {
+      centerOn(_page.rect().center().x(), _page.rect().top());
+    } else {
+      centerOn(dest);
+    }
+
+    return true;
   }
 
   return false;
