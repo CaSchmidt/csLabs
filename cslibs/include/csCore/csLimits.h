@@ -45,4 +45,10 @@ struct CS_CORE_EXPORT csLimits<int32_t> {
   static int32_t Max;
 };
 
+template<>
+struct CS_CORE_EXPORT csLimits<uint32_t> {
+  static uint32_t Min;
+  static uint32_t Max;
+};
+
 #endif // __CSLIMITS_H__

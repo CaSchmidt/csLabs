@@ -29,10 +29,74 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <csCore/csLimits.h>
+#ifndef __UTIL_ALPHANUM_H__
+#define __UTIL_ALPHANUM_H__
 
-int32_t csLimits<int32_t>::Min = INT32_MIN;
-int32_t csLimits<int32_t>::Max = INT32_MAX;
+#include <csCore/cscore_config.h>
 
-uint32_t csLimits<uint32_t>::Min = 0;
-uint32_t csLimits<uint32_t>::Max = UINT32_MAX;
+namespace priv_a {
+
+  template<typename T>
+  inline int toDigit(const T ch, const int base)
+  {
+    int dig = -1;
+    if(        (int)'0' <= (int)ch  &&  (int)ch <= (int)'9' ) {
+      dig = (int)ch - (int)'0';
+    } else if( (int)'a' <= (int)ch  &&  (int)ch <= (int)'z' ) {
+      dig = (int)ch - (int)'a' + 10;
+    } else if( (int)'A' <= (int)ch  &&  (int)ch <= (int)'Z' ) {
+      dig = (int)ch - (int)'A' + 10;
+    }
+    if( dig > base ) {
+      return -1;
+    }
+    return dig;
+  }
+
+#define BASE  ((uint32_t)base)
+#define DIG   ((uint32_t)dig)
+
+  template<typename T>
+  inline uint32_t toUInt(const T *s, bool *ok, const int base, const uint32_t max)
+  {
+    if( ok != 0 ) {
+      *ok = false;
+    }
+
+    if( s == 0  ||  base < 2  ||  base > 36 ) {
+      return 0;
+    }
+
+    const uint32_t mulGuard = max / BASE;
+    const uint32_t remGuard = max % BASE;
+
+    uint32_t num = 0;
+
+    int dig;
+    int i = 0;
+    while( (dig = toDigit(s[i++], base)) >= 0 ) {
+      if( num > mulGuard ) {
+        return 0;
+      }
+
+      if( num == mulGuard  &&  DIG > remGuard ) {
+        return 0;
+      }
+
+      num *= BASE;
+      num += DIG;
+    }
+
+    if( ok != 0 ) {
+      *ok = true;
+    }
+
+    return num;
+  }
+
+#undef BASE
+#undef DIG
+
+}; // namespace priv_a
+
+#endif // __UTIL_ALPHANUM_H__

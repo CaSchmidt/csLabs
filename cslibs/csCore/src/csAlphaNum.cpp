@@ -29,10 +29,18 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <csCore/csAlphaNum.h>
+
 #include <csCore/csLimits.h>
 
-int32_t csLimits<int32_t>::Min = INT32_MIN;
-int32_t csLimits<int32_t>::Max = INT32_MAX;
+#include "internal/util_alphanum.h"
 
-uint32_t csLimits<uint32_t>::Min = 0;
-uint32_t csLimits<uint32_t>::Max = UINT32_MAX;
+CS_CORE_EXPORT uint32_t csToUInt(const char *s, bool *ok, const int base)
+{
+  return priv_a::toUInt(s, ok, base, csLimits<uint32_t>::Max);
+}
+
+CS_CORE_EXPORT uint32_t csToUInt(const wchar_t *s, bool *ok, const int base)
+{
+  return priv_a::toUInt(s, ok, base, csLimits<uint32_t>::Max);
+}

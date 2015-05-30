@@ -29,10 +29,13 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <csCore/csLimits.h>
+#ifndef __CSALPHANUM_H__
+#define __CSALPHANUM_H__
 
-int32_t csLimits<int32_t>::Min = INT32_MIN;
-int32_t csLimits<int32_t>::Max = INT32_MAX;
+#include <csCore/cscore_config.h>
 
-uint32_t csLimits<uint32_t>::Min = 0;
-uint32_t csLimits<uint32_t>::Max = UINT32_MAX;
+CS_CORE_EXPORT uint32_t csToUInt(const char *s, bool *ok = 0, const int base = 10);
+
+CS_CORE_EXPORT uint32_t csToUInt(const wchar_t *s, bool *ok = 0, const int base = 10);
+
+#endif // __CSALPHANUM_H__

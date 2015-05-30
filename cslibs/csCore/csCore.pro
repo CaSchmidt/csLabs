@@ -31,7 +31,8 @@ SOURCES += \
     src/csString.cpp \
     src/csStringLib.cpp \
     src/csStringList.cpp \
-    src/csMemory.cpp
+    src/csMemory.cpp \
+    src/csAlphaNum.cpp
 
 win32 {
 SOURCES += \
@@ -55,4 +56,6 @@ HEADERS += \
     ../include/csCore/csUtil.h \
     ../include/csCore/csFile.h \
     ../include/csCore/csMemory.h \
-    ../include/csCore/csProcess.h
+    ../include/csCore/csProcess.h \
+    include/internal/util_alphanum.h \
+    ../include/csCore/csAlphaNum.h
