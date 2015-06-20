@@ -32,7 +32,6 @@
 #include <csCore/csStringLib.h>
 
 #include <csCore/csChar.h>
-#include <csCore/csLimits.h>
 #include <csCore/csUtil.h>
 
 CS_CORE_EXPORT wchar_t *csStringCat(wchar_t *dest, const wchar_t *src)
@@ -57,7 +56,13 @@ CS_CORE_EXPORT int csStringCmp(const wchar_t *s1, const wchar_t *s2)
   const size_t len1 = csStringLen(s1);
   const size_t len2 = csStringLen(s2);
   if( len1 < 1  ||  len2 < 1 ) {
-    return csLimits<int>::Min;
+    if(        len1 < 1  &&  len2 < 1 ) {
+      return 0;
+    } else if( len1 < 1 ) {
+      return -1;
+    } else if( len2 < 1 ) {
+      return 1;
+    }
   }
   const size_t len = csMin(len1, len2);
   for(size_t i = 0; i < len; i++) {
@@ -81,7 +86,13 @@ CS_CORE_EXPORT int csStringCmpI(const wchar_t *s1, const wchar_t *s2)
   const size_t len1 = csStringLen(s1);
   const size_t len2 = csStringLen(s2);
   if( len1 < 1  ||  len2 < 1 ) {
-    return csLimits<int>::Min;
+    if(        len1 < 1  &&  len2 < 1 ) {
+      return 0;
+    } else if( len1 < 1 ) {
+      return -1;
+    } else if( len2 < 1 ) {
+      return 1;
+    }
   }
   const size_t len = csMin(len1, len2);
   for(size_t i = 0; i < len; i++) {
@@ -149,8 +160,14 @@ CS_CORE_EXPORT wchar_t *csStringNCat(wchar_t *dest, const wchar_t *src,
 CS_CORE_EXPORT int csStringNCmp(const wchar_t *s1, const wchar_t *s2,
                                 const size_t maxsize)
 {
-  if( s1 == 0  ||  *s1 == L'\0'  ||  s2 == 0  ||  *s2 == L'\0' ) {
-    return csLimits<int>::Min;
+  if( s1 == 0  ||  s2 == 0 ) {
+    if(        s1 == 0  &&  s2 == 0 ) {
+      return 0;
+    } else if( s1 == 0 ) {
+      return -1;
+    } else if( s2 == 0 ) {
+      return 1;
+    }
   }
   size_t i;
   for(i = 0; i < maxsize  &&  s1[i] != L'\0'  &&  s2[i] != L'\0'; i++) {
@@ -174,8 +191,14 @@ CS_CORE_EXPORT int csStringNCmp(const wchar_t *s1, const wchar_t *s2,
 CS_CORE_EXPORT int csStringNCmpI(const wchar_t *s1, const wchar_t *s2,
                                  const size_t maxsize)
 {
-  if( s1 == 0  ||  *s1 == L'\0'  ||  s2 == 0  ||  *s2 == L'\0' ) {
-    return csLimits<int>::Min;
+  if( s1 == 0  ||  s2 == 0 ) {
+    if(        s1 == 0  &&  s2 == 0 ) {
+      return 0;
+    } else if( s1 == 0 ) {
+      return -1;
+    } else if( s2 == 0 ) {
+      return 1;
+    }
   }
   size_t i;
   for(i = 0; i < maxsize  &&  s1[i] != L'\0'  &&  s2[i] != L'\0'; i++) {
