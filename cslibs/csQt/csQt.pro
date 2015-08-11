@@ -35,7 +35,8 @@ SOURCES += \
     src/csHighlightingDelegate.cpp \
     src/csTrie.cpp \
     src/csTreeItem.cpp \
-    src/csFlatTrie.cpp
+    src/csFlatTrie.cpp \
+    src/csCollapser.cpp
 
 HEADERS += \
     ../include/csQt/csTableCopier.h \
@@ -51,4 +52,5 @@ HEADERS += \
     ../include/csQt/csNamespace.h \
     ../include/csQt/csTreeItem.h \
     include/private/csFlatTriePrivate.h \
-    ../include/csQt/csFlatTrie.h
+    ../include/csQt/csFlatTrie.h \
+    ../include/csQt/csCollapser.h

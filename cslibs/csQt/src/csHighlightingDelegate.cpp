@@ -33,9 +33,9 @@
 #include <QtGui/QTextDocument>
 #include <QtWidgets/QApplication>
 
-#include <csQt/csHighlightingDelegate.h>
+#include "csQt/csHighlightingDelegate.h"
 
-#include <csQt/csSubstringHighlighter.h>
+#include "csQt/csSubstringHighlighter.h"
 
 ////// public ////////////////////////////////////////////////////////////////
 

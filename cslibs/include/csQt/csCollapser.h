@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2015, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,64 +29,27 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSQTUTIL_H__
-#define __CSQTUTIL_H__
+#ifndef __CSCOLLAPSER_H__
+#define __CSCOLLAPSER_H__
 
-#include <QtCore/QLocale>
-#include <QtCore/QModelIndex>
-#include <QtCore/QString>
-#include <QtWidgets/QWidget>
+#include <QtWidgets/QToolButton>
 
 #include <csQt/csqt_config.h>
-#include <csQt/csNamespace.h>
 
-#ifndef _L1
-# define _L1(s)  QString::fromLatin1(s)
-#endif
+class CS_QT_EXPORT csCollapser : public QToolButton {
+  Q_OBJECT
+public:
+  csCollapser(class QSplitter *splitter, QWidget *widget,
+              const QColor& color = Qt::gray, const int ratio = 8);
+  ~csCollapser();
 
-#ifndef _L1C
-# define _L1C(c)  QChar::fromLatin1(c)
-#endif
+public slots:
+  void collapse();
 
-#ifndef _U8
-# define _U8(s)  QString::fromUtf8(s)
-#endif
+private:
+  int _lastSize;
+  class QSplitter *_splitter;
+  QWidget *_widget;
+};
 
-class QColor;
-class QPoint;
-class QTableView;
-class QVariant;
-class QWidget;
-
-CS_QT_EXPORT int csScreenNumber(const QPoint& globalPos, QWidget *widget);
-
-CS_QT_EXPORT void csSetBackgroundColor(QWidget *w, const QColor& c,
-                                       const bool inactive = true);
-
-CS_QT_EXPORT QString csTableToString(const QTableView *table,
-                                     const QModelIndex& topLeft = QModelIndex(),
-                                     const QModelIndex& bottomRight = QModelIndex(),
-                                     const int role = Qt::DisplayRole,
-                                     const cs::TableExtractionFlags flags = cs::NoTableExtractionFlags);
-
-CS_QT_EXPORT QString csVariantToString(const QVariant& variant,
-                                       const QLocale& locale = QLocale(),
-                                       const char format = 'g', const int precision = 6);
-
-template<class T>
-T *csFindParentWidget(QWidget *widget)
-{
-  if( widget == 0 ) {
-    return 0;
-  }
-
-  while( (widget = widget->parentWidget()) != 0 ) {
-    if( dynamic_cast<T*>(widget) != 0 ) {
-      return dynamic_cast<T*>(widget);
-    }
-  }
-
-  return 0;
-}
-
-#endif // __CSQTUTIL_H__
+#endif // __CSCOLLAPSER_H__

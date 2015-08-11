@@ -31,7 +31,7 @@
 
 #include <QtCore/QString>
 
-#include <csQt/csFlatTrie.h>
+#include "csQt/csFlatTrie.h"
 
 #include "private/csFlatTriePrivate.h"
 

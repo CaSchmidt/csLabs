@@ -37,9 +37,11 @@
 #include <QtGui/QPixmap>
 #include <QtCore/QPoint>
 #include <QtWidgets/QWidget>
-#include <QtWidgets/5.4.1/QtWidgets/private/qeffects_p.h>
+#include <QtWidgets/5.5.0/QtWidgets/private/qeffects_p.h>
 
 #include "csQt/csImageTip.h"
+
+#include "csQt/csQtUtil.h"
 
 ////// Private ///////////////////////////////////////////////////////////////
 
@@ -56,7 +58,6 @@ public:
   bool eventFilter(QObject *watched, QEvent *event);
   void hideTip();
   void placeTip(const QPoint& globalPos, QWidget *widget);
-  static int tipScreen(const QPoint& globalPos, QWidget *widget);
 
 protected:
   void paintEvent(QPaintEvent *event);
@@ -141,7 +142,7 @@ void csTipWidget::placeTip(const QPoint& globalPos, QWidget *widget)
   QPoint placePos(offset+globalPos);
 
   const QRect screenRect =
-      QApplication::desktop()->screenGeometry(tipScreen(globalPos, widget));
+      QApplication::desktop()->screenGeometry(csScreenNumber(globalPos, widget));
 
   if( placePos.x() + width() > screenRect.right()  &&
       width() < screenRect.width() ) {
@@ -165,15 +166,6 @@ void csTipWidget::paintEvent(QPaintEvent *event)
   event->accept();
 }
 
-int csTipWidget::tipScreen(const QPoint& globalPos, QWidget *widget)
-{
-  if( QApplication::desktop()->isVirtualDesktop() ) {
-    return QApplication::desktop()->screenNumber(globalPos);
-  }
-
-  return QApplication::desktop()->screenNumber(widget);
-}
-
 ////// Public ////////////////////////////////////////////////////////////////
 
 void csImageTip::showImage(const QPoint& globalPos, const QImage& image,
@@ -184,8 +176,8 @@ void csImageTip::showImage(const QPoint& globalPos, const QImage& image,
   new csTipWidget(image, flags, widget);
 #else
   new csTipWidget(image, flags,
-                  QApplication::desktop()->screen(csTipWidget::tipScreen(globalPos,
-                                                                         widget)));
+                  QApplication::desktop()->screen(csScreenNumber(globalPos,
+                                                                 widget)));
 #endif
 
   if( flags.testFlag(ForcePosition) ) {
@@ -199,9 +191,9 @@ void csImageTip::showImage(const QPoint& globalPos, const QImage& image,
 # if 1
   qFadeEffect(csTipWidget::instance);
 # else
-  if (QApplication::isEffectEnabled(Qt::UI_FadeTooltip)) {
+  if( QApplication::isEffectEnabled(Qt::UI_FadeTooltip) ) {
     qFadeEffect(csTipWidget::instance);
-  } else if (QApplication::isEffectEnabled(Qt::UI_AnimateTooltip)) {
+  } else if( QApplication::isEffectEnabled(Qt::UI_AnimateTooltip) ) {
     qScrollEffect(csTipWidget::instance);
   } else {
     csTipWidget::instance->show();

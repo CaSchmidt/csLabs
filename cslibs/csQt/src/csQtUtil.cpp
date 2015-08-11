@@ -29,6 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QDesktopWidget>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QTableView>
 #include <QtCore/QDate>
@@ -36,6 +38,14 @@
 #include "csQt/csQtUtil.h"
 
 ////// Public ////////////////////////////////////////////////////////////////
+
+CS_QT_EXPORT int csScreenNumber(const QPoint& globalPos, QWidget *widget)
+{
+  if( QApplication::desktop()->isVirtualDesktop() ) {
+    return QApplication::desktop()->screenNumber(globalPos);
+  }
+  return QApplication::desktop()->screenNumber(widget);
+}
 
 CS_QT_EXPORT void csSetBackgroundColor(QWidget *w, const QColor &c,
                                        const bool inactive)
@@ -123,7 +133,7 @@ CS_QT_EXPORT QString csVariantToString(const QVariant& variant, const QLocale& l
 {
   QString text;
   switch( variant.userType() ) {
-    // case QMetaType::Short:
+  // case QMetaType::Short:
   case QMetaType::Int:
     // case QMetaType::Long:
   case QMetaType::LongLong:
