@@ -27,6 +27,8 @@ DEPENDPATH  += ./include
 INCLUDEPATH += ../include
 DEPENDPATH  += ../include
 
+win32:LIBS += shell32.lib
+
 
 SOURCES += \
     src/csAlphaNum.cpp \
@@ -35,6 +37,12 @@ SOURCES += \
     src/csString.cpp \
     src/csStringLib.cpp \
     src/csStringList.cpp
+
+win32 {
+SOURCES += \
+    src/csFile_win32.cpp \
+    src/csProcess_win32.cpp
+}
 
 HEADERS += \
     ../include/csCore2/csAlphaNum.h \
@@ -45,4 +53,6 @@ HEADERS += \
     ../include/csCore2/csString.h \
     ../include/csCore2/csStringLib.h \
     ../include/csCore2/csStringList.h \
-    ../include/csCore2/csUtil.h
+    ../include/csCore2/csUtil.h \
+    ../include/csCore2/csFile.h \
+    ../include/csCore2/csProcess.h
