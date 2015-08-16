@@ -37,10 +37,11 @@
 
 bool executeCommand(const UINT cmd, const csWStringList& files)
 {
-  const DWORD flags   = regReadFlags();
-  const bool  isBatch = testFlags(flags, CMD_FLAG_BATCH);
-  const bool  isUnc   = testFlags(flags, CMD_FLAG_UNC)  &&  cmd != Cmd_List;
-  const bool  isUnix  = testFlags(flags, CMD_FLAG_UNIX);
+  const DWORD flags      = regReadFlags();
+  const bool  isBatch    = testFlags(flags, CMD_FLAG_BATCH);
+  const bool  isParallel = testFlags(flags, CMD_FLAG_PARALLEL);
+  const bool  isUnc      = testFlags(flags, CMD_FLAG_UNC)  &&  cmd != Cmd_List;
+  const bool  isUnix     = testFlags(flags, CMD_FLAG_UNIX);
 
   if(        cmd == Cmd_List                ||
              cmd == Cmd_ListWithPath        ||
@@ -84,6 +85,10 @@ bool executeCommand(const UINT cmd, const csWStringList& files)
 
   } else if( cmd == Cmd_CheckBatchProcessing ) {
     regWriteFlags(flags ^ CMD_FLAG_BATCH);
+    return true;
+
+  } else if( cmd == Cmd_CheckParallelExecution ) {
+    regWriteFlags(flags ^ CMD_FLAG_PARALLEL);
     return true;
 
   } else if( cmd == Cmd_CheckResolveUncPaths ) {

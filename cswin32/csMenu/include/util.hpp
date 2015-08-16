@@ -35,8 +35,6 @@
 #include <Windows.h>
 #include <csCore2/csString.h>
 
-bool isDirectory(const wchar_t *filename);
-
 void replace(wchar_t *text, const int size,
              const wchar_t ch, const wchar_t after);
 

@@ -36,15 +36,17 @@
 
 #include <csCore2/csStringList.h>
 
-#define CMD_FLAG_BATCH  1
-#define CMD_FLAG_UNC    2
-#define CMD_FLAG_UNIX   4
+#define CMD_FLAG_BATCH     1
+#define CMD_FLAG_PARALLEL  2
+#define CMD_FLAG_UNC       4
+#define CMD_FLAG_UNIX      8
 
 enum Commands {
   Cmd_List = 0,
   Cmd_ListWithPath,
   Cmd_ListWithPathTabular,
   Cmd_CheckBatchProcessing,
+  Cmd_CheckParallelExecution,
   Cmd_CheckResolveUncPaths,
   Cmd_CheckUnixPathSeparators,
   Cmd_csMenu,

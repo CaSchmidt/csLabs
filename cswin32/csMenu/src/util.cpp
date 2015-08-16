@@ -31,20 +31,12 @@
 
 #include <Windows.h>
 #include <winnetwk.h>
+#include <csCore2/csFile.h>
 #include <csCore2/csStringLib.h>
 
 #include "util.hpp"
 
 #include "command.h"
-
-bool isDirectory(const wchar_t *filename)
-{
-  const DWORD attributes = GetFileAttributesW(filename);
-  if( attributes == INVALID_FILE_ATTRIBUTES ) {
-    return false;
-  }
-  return testFlags(attributes, FILE_ATTRIBUTE_DIRECTORY);
-}
 
 void replace(wchar_t *text, const int size,
              const wchar_t ch, const wchar_t after)
@@ -68,7 +60,7 @@ int lenFN(const csWString& filename, const UINT cmd)
   if( cmd == Cmd_ListWithPathTabular ) {
     size++; // separating '\t'
   }
-  if( isDirectory(filename.c_str()) ) {
+  if( csIsDirectory(filename.c_str()) ) {
     size++; // trailing  '\\'
   }
   size += 2; // "\r\n"
@@ -96,7 +88,7 @@ void catFN(wchar_t *text, int& pos,
   csStringNCpy(&text[pos], &filename[tagPos], len-tagPos);
   pos += len - tagPos;
 
-  if( isDirectory(filename.c_str()) ) {
+  if( csIsDirectory(filename.c_str()) ) {
     text[pos++] = L'\\';
   }
 

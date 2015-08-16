@@ -190,20 +190,23 @@ HRESULT csMenu::QueryContextMenu(HMENU hmenu, UINT indexMenu, UINT idCmdFirst,
     return MAKE_HRESULT(SEVERITY_SUCCESS, FACILITY_NULL, 0);
   }
 
+  UINT uPos = 0;
   UINT uCmdID = idCmdFirst;
 
   const DWORD flags = regReadFlags();
 
   HMENU submenu = CreatePopupMenu();
-  insertMenuItem(submenu, 0, uCmdID++, L"List");
-  insertMenuItem(submenu, 1, uCmdID++, L"List (path)");
-  insertMenuItem(submenu, 2, uCmdID++, L"List (path, tabular)");
-  insertSeparatorMenuItem(submenu, 3);
-  insertCheckableMenuItem(submenu, 4, uCmdID++, L"Batch processing",
+  insertMenuItem(submenu, uPos++, uCmdID++, L"List");
+  insertMenuItem(submenu, uPos++, uCmdID++, L"List (path)");
+  insertMenuItem(submenu, uPos++, uCmdID++, L"List (path, tabular)");
+  insertSeparatorMenuItem(submenu, uPos++);
+  insertCheckableMenuItem(submenu, uPos++, uCmdID++, L"Batch processing",
                           testFlags(flags, CMD_FLAG_BATCH));
-  insertCheckableMenuItem(submenu, 5, uCmdID++, L"Resolve UNC paths",
+  insertCheckableMenuItem(submenu, uPos++, uCmdID++, L"Parallel execution",
+                          testFlags(flags, CMD_FLAG_PARALLEL));
+  insertCheckableMenuItem(submenu, uPos++, uCmdID++, L"Resolve UNC paths",
                           testFlags(flags, CMD_FLAG_UNC));
-  insertCheckableMenuItem(submenu, 6, uCmdID++, L"UN*X path separators",
+  insertCheckableMenuItem(submenu, uPos++, uCmdID++, L"UN*X path separators",
                           testFlags(flags, CMD_FLAG_UNIX));
 
   insertSubMenuItem(hmenu, submenu, indexMenu, uCmdID++, L"CS::Menu", _menuBitmap);
