@@ -31,7 +31,7 @@
 
 #include "menu.h"
 
-#include <csCore/csStringLib.h>
+#include <csCore2/csStringLib.h>
 
 void insertMenuItem(HMENU menu,
                     const UINT pos, const UINT id, const wchar_t *text)

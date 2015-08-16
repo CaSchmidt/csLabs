@@ -31,12 +31,11 @@
 
 #include "command.h"
 
-#include <csCore/csAlloc.h>
 #include "clipboard.h"
 #include "reg.h"
 #include "util.hpp"
 
-bool executeCommand(const UINT cmd, const csStringList& files)
+bool executeCommand(const UINT cmd, const csWStringList& files)
 {
   const DWORD flags   = regReadFlags();
   const bool  isBatch = testFlags(flags, CMD_FLAG_BATCH);
@@ -47,27 +46,29 @@ bool executeCommand(const UINT cmd, const csStringList& files)
              cmd == Cmd_ListWithPath        ||
              cmd == Cmd_ListWithPathTabular ) {
     int size = 0;
-    for(int i = 0; i < files.count(); i++) {
+    for(csWStringList::const_iterator it = files.begin(); it != files.end(); it++) {
       wchar_t *uncName = 0;
-      if( isUnc  &&  (uncName = resolveUNC(files[i])) != 0 ) {
-        size += lenFN(csString(uncName, false), cmd);
+      if( isUnc  &&  (uncName = resolveUNC(it->c_str())) != 0 ) {
+        size += lenFN(csWString(uncName), cmd);
+        delete[] uncName;
       } else {
-        size += lenFN(files[i], cmd);
+        size += lenFN(*it, cmd);
       }
     }
 
-    wchar_t *text = (wchar_t*)csAlloc((size+1)*sizeof(wchar_t));
+    wchar_t *text = new wchar_t[size+1];
     if( text == 0 ) {
       return false;
     }
 
     int pos = 0;
-    for(int i = 0; i < files.count(); i++) {
+    for(csWStringList::const_iterator it = files.begin(); it != files.end(); it++) {
       wchar_t *uncName = 0;
-      if( isUnc  &&  (uncName = resolveUNC(files[i])) != 0 ) {
-        catFN(text, pos, csString(uncName, false), cmd);
+      if( isUnc  &&  (uncName = resolveUNC(it->c_str())) != 0 ) {
+        catFN(text, pos, csWString(uncName), cmd);
+        delete[] uncName;
       } else {
-        catFN(text, pos, files[i], cmd);
+        catFN(text, pos, *it, cmd);
       }
     }
     text[size] = L'\0';
@@ -77,7 +78,7 @@ bool executeCommand(const UINT cmd, const csStringList& files)
     }
 
     setClipboardText(text);
-    csFree(text);
+    delete[] text;
 
     return true;
 

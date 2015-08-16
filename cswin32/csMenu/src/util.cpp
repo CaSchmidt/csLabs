@@ -31,8 +31,7 @@
 
 #include <Windows.h>
 #include <winnetwk.h>
-#include <csCore/csAlloc.h>
-#include <csCore/csStringLib.h>
+#include <csCore2/csStringLib.h>
 
 #include "util.hpp"
 
@@ -57,7 +56,7 @@ void replace(wchar_t *text, const int size,
   }
 }
 
-int lenFN(const csString& filename, const UINT cmd)
+int lenFN(const csWString& filename, const UINT cmd)
 {
   int size = 0;
 
@@ -69,7 +68,7 @@ int lenFN(const csString& filename, const UINT cmd)
   if( cmd == Cmd_ListWithPathTabular ) {
     size++; // separating '\t'
   }
-  if( isDirectory(filename) ) {
+  if( isDirectory(filename.c_str()) ) {
     size++; // trailing  '\\'
   }
   size += 2; // "\r\n"
@@ -78,14 +77,14 @@ int lenFN(const csString& filename, const UINT cmd)
 }
 
 void catFN(wchar_t *text, int& pos,
-           const csString& filename, const UINT cmd)
+           const csWString& filename, const UINT cmd)
 {
   const int len    = filename.length();
   const int tag    = filename.lastIndexOf(L'\\');
   const int tagPos = tag < 0  ?  0 : tag+1;
 
   if( cmd != Cmd_List  &&  tagPos > 0 ) {
-    csStringNCpy(&text[pos], filename, tagPos);
+    csStringNCpy(&text[pos], filename.c_str(), tagPos);
     pos += tagPos;
   }
 
@@ -97,7 +96,7 @@ void catFN(wchar_t *text, int& pos,
   csStringNCpy(&text[pos], &filename[tagPos], len-tagPos);
   pos += len - tagPos;
 
-  if( isDirectory(filename) ) {
+  if( isDirectory(filename.c_str()) ) {
     text[pos++] = L'\\';
   }
 
@@ -117,7 +116,7 @@ wchar_t *resolveUNC(const wchar_t *filename)
   }
 
   uncSize += sizeof(wchar_t);
-  void *uncData = csAlloc(uncSize);
+  uint8_t *uncData = new uint8_t[uncSize];
   if( uncData == 0 ) {
     return 0;
   }
@@ -125,27 +124,27 @@ wchar_t *resolveUNC(const wchar_t *filename)
   res = WNetGetUniversalNameW(filename, UNIVERSAL_NAME_INFO_LEVEL,
                               uncData, &uncSize);
   if( res != NO_ERROR ) {
-    csFree(uncData);
+    delete[] uncData;
     return 0;
   }
 
   UNIVERSAL_NAME_INFOW *uniw = (UNIVERSAL_NAME_INFOW*)uncData;
   const size_t len = csStringLen(uniw->lpUniversalName);
   if( len < 1 ) {
-    csFree(uncData);
+    delete[] uncData;
     return 0;
   }
 
-  wchar_t *uncName = (wchar_t*)csAlloc((len+1)*sizeof(wchar_t));
+  wchar_t *uncName = new wchar_t[len+1];
   if( uncName == 0 ) {
-    csFree(uncData);
+    delete[] uncData;
     return 0;
   }
 
   csStringNCpy(uncName, uniw->lpUniversalName, len);
   uncName[len] = L'\0';
 
-  csFree(uncData);
+  delete[] uncData;
 
   return uncName;
 }

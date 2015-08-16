@@ -35,7 +35,7 @@
 #include <Windows.h>
 #include <ShObjIdl.h>
 
-#include <csCore/csStringList.h>
+#include <csCore2/csStringList.h>
 
 class csMenu : public IShellExtInit, public IContextMenu {
 public:
@@ -62,7 +62,7 @@ public:
 
 private:
   LONG m_lRefCount;
-  csStringList _files;
+  csWStringList _files;
   HBITMAP _menuBitmap;
 };
 

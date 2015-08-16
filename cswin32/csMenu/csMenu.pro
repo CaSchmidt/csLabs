@@ -17,7 +17,7 @@ QMAKE_CFLAGS_RELEASE += /MT
 QMAKE_CXXFLAGS_DEBUG   += /MTd
 QMAKE_CXXFLAGS_RELEASE += /MT
 
-DESTDIR = ../../bin
+DLLDESTDIR = ../../bin
 
 
 INCLUDEPATH += ./include
@@ -28,7 +28,7 @@ DEPENDPATH += ./include
 DEPENDPATH += ./resource
 DEPENDPATH += ../../cslibs/include
 
-LIBS += -L../../lib -lcsCore$${TARGET_POSTFIX}
+LIBS += -L../../lib -lcsCore2$${TARGET_POSTFIX}
 LIBS += advapi32.lib gdi32.lib mpr.lib ole32.lib shell32.lib shlwapi.lib user32.lib
 
 

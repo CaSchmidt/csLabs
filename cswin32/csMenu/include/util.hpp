@@ -33,7 +33,7 @@
 #define __UTIL_HPP__
 
 #include <Windows.h>
-#include <csCore/csString.h>
+#include <csCore2/csString.h>
 
 bool isDirectory(const wchar_t *filename);
 
@@ -45,10 +45,10 @@ inline bool testFlags(const DWORD flags, const DWORD mask)
   return (flags & mask) == mask;
 }
 
-int lenFN(const csString& filename, const UINT cmd);
+int lenFN(const csWString& filename, const UINT cmd);
 
 void catFN(wchar_t *text, int& pos,
-           const csString& filename, const UINT cmd);
+           const csWString& filename, const UINT cmd);
 
 wchar_t *resolveUNC(const wchar_t *filename);
 

@@ -31,7 +31,7 @@
 
 #include <Windows.h>
 
-#include <csCore/csStringLib.h>
+#include <csCore2/csStringLib.h>
 
 #include "clipboard.h"
 

@@ -9,6 +9,12 @@ TEMPLATE = lib
 include(../../global.pri)
 TARGET = csCore2$${TARGET_POSTFIX}
 
+QMAKE_CFLAGS_DEBUG   += /MTd
+QMAKE_CFLAGS_RELEASE += /MT
+
+QMAKE_CXXFLAGS_DEBUG   += /MTd
+QMAKE_CXXFLAGS_RELEASE += /MT
+
 DESTDIR    = ../../lib
 DLLDESTDIR = ../../bin
 

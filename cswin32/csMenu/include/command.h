@@ -32,7 +32,9 @@
 #ifndef __COMMAND_H__
 #define __COMMAND_H__
 
-#include <csCore/csStringList.h>
+#include <Windows.h>
+
+#include <csCore2/csStringList.h>
 
 #define CMD_FLAG_BATCH  1
 #define CMD_FLAG_UNC    2
@@ -49,6 +51,6 @@ enum Commands {
   Num_Commands
 };
 
-bool executeCommand(const UINT cmd, const csStringList& files);
+bool executeCommand(const UINT cmd, const csWStringList& files);
 
 #endif // __COMMAND_H__

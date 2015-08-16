@@ -30,8 +30,8 @@
 *****************************************************************************/
 
 #include <OleCtl.h>
-#include <csCore/csString.h>
-#include <csCore/csStringLib.h>
+#include <csCore2/csString.h>
+#include <csCore2/csStringLib.h>
 
 #include "reg.h"
 
@@ -62,7 +62,7 @@ HRESULT registerWithFiles(const wchar_t *clsId)
   HKEY key;
   HRESULT hr;
 
-  csString keyPath(L"*\\shellex\\ContextMenuHandlers\\");
+  csWString keyPath(L"*\\shellex\\ContextMenuHandlers\\");
   keyPath += clsId;
   hr = HRESULT_FROM_WIN32(RegCreateKeyExW(HKEY_CLASSES_ROOT, keyPath.c_str(),
                                           0, NULL, REG_OPTION_NON_VOLATILE,
@@ -87,7 +87,7 @@ HRESULT registerWithDirectories(const wchar_t *clsId)
   HKEY key;
   HRESULT hr;
 
-  csString keyPath(L"Directory\\shellex\\ContextMenuHandlers\\");
+  csWString keyPath(L"Directory\\shellex\\ContextMenuHandlers\\");
   keyPath += clsId;
   hr = HRESULT_FROM_WIN32(RegCreateKeyExW(HKEY_CLASSES_ROOT, keyPath.c_str(),
                                           0, NULL, REG_OPTION_NON_VOLATILE,
@@ -113,7 +113,7 @@ HRESULT registerWithCLSID(const wchar_t *clsId,
   HKEY key;
   HRESULT hr;
 
-  csString keyPath(L"CLSID\\");
+  csWString keyPath(L"CLSID\\");
   keyPath += clsId;
   hr = HRESULT_FROM_WIN32(RegCreateKeyExW(HKEY_CLASSES_ROOT, keyPath.c_str(),
                                           0, NULL, REG_OPTION_NON_VOLATILE,

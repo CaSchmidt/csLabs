@@ -31,8 +31,8 @@
 
 #include <Windows.h>
 #include <OleCtl.h>
-#include <csCore/csString.h>
-#include <csCore/csStringLib.h>
+#include <csCore2/csString.h>
+#include <csCore2/csStringLib.h>
 
 #include "csMenu.h"
 #include "csMenuFactory.h"
@@ -112,7 +112,7 @@ HRESULT __stdcall DllUnregisterServer(void)
   wchar_t clsId[64];
   StringFromGUID2(GUID_csMenu, clsId, 64);
 
-  csString keyPath;
+  csWString keyPath;
 
   // (1) All files ///////////////////////////////////////////////////////////
 

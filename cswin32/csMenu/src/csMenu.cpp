@@ -31,8 +31,6 @@
 
 #include <Shlwapi.h>
 
-#include <csCore/csAlloc.h>
-
 #include "csMenu.h"
 
 #include "command.h"
@@ -141,8 +139,8 @@ HRESULT csMenu::Initialize(LPCITEMIDLIST /*pidlFolder*/, IDataObject *pdtobj,
 
     if( reqFN+1 > sizeFN ) {
       sizeFN = 0;
-      csFree(filename);
-      filename = (WCHAR*)csAlloc((reqFN+1)*sizeof(WCHAR));
+      delete[] filename;
+      filename = new wchar_t[reqFN+1];
       if( filename == 0 ) {
         continue;
       }
@@ -153,15 +151,17 @@ HRESULT csMenu::Initialize(LPCITEMIDLIST /*pidlFolder*/, IDataObject *pdtobj,
       continue;
     }
 
-    _files += filename;
+    _files.push_back(filename);
   }
 
-  csFree(filename);
+  delete[] filename;
 
   GlobalUnlock(stg.hGlobal);
   ReleaseStgMedium(&stg);
 
-  return _files.count() > 0  ?  S_OK : E_INVALIDARG;
+  _files.sort();
+
+  return _files.size() > 0  ?  S_OK : E_INVALIDARG;
 }
 
 ////// IContextMenu //////////////////////////////////////////////////////////

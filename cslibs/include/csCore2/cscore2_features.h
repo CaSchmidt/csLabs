@@ -32,7 +32,7 @@
 #ifndef __CSCORE2_FEATURES_H__
 #define __CSCORE2_FEATURES_H__
 
-#define HAVE_CHAR
+#undef  HAVE_CHAR
 #define HAVE_WCHAR_T
 
 #endif // __CSCORE2_FEATURES_H__
