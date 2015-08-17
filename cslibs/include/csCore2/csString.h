@@ -63,6 +63,11 @@ public:
 
   int lastIndexOf(const CharT ch, const int from = -1, const bool ignoreCase = false) const;
 
+  csBasicString<CharT> mid(const int pos, const int n = -1) const;
+
+  csBasicString<CharT>& replace(const wchar_t before, const wchar_t after,
+                                const bool ignoreCase = false);
+
   bool startsWith(const CharT ch, const bool ignoreCase = false) const;
   bool startsWith(const CharT *s, const bool ignoreCase = false) const;
   bool startsWith(const csBasicString<CharT>& other, const bool ignoreCase = false) const;

@@ -53,3 +53,22 @@ CS_CORE2_EXPORT bool csIsFile(const wchar_t *name)
       FILE_ATTRIBUTE_SPARSE_FILE | FILE_ATTRIBUTE_VIRTUAL;
   return (attr & nofilemask) == 0;
 }
+
+CS_CORE2_EXPORT csWStringList csListDirectory(const wchar_t *path)
+{
+  csWStringList files;
+
+  WIN32_FIND_DATAW data;
+  HANDLE handle;
+  if( (handle = FindFirstFileW(path, &data)) != INVALID_HANDLE_VALUE ) {
+    files.push_back(data.cFileName);
+
+    while( FindNextFileW(handle, &data) != 0 ) {
+      files.push_back(data.cFileName);
+    }
+
+    FindClose(handle);
+  }
+
+  return files;
+}

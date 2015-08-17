@@ -31,8 +31,9 @@
 
 #include "csCore2/csString.h"
 
-#include "csCore2/csChar.h"
 #include "csCore2/csAlphaNum.h"
+#include "csCore2/csChar.h"
+#include "csCore2/csUtil.h"
 
 ////// Private ///////////////////////////////////////////////////////////////
 
@@ -197,7 +198,7 @@ int csBasicString<CharT>::indexOf(const CharT ch, const int from,
       ? (int)size()+from
       : from;
 
-  if( empty()  ||  indexFrom < 0  ||  indexFrom >= (int)size() ) {
+  if( empty()  ||  indexFrom < 0  ||  (size_t)indexFrom >= size() ) {
     return -1;
   }
 
@@ -227,7 +228,7 @@ int csBasicString<CharT>::lastIndexOf(const CharT ch, const int from,
       ? (int)size()+from
       : from;
 
-  if( empty()  ||  indexFrom < 0  ||  indexFrom >= (int)size() ) {
+  if( empty()  ||  indexFrom < 0  ||  (size_t)indexFrom >= size() ) {
     return -1;
   }
 
@@ -249,6 +250,46 @@ int csBasicString<CharT>::lastIndexOf(const CharT ch, const int from,
   }
 
   return -1;
+}
+
+template<typename CharT>
+csBasicString<CharT> csBasicString<CharT>::mid(const int pos, const int n) const
+{
+  if( empty()  ||  pos < 0  ||  (size_t)pos >= size() ) {
+    csBasicString<CharT>();
+  }
+
+  const size_t len = n < 1
+      ? size() - (size_t)pos
+      : csMin((size_t)n, size() - (size_t)pos);
+
+  csBasicString<CharT> res(len+1);
+  for(size_t i = 0; i < len; i++) {
+    res[i] = operator[]((size_t)pos+i);
+  }
+  return res;
+}
+
+template<typename CharT>
+csBasicString<CharT>& csBasicString<CharT>::replace(const wchar_t before,
+                                                    const wchar_t after,
+                                                    const bool ignoreCase)
+{
+  if( ignoreCase ) {
+    const wchar_t needle = csToLower(before);
+    for(size_t i = 0; i < size(); i++) {
+      if( csToLower(operator[](i)) == needle ) {
+        operator[](i) = after;
+      }
+    }
+  } else {
+    for(size_t i = 0; i < size(); i++) {
+      if( operator[](i) == before ) {
+        operator[](i) = after;
+      }
+    }
+  }
+  return *this;
 }
 
 template<typename CharT>
