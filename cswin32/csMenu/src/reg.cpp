@@ -30,12 +30,37 @@
 *****************************************************************************/
 
 #include <OleCtl.h>
-#include <csCore2/csString.h>
+#include <csCore2/csFile.h>
 #include <csCore2/csStringLib.h>
 
 #include "reg.h"
 
 namespace priv_reg {
+
+  csWString readSzValue(HKEY key, const wchar_t *name)
+  {
+    DWORD dataSize = 0;
+    if( RegGetValueW(key, NULL, name, RRF_RT_REG_SZ, NULL, NULL, &dataSize)
+        != ERROR_SUCCESS ) {
+      return csWString();
+    }
+
+    uint8_t *data = new uint8_t[dataSize];
+    if( data == 0 ) {
+      return csWString();
+    }
+
+    if( RegGetValueW(key, NULL, name, RRF_RT_REG_SZ, NULL, data, &dataSize)
+        != ERROR_SUCCESS ) {
+      delete[] data;
+      return csWString();
+    }
+
+    csWString res((const wchar_t *)data);
+    delete[] data;
+
+    return res;
+  }
 
   HRESULT setValue(HKEY key, const wchar_t *name, const DWORD value)
   {
@@ -198,4 +223,43 @@ void regWriteFlags(const DWORD flags)
 
   hr = priv_reg::setValue(key, L"Flags", flags);
   RegCloseKey(key);
+}
+
+csWString regReadScriptsPath()
+{
+  HKEY    key;
+  HRESULT hr;
+
+  hr = HRESULT_FROM_WIN32(RegCreateKeyExW(HKEY_CURRENT_USER, L"Software\\csLabs\\csMenu",
+                                          0, NULL, REG_OPTION_NON_VOLATILE,
+                                          KEY_READ, NULL, &key, NULL));
+  if( FAILED(hr) ) {
+    return csWString();
+  }
+
+  const csWString scriptsPath = priv_reg::readSzValue(key, L"Scripts");
+  RegCloseKey(key);
+
+  return scriptsPath;
+}
+
+csWStringList regReadScripts()
+{
+  const csWString scriptsPath = regReadScriptsPath();
+  if( scriptsPath.empty() ) {
+    return csWStringList();
+  }
+
+  csWStringList scripts = csListDirectory((scriptsPath + L"\\*").c_str());
+  for(csWStringList::iterator it = scripts.begin(); it != scripts.end(); ) {
+    if( csIsFile((scriptsPath + L'\\' + *it).c_str()) ) {
+      it++;
+    } else {
+      it = scripts.erase(it);
+    }
+  }
+
+  scripts.sort();
+
+  return scripts;
 }

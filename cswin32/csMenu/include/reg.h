@@ -34,6 +34,8 @@
 
 #include <Windows.h>
 
+#include <csCore2/csStringList.h>
+
 HRESULT registerWithFiles(const wchar_t *clsId);
 HRESULT registerWithDirectories(const wchar_t *clsId);
 HRESULT registerWithCLSID(const wchar_t *clsId,
@@ -41,5 +43,8 @@ HRESULT registerWithCLSID(const wchar_t *clsId,
 
 DWORD regReadFlags();
 void  regWriteFlags(const DWORD flags);
+
+csWString regReadScriptsPath();
+csWStringList regReadScripts();
 
 #endif // __REG_H__

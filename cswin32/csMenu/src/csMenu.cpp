@@ -211,5 +211,13 @@ HRESULT csMenu::QueryContextMenu(HMENU hmenu, UINT indexMenu, UINT idCmdFirst,
 
   insertSubMenuItem(hmenu, submenu, indexMenu, uCmdID++, L"CS::Menu", _menuBitmap);
 
+  const csWStringList scripts = regReadScripts();
+  if( !scripts.empty() ) {
+    insertSeparatorMenuItem(submenu, uPos++);
+    for(csWStringList::const_iterator it = scripts.begin(); it != scripts.end(); it++) {
+      insertMenuItem(submenu, uPos++, uCmdID++, it->c_str());
+    }
+  }
+
   return MAKE_HRESULT(SEVERITY_SUCCESS, FACILITY_NULL, uCmdID-idCmdFirst);
 }
