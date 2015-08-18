@@ -96,6 +96,51 @@ void catFN(wchar_t *text, int& pos,
   text[pos++] = L'\n';
 }
 
+csWString joinFileNames(const csWStringList& files)
+{
+  size_t size = 0;
+  for(csWStringList::const_iterator it = files.begin(); it != files.end(); it++) {
+    if( it->size() > 0 ) {
+      size += 3 + it->size(); // '"' + <filename> + '"' + ' '
+    }
+  }
+
+  if( size < 1 ) {
+    return csWString();
+  }
+
+  wchar_t *data = new wchar_t[size];
+  if( data == 0 ) {
+    return csWString();
+  }
+
+  size_t pos(0);
+  for(csWStringList::const_iterator it = files.begin(); it != files.end(); it++) {
+    if( it->size() > 0 ) {
+      data[pos++] = L'"';
+      csStringNCpy(&data[pos], it->c_str(), it->size());
+      pos += it->size();
+      data[pos++] = L'"';
+      data[pos++] = L' ';
+    }
+  }
+  data[size-1] = L'\0'; // Overwrite last ' ' with '\0'
+
+  csWString joined(data);
+  delete[] data;
+
+  return joined;
+}
+
+csWString quoteFileName(const csWString& filename)
+{
+  if( filename.empty() ) {
+    return csWString();
+  }
+
+  return csWString(L"\""+filename+L"\"");
+}
+
 wchar_t *resolveUNC(const wchar_t *filename)
 {
   UNIVERSAL_NAME_INFOW uniwTemp;

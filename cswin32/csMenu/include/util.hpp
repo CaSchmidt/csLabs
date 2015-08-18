@@ -33,7 +33,7 @@
 #define __UTIL_HPP__
 
 #include <Windows.h>
-#include <csCore2/csString.h>
+#include <csCore2/csStringList.h>
 
 void replace(wchar_t *text, const int size,
              const wchar_t ch, const wchar_t after);
@@ -47,6 +47,10 @@ int lenFN(const csWString& filename, const UINT cmd);
 
 void catFN(wchar_t *text, int& pos,
            const csWString& filename, const UINT cmd);
+
+csWString joinFileNames(const csWStringList& files);
+
+csWString quoteFileName(const csWString& filename);
 
 wchar_t *resolveUNC(const wchar_t *filename);
 

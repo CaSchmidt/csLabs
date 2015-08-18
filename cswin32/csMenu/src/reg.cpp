@@ -35,6 +35,12 @@
 
 #include "reg.h"
 
+////// Macros ////////////////////////////////////////////////////////////////
+
+#define KEY_HKCU_CSMENU  L"Software\\csLabs\\csMenu"
+
+////// Private ///////////////////////////////////////////////////////////////
+
 namespace priv_reg {
 
   csWString readSzValue(HKEY key, const wchar_t *name)
@@ -81,6 +87,8 @@ namespace priv_reg {
   }
 
 }; // namespace priv_reg
+
+////// Public ////////////////////////////////////////////////////////////////
 
 HRESULT registerWithFiles(const wchar_t *clsId)
 {
@@ -189,7 +197,7 @@ DWORD regReadFlags()
   HKEY    key;
   HRESULT hr;
 
-  hr = HRESULT_FROM_WIN32(RegCreateKeyExW(HKEY_CURRENT_USER, L"Software\\csLabs\\csMenu",
+  hr = HRESULT_FROM_WIN32(RegCreateKeyExW(HKEY_CURRENT_USER, KEY_HKCU_CSMENU,
                                           0, NULL, REG_OPTION_NON_VOLATILE,
                                           KEY_READ, NULL, &key, NULL));
   if( FAILED(hr) ) {
@@ -214,7 +222,7 @@ void regWriteFlags(const DWORD flags)
   HKEY    key;
   HRESULT hr;
 
-  hr = HRESULT_FROM_WIN32(RegCreateKeyExW(HKEY_CURRENT_USER, L"Software\\csLabs\\csMenu",
+  hr = HRESULT_FROM_WIN32(RegCreateKeyExW(HKEY_CURRENT_USER, KEY_HKCU_CSMENU,
                                           0, NULL, REG_OPTION_NON_VOLATILE,
                                           KEY_WRITE, NULL, &key, NULL));
   if( FAILED(hr) ) {
@@ -230,7 +238,7 @@ csWString regReadScriptsPath()
   HKEY    key;
   HRESULT hr;
 
-  hr = HRESULT_FROM_WIN32(RegCreateKeyExW(HKEY_CURRENT_USER, L"Software\\csLabs\\csMenu",
+  hr = HRESULT_FROM_WIN32(RegCreateKeyExW(HKEY_CURRENT_USER, KEY_HKCU_CSMENU,
                                           0, NULL, REG_OPTION_NON_VOLATILE,
                                           KEY_READ, NULL, &key, NULL));
   if( FAILED(hr) ) {

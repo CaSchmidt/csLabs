@@ -43,6 +43,9 @@ bool executeCommand(const UINT cmd, const csWStringList& files)
   const bool  isUnc      = testFlags(flags, CMD_FLAG_UNC)  &&  cmd != Cmd_List;
   const bool  isUnix     = testFlags(flags, CMD_FLAG_UNIX);
 
+  const csWString  scriptPath = regReadScriptsPath();
+  const csWStringList scripts = regReadScripts();
+
   if(        cmd == Cmd_List                ||
              cmd == Cmd_ListWithPath        ||
              cmd == Cmd_ListWithPathTabular ) {
@@ -98,6 +101,34 @@ bool executeCommand(const UINT cmd, const csWStringList& files)
   } else if( cmd == Cmd_CheckUnixPathSeparators ) {
     regWriteFlags(flags ^ CMD_FLAG_UNIX);
     return true;
+
+  } else if( Cmd_ExecuteScripts <= cmd  &&  cmd < Cmd_ExecuteScripts+scripts.size() ) {
+    csWString script(scriptPath + L"\\");
+    UINT i = 0;
+    for(csWStringList::const_iterator it = scripts.begin(); it != scripts.end(); it++) {
+      if( i == cmd-Cmd_ExecuteScripts ) {
+        script += *it;
+        break;
+      }
+      i++;
+    }
+
+    if( isParallel ) {
+
+    } else { // DO NOT use parallelizer
+      if( isBatch ) {
+        const csWString args = joinFileNames(files);
+        ShellExecuteW(NULL, L"open", script.c_str(), args.c_str(), NULL, SW_SHOWNORMAL);
+      } else { // NO batch processing
+        for(csWStringList::const_iterator it = files.begin();
+            it != files.end(); it++) {
+          ShellExecuteW(NULL, L"open", script.c_str(), quoteFileName(*it).c_str(),
+                        NULL, SW_SHOWNORMAL);
+        }
+      }
+    }
+    return true;
+
   }
 
   return false;

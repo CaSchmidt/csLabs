@@ -60,7 +60,7 @@ bool setClipboardText(const wchar_t *text)
 
   wchar_t *dest = (wchar_t*)GlobalLock(hGlobal);
   CopyMemory(dest, text, len*sizeof(wchar_t));
-  dest[len] = '\0';
+  dest[len] = L'\0';
   GlobalUnlock(hGlobal);
 
   SetClipboardData(CF_UNICODETEXT, hGlobal);

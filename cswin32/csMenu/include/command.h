@@ -50,7 +50,7 @@ enum Commands {
   Cmd_CheckResolveUncPaths,
   Cmd_CheckUnixPathSeparators,
   Cmd_csMenu,
-  Cmd_Scripts
+  Cmd_ExecuteScripts
 };
 
 bool executeCommand(const UINT cmd, const csWStringList& files);
