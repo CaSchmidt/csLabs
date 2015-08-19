@@ -65,7 +65,9 @@ public:
 
   csBasicString<CharT> mid(const int pos, const int n = -1) const;
 
-  csBasicString<CharT>& replace(const wchar_t before, const wchar_t after,
+  static csBasicString<CharT> number(const uint32_t num, const int base = 10);
+
+  csBasicString<CharT>& replace(const CharT before, const CharT after,
                                 const bool ignoreCase = false);
 
   bool startsWith(const CharT ch, const bool ignoreCase = false) const;

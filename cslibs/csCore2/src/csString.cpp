@@ -271,12 +271,26 @@ csBasicString<CharT> csBasicString<CharT>::mid(const int pos, const int n) const
 }
 
 template<typename CharT>
-csBasicString<CharT>& csBasicString<CharT>::replace(const wchar_t before,
-                                                    const wchar_t after,
+csBasicString<CharT> csBasicString<CharT>::number(const uint32_t num,
+                                                  const int base)
+{
+  const size_t maxsize = 33;
+  CharT s[maxsize];
+  CharT *p = csToStr(s, maxsize, num, base);
+  if( p == 0 ) {
+    return csBasicString<CharT>();
+  }
+  csBasicString<CharT> res(s);
+  return res;
+}
+
+template<typename CharT>
+csBasicString<CharT>& csBasicString<CharT>::replace(const CharT before,
+                                                    const CharT after,
                                                     const bool ignoreCase)
 {
   if( ignoreCase ) {
-    const wchar_t needle = csToLower(before);
+    const CharT needle = csToLower(before);
     for(size_t i = 0; i < size(); i++) {
       if( csToLower(operator[](i)) == needle ) {
         operator[](i) = after;

@@ -38,6 +38,17 @@
 namespace priv_alphanum {
 
   template<typename CharT>
+  inline CharT toChar(const uint32_t digit)
+  {
+    if(         0 <= digit  &&  digit <=  9 ) {
+      return CharT('0')+(CharT)digit;
+    } else if( 10 <= digit  &&  digit <  36 ) {
+      return CharT('a')+(CharT)(digit-10);
+    }
+    return CharT(0);
+  }
+
+  template<typename CharT>
   inline int toDigit(const CharT ch, const int base)
   {
     int dig = -1;
@@ -58,7 +69,41 @@ namespace priv_alphanum {
 #define DIG   ((uint32_t)dig)
 
   template<typename CharT>
-  inline uint32_t toUInt(const CharT *s, bool *ok, const int base, const uint32_t max)
+  inline CharT *toStr(CharT *s, const size_t maxsize, const uint32_t num,
+                      const int base)
+  {
+    if( base < 2  ||  base > 36 ) {
+      return 0;
+    }
+
+    uint32_t compnum = num;
+    size_t   reqsize = 0;
+    do {
+      reqsize++;
+      compnum /= BASE;
+    } while( compnum != 0 );
+
+    if( reqsize+1 > maxsize ) {
+      return 0;
+    }
+
+    s[reqsize] = CharT(0);
+
+    compnum = num;
+    size_t i = 0;
+    do {
+      s[reqsize-i-1] = toChar<CharT>(compnum % BASE);
+
+      i++;
+      compnum /= BASE;
+    } while( compnum != 0 );
+
+    return s;
+  }
+
+  template<typename CharT>
+  inline uint32_t toUInt(const CharT *s, bool *ok, const int base,
+                         const uint32_t max)
   {
     if( ok != 0 ) {
       *ok = false;
@@ -103,6 +148,12 @@ namespace priv_alphanum {
 ////// Implementation ////////////////////////////////////////////////////////
 
 template<typename CharT>
+CharT *csToStr(CharT *s, const size_t maxsize, const uint32_t num, const int base)
+{
+  return priv_alphanum::toStr(s, maxsize, num, base);
+}
+
+template<typename CharT>
 uint32_t csToUInt(const CharT *s, bool *ok, const int base)
 {
   return priv_alphanum::toUInt(s, ok, base, csLimits<uint32_t>::Max);
@@ -111,9 +162,11 @@ uint32_t csToUInt(const CharT *s, bool *ok, const int base)
 ////// Explicit instantiation ////////////////////////////////////////////////
 
 #ifdef HAVE_CHAR
+template CS_CORE2_EXPORT char *csToStr<char>(char *s, const size_t maxsize, const uint32_t num, const int base);
 template CS_CORE2_EXPORT uint32_t csToUInt<char>(const char *s, bool *ok, const int base);
 #endif
 
 #ifdef HAVE_WCHAR_T
+template CS_CORE2_EXPORT wchar_t *csToStr<wchar_t>(wchar_t *s, const size_t maxsize, const uint32_t num, const int base);
 template CS_CORE2_EXPORT uint32_t csToUInt<wchar_t>(const wchar_t *s, bool *ok, const int base);
 #endif

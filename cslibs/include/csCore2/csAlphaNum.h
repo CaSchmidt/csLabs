@@ -35,13 +35,18 @@
 #include <csCore2/cscore2_config.h>
 
 template<typename CharT>
+CharT *csToStr(CharT *s, const size_t maxsize, const uint32_t num, const int base = 10);
+
+template<typename CharT>
 uint32_t csToUInt(const CharT *s, bool *ok = 0, const int base = 10);
 
 #ifdef HAVE_CHAR
+extern template CS_CORE2_EXPORT char *csToStr<char>(char *s, const size_t maxsize, const uint32_t num, const int base);
 extern template CS_CORE2_EXPORT uint32_t csToUInt<char>(const char *s, bool *ok, const int base);
 #endif
 
 #ifdef HAVE_WCHAR_T
+extern template CS_CORE2_EXPORT wchar_t *csToStr<wchar_t>(wchar_t *s, const size_t maxsize, const uint32_t num, const int base);
 extern template CS_CORE2_EXPORT uint32_t csToUInt<wchar_t>(const wchar_t *s, bool *ok, const int base);
 #endif
 
