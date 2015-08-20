@@ -27,11 +27,6 @@ VOID CALLBACK ThreadPoolWorker(PTP_CALLBACK_INSTANCE /*Instance*/,
     delete[] filename;
   }
 
-  /*
-  MessageBoxW(NULL, filenameRaw, L"Info", MB_ICONINFORMATION | MB_OK);
-  Sleep(id*1000);
-  */
-
   SendMessageW(g_hProgWnd, PBM_STEPIT, 0, 0);
   InterlockedDecrement(&g_cntFilesToGo);
   SendMessageW(g_hMainWnd, CS_WM_FILEDONE, 0, 0);

@@ -22,14 +22,6 @@ HWND g_hProgWnd = NULL;
 LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT Msg,
                                 WPARAM wParam, LPARAM lParam)
 {
-#ifdef HAVE_PAINT
-  COLORREF color = RGB(255, 0, 0);
-  HBRUSH brush;
-  HDC dc;
-  PAINTSTRUCT ps;
-  RECT rect;
-#endif
-
   switch( Msg ) {
   case CS_WM_FILEDONE:
     if( g_cntFiles < (LONG)g_numFiles ) {
@@ -57,34 +49,6 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT Msg,
       SubmitThreadpoolWork(g_work);
     }
     return 0;
-
-#ifdef HAVE_PAINT
-  case WM_PAINT:
-    GetClientRect(hWnd, &rect);
-
-    dc = BeginPaint(hWnd, &ps);
-
-    brush = CreateSolidBrush(color);
-    FillRect(dc, &rect, brush);
-    DeleteObject(brush);
-
-    /*
-    MoveToEx(dc, rect.left, rect.top+1, NULL); // V
-    LineTo(dc,   rect.left, rect.bottom-1-1);
-
-    MoveToEx(dc, rect.right-1, rect.top+1, NULL); // V
-    LineTo(dc,   rect.right-1, rect.bottom-1-1);
-
-    MoveToEx(dc, rect.left+1,    rect.top, NULL); // H
-    LineTo(dc,   rect.right-1-1, rect.top);
-
-    MoveToEx(dc, rect.left+1,    rect.bottom-1, NULL); // H
-    LineTo(dc,   rect.right-1-1, rect.bottom-1);
-    */
-
-    EndPaint(hWnd, &ps);
-    return 0;
-#endif
 
   default:
     return DefWindowProcW(hWnd, Msg, wParam, lParam);
@@ -154,7 +118,6 @@ bool initGui(HINSTANCE hInstance)
   }
 
   ShowWindow(g_hMainWnd, SW_SHOWNORMAL);
-  // UpdateWindow(g_hMainWnd); // Send WM_PAINT
 
   SendMessageW(g_hProgWnd, PBM_SETRANGE32, 0, (LPARAM)g_numFiles);
   SendMessageW(g_hProgWnd, PBM_SETSTEP, (WPARAM)1, 0);

@@ -77,41 +77,6 @@ bool initEnv()
     return false;
   }
 
-#if 0
-  // (3) Processor Information ///////////////////////////////////////////////
-
-  DWORD slpiSize = 0;
-  SYSTEM_LOGICAL_PROCESSOR_INFORMATION *slpi = NULL;
-  if( GetLogicalProcessorInformation(slpi, &slpiSize) == FALSE  &&
-      GetLastError() != ERROR_INSUFFICIENT_BUFFER ) {
-    MessageBoxW(NULL, L"GetLogicalProcessorInformation(NULL,0)", L"Error",
-                MB_ICONERROR | MB_OK);
-    return false;
-  }
-
-  slpi = (SYSTEM_LOGICAL_PROCESSOR_INFORMATION*)csAlloc(slpiSize);
-  if( slpi == NULL ) {
-    MessageBoxW(NULL, L"csMalloc()", L"Error",
-                MB_ICONERROR | MB_OK);
-    return false;
-  }
-
-  if( GetLogicalProcessorInformation(slpi, &slpiSize) == FALSE ) {
-    csFree(slpi);
-    MessageBoxW(NULL, L"GetLogicalProcessorInformation()", L"Error",
-                MB_ICONERROR | MB_OK);
-    return false;
-  }
-
-  const int numProcessors = slpiSize / sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION);
-  for(int i = 0; i < numProcessors; i++) {
-    printf("mask=0x%08X\n", slpi[i].ProcessorMask);
-    printf("node=%u\n", slpi[i].NumaNode.NodeNumber);
-    fflush(stdout);
-  }
-  csFree(slpi);
-#endif
-
   return true;
 }
 
