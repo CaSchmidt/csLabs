@@ -53,6 +53,8 @@ public:
   csBasicStringList<CharT>& operator=(const std::list<csBasicString<CharT> >& other);
 
   void push_back(const CharT *data);
+
+  void push_front(const CharT *data);
 };
 
 #ifdef HAVE_CHAR

@@ -78,6 +78,12 @@ void csBasicStringList<CharT>::push_back(const CharT *data)
   std::list<csBasicString<CharT> >::push_back(csBasicString<CharT>(data));
 }
 
+template<typename CharT>
+void csBasicStringList<CharT>::push_front(const CharT *data)
+{
+  std::list<csBasicString<CharT> >::push_front(csBasicString<CharT>(data));
+}
+
 ////// Explicit instantiation ////////////////////////////////////////////////
 
 #ifdef HAVE_CHAR
