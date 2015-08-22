@@ -73,9 +73,21 @@ csBasicStringList<CharT>& csBasicStringList<CharT>::operator=(const std::list<cs
 }
 
 template<typename CharT>
+void csBasicStringList<CharT>::push_back(const csBasicString<CharT>& s)
+{
+  std::list<csBasicString<CharT> >::push_back(s);
+}
+
+template<typename CharT>
 void csBasicStringList<CharT>::push_back(const CharT *data)
 {
   std::list<csBasicString<CharT> >::push_back(csBasicString<CharT>(data));
+}
+
+template<typename CharT>
+void csBasicStringList<CharT>::push_front(const csBasicString<CharT>& s)
+{
+  std::list<csBasicString<CharT> >::push_front(s);
 }
 
 template<typename CharT>

@@ -11,12 +11,6 @@ TARGET = csMenu$${TARGET_POSTFIX}
 
 QT       -= core gui widgets
 
-QMAKE_CFLAGS_DEBUG   += /MTd
-QMAKE_CFLAGS_RELEASE += /MT
-
-QMAKE_CXXFLAGS_DEBUG   += /MTd
-QMAKE_CXXFLAGS_RELEASE += /MT
-
 DLLDESTDIR = ../../bin
 
 

@@ -233,6 +233,53 @@ void regWriteFlags(const DWORD flags)
   RegCloseKey(key);
 }
 
+csWString regReadParallel()
+{
+  HKEY    key;
+  HRESULT hr;
+
+  hr = HRESULT_FROM_WIN32(RegCreateKeyExW(HKEY_CURRENT_USER, KEY_HKCU_CSMENU,
+                                          0, NULL, REG_OPTION_NON_VOLATILE,
+                                          KEY_READ, NULL, &key, NULL));
+  if( FAILED(hr) ) {
+    return csWString();
+  }
+
+  const csWString parallel = priv_reg::readSzValue(key, L"Parallel");
+  RegCloseKey(key);
+
+  if( !csIsFile(parallel.c_str()) ) {
+    return csWString();
+  }
+
+  return parallel;
+}
+
+DWORD regReadParallelCount()
+{
+  HKEY    key;
+  HRESULT hr;
+
+  hr = HRESULT_FROM_WIN32(RegCreateKeyExW(HKEY_CURRENT_USER, KEY_HKCU_CSMENU,
+                                          0, NULL, REG_OPTION_NON_VOLATILE,
+                                          KEY_READ, NULL, &key, NULL));
+  if( FAILED(hr) ) {
+    return 0;
+  }
+
+  DWORD count = 0;
+  DWORD size  = sizeof(DWORD);
+  hr = HRESULT_FROM_WIN32(RegGetValueW(key, NULL, L"ParallelCount",
+                                       RRF_RT_REG_DWORD, NULL,
+                                       &count, &size));
+  RegCloseKey(key);
+  if( FAILED(hr) ) {
+    return 0;
+  }
+
+  return count;
+}
+
 csWString regReadScriptsPath()
 {
   HKEY    key;
@@ -247,6 +294,10 @@ csWString regReadScriptsPath()
 
   const csWString scriptsPath = priv_reg::readSzValue(key, L"Scripts");
   RegCloseKey(key);
+
+  if( !csIsDirectory(scriptsPath.c_str()) ) {
+    return csWString();
+  }
 
   return scriptsPath;
 }

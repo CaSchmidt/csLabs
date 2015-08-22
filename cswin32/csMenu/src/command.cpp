@@ -37,9 +37,13 @@
 
 bool executeCommand(const UINT cmd, const csWStringList& files)
 {
+  const csWString parallel  = regReadParallel();
+  const DWORD parallelCount = regReadParallelCount();
+  const bool    hasParallel = !parallel.empty()  &&  parallelCount > 1;
+
   const DWORD flags      = regReadFlags();
   const bool  isBatch    = testFlags(flags, CMD_FLAG_BATCH);
-  const bool  isParallel = testFlags(flags, CMD_FLAG_PARALLEL);
+  const bool  isParallel = testFlags(flags, CMD_FLAG_PARALLEL)  &&  hasParallel;
   const bool  isUnc      = testFlags(flags, CMD_FLAG_UNC)  &&  cmd != Cmd_List;
   const bool  isUnix     = testFlags(flags, CMD_FLAG_UNIX);
 
@@ -114,7 +118,11 @@ bool executeCommand(const UINT cmd, const csWStringList& files)
     }
 
     if( isParallel ) {
-
+      csWStringList args(files);
+      args.push_front(script);
+      args.push_front(csWString::number(parallelCount));
+      ShellExecuteW(NULL, L"open", parallel.c_str(), joinFileNames(args).c_str(),
+                    NULL, SW_SHOWNORMAL);
     } else { // DO NOT use parallelizer
       if( isBatch ) {
         const csWString args = joinFileNames(files);

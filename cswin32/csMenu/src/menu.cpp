@@ -34,7 +34,8 @@
 #include <csCore2/csStringLib.h>
 
 void insertMenuItem(HMENU menu,
-                    const UINT pos, const UINT id, const wchar_t *text)
+                    const UINT pos, const UINT id, const wchar_t *text,
+                    const bool enabled)
 {
   MENUITEMINFOW mii;
   SecureZeroMemory(&mii, sizeof(MENUITEMINFOW));
@@ -44,12 +45,17 @@ void insertMenuItem(HMENU menu,
   mii.wID        = id;
   mii.dwTypeData = (LPWSTR)text;
 
+  if( !enabled ) {
+    mii.fMask  |= MIIM_STATE;
+    mii.fState |= MFS_DISABLED;
+  }
+
   InsertMenuItemW(menu, pos, TRUE, &mii);
 }
 
 void insertCheckableMenuItem(HMENU menu,
                              const UINT pos, const UINT id, const wchar_t *text,
-                             const bool state)
+                             const bool state, const bool enabled)
 {
   MENUITEMINFOW mii;
   SecureZeroMemory(&mii, sizeof(MENUITEMINFOW));
@@ -59,6 +65,11 @@ void insertCheckableMenuItem(HMENU menu,
   mii.wID        = id;
   mii.fState     = state  ?  MFS_CHECKED : MFS_UNCHECKED;
   mii.dwTypeData = (LPWSTR)text;
+
+  if( !enabled ) {
+    mii.fMask  |= MIIM_STATE;
+    mii.fState |= MFS_DISABLED;
+  }
 
   InsertMenuItemW(menu, pos, TRUE, &mii);
 }

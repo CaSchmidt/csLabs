@@ -195,6 +195,10 @@ HRESULT csMenu::QueryContextMenu(HMENU hmenu, UINT indexMenu, UINT idCmdFirst,
 
   const DWORD flags = regReadFlags();
 
+  const csWString parallel  = regReadParallel();
+  const DWORD parallelCount = regReadParallelCount();
+  const bool hasParallel    = !parallel.empty()  &&  parallelCount > 1;
+
   HMENU submenu = CreatePopupMenu();
   insertMenuItem(submenu, uPos++, uCmdID++, L"List");
   insertMenuItem(submenu, uPos++, uCmdID++, L"List (path)");
@@ -203,7 +207,7 @@ HRESULT csMenu::QueryContextMenu(HMENU hmenu, UINT indexMenu, UINT idCmdFirst,
   insertCheckableMenuItem(submenu, uPos++, uCmdID++, L"Batch processing",
                           testFlags(flags, CMD_FLAG_BATCH));
   insertCheckableMenuItem(submenu, uPos++, uCmdID++, L"Parallel execution",
-                          testFlags(flags, CMD_FLAG_PARALLEL));
+                          testFlags(flags, CMD_FLAG_PARALLEL), hasParallel);
   insertCheckableMenuItem(submenu, uPos++, uCmdID++, L"Resolve UNC paths",
                           testFlags(flags, CMD_FLAG_UNC));
   insertCheckableMenuItem(submenu, uPos++, uCmdID++, L"UN*X path separators",

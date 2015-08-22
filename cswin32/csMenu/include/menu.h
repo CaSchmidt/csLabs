@@ -35,11 +35,12 @@
 #include <Windows.h>
 
 void insertMenuItem(HMENU menu,
-                    const UINT pos, const UINT id, const wchar_t *text);
+                    const UINT pos, const UINT id, const wchar_t *text,
+                    const bool enabled = true);
 
 void insertCheckableMenuItem(HMENU menu,
                              const UINT pos, const UINT id, const wchar_t *text,
-                             const bool state);
+                             const bool state, const bool enabled = true);
 
 void insertSeparatorMenuItem(HMENU menu,
                              const UINT pos);

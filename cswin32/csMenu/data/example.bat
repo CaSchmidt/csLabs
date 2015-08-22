@@ -1,0 +1,4 @@
+@ECHO OFF
+FOR %%a IN (%*) DO ECHO %%a
+PAUSE
+ECHO ON

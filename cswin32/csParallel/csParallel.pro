@@ -14,14 +14,6 @@ QT       -= core gui widgets
 CONFIG   -= console
 CONFIG   -= app_bundle
 
-QMAKE_CFLAGS_DEBUG   += /MTd
-QMAKE_CFLAGS_RELEASE += /MT
-
-QMAKE_CXXFLAGS_DEBUG   += /MTd
-QMAKE_CXXFLAGS_RELEASE += /MT
-
-QMAKE_LFLAGS += /ENTRY:wWinMain
-
 DESTDIR = ../../bin
 
 
