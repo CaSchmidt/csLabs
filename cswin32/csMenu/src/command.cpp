@@ -81,6 +81,11 @@ bool executeCommand(const UINT cmd, const csWStringList& files)
     }
     text[size] = L'\0';
 
+    if( files.size() == 1 ) {
+      // Overwrite trailing <CR><LF>
+      text[size-1] = text[size-2] = L'\0';
+    }
+
     if( isUnix ) {
       replace(text, size, L'\\', L'/');
     }
