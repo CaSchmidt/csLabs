@@ -7,8 +7,8 @@ IDI_csMenu  ICON  "csMenu.ico"
 /* cf. VerRsrc.h and "VS_FIXEDFILEINFO structure (Windows)‎" */
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION     1,0,0,0
-PRODUCTVERSION  1,0,0,0
+FILEVERSION     1,1,0,0
+PRODUCTVERSION  1,1,0,0
 FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
 #ifdef _DEBUG
 FILEFLAGS       VS_FF_DEBUG
@@ -25,12 +25,12 @@ BEGIN
     BEGIN
       VALUE "CompanyName",      "Carsten Schmidt\0"
       VALUE "FileDescription",  "CS::Menu\0"
-      VALUE "FileVersion",      "1.0\0"
+      VALUE "FileVersion",      "1.1\0"
       VALUE "InternalName",     "csMenu\0"
       VALUE "LegalCopyright",   "(C) 2015 by Carsten Schmidt\0"
       VALUE "OriginalFilename", "csMenu.DLL\0"
       VALUE "ProductName",      "CS::Menu\0"
-      VALUE "ProductVersion",   "1.0\0"
+      VALUE "ProductVersion",   "1.1\0"
     END
   END
   BLOCK "VarFileInfo"

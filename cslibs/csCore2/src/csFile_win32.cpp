@@ -33,6 +33,11 @@
 
 #include "csCore2/csFile.h"
 
+CS_CORE2_EXPORT bool csFileExists(const wchar_t *name)
+{
+  return GetFileAttributesW(name) != INVALID_FILE_ATTRIBUTES;
+}
+
 CS_CORE2_EXPORT bool csIsDirectory(const wchar_t *name)
 {
   const DWORD attr = GetFileAttributesW(name);

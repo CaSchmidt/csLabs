@@ -45,6 +45,7 @@ enum Commands {
   Cmd_List = 0,
   Cmd_ListWithPath,
   Cmd_ListWithPathTabular,
+  Cmd_CreateSymbolicLink,
   Cmd_CheckBatchProcessing,
   Cmd_CheckParallelExecution,
   Cmd_CheckResolveUncPaths,

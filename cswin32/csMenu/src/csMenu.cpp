@@ -200,9 +200,12 @@ HRESULT csMenu::QueryContextMenu(HMENU hmenu, UINT indexMenu, UINT idCmdFirst,
   const bool hasParallel    = !parallel.empty()  &&  parallelCount > 1;
 
   HMENU submenu = CreatePopupMenu();
-  insertMenuItem(submenu, uPos++, uCmdID++, L"List");
-  insertMenuItem(submenu, uPos++, uCmdID++, L"List (path)");
-  insertMenuItem(submenu, uPos++, uCmdID++, L"List (path, tabular)");
+  insertMenuItem(submenu, uPos++, uCmdID++, L"List", !_files.empty());
+  insertMenuItem(submenu, uPos++, uCmdID++, L"List (path)", !_files.empty());
+  insertMenuItem(submenu, uPos++, uCmdID++, L"List (path, tabular)", !_files.empty());
+  insertSeparatorMenuItem(submenu, uPos++);
+  insertMenuItem(submenu, uPos++, uCmdID++, L"Create symbolic link...",
+                 _files.size() == 1);
   insertSeparatorMenuItem(submenu, uPos++);
   insertCheckableMenuItem(submenu, uPos++, uCmdID++, L"Batch processing",
                           testFlags(flags, CMD_FLAG_BATCH));
@@ -216,7 +219,7 @@ HRESULT csMenu::QueryContextMenu(HMENU hmenu, UINT indexMenu, UINT idCmdFirst,
   insertSubMenuItem(hmenu, submenu, indexMenu, uCmdID++, L"CS::Menu", _menuBitmap);
 
   const csWStringList scripts = regReadScripts();
-  if( !scripts.empty() ) {
+  if( !scripts.empty()  &&  !_files.empty() ) {
     insertSeparatorMenuItem(submenu, uPos++);
     for(csWStringList::const_iterator it = scripts.begin(); it != scripts.end(); it++) {
       insertMenuItem(submenu, uPos++, uCmdID++, it->c_str());

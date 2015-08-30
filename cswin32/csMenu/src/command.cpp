@@ -29,6 +29,12 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <Windows.h>
+#include <objbase.h>
+#include <ShlObj.h>
+
+#include <csCore2/csFile.h>
+
 #include "command.h"
 
 #include "clipboard.h"
@@ -92,6 +98,75 @@ bool executeCommand(const UINT cmd, const csWStringList& files)
 
     setClipboardText(text);
     delete[] text;
+
+    return true;
+
+  } else if( cmd == Cmd_CreateSymbolicLink ) {
+
+    csWString symLink;
+
+    IFileSaveDialog *saveDialog = NULL;
+    HRESULT hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_INPROC_SERVER,
+                                  IID_IFileSaveDialog, (LPVOID*)&saveDialog);
+    if( hr == S_OK ) {
+      saveDialog->SetTitle(L"Create symbolic link");
+
+      const COMDLG_FILTERSPEC filterSpec = {
+        L"All files", L"*.*"
+      };
+      saveDialog->SetFileTypes(1, &filterSpec);
+
+      const FILEOPENDIALOGOPTIONS opts
+          = FOS_OVERWRITEPROMPT
+          | FOS_FORCEFILESYSTEM
+          | FOS_PATHMUSTEXIST
+          | FOS_CREATEPROMPT
+          | FOS_NOREADONLYRETURN
+          | FOS_NODEREFERENCELINKS
+          | FOS_DONTADDTORECENT;
+      saveDialog->SetOptions(opts);
+
+      if( saveDialog->Show(NULL) == S_OK ) {
+        IShellItem *item = NULL;
+        if( saveDialog->GetResult(&item) == S_OK ) {
+          wchar_t *filename = NULL;
+          if( item->GetDisplayName(SIGDN_FILESYSPATH, &filename) == S_OK ) {
+            symLink = filename;
+            CoTaskMemFree(filename);
+          }
+
+          item->Release();
+        }
+      }
+
+      saveDialog->Release();
+    }
+
+    if( !symLink.empty() ) {
+      if( csFileExists(symLink.c_str()) ) {
+        MessageBoxW(NULL, L"Symbolic link target already exists!",
+                    L"Error", MB_OK | MB_ICONERROR);
+        return false;
+      }
+
+      const DWORD linkFlags = csIsDirectory(files.front().c_str())
+          ? SYMBOLIC_LINK_FLAG_DIRECTORY
+          : 0;
+
+      if( CreateSymbolicLinkW(symLink.c_str(),
+                              files.front().c_str(),
+                              linkFlags) == 0 ) {
+        const DWORD lastError = GetLastError();
+
+        csWString msg(L"Creation of symbolic link failed (0x");
+        msg += csWString::number(lastError, 16);
+        msg += L")!";
+
+        MessageBoxW(NULL, msg.c_str(),
+                    L"Error", MB_OK | MB_ICONERROR);
+        return false;
+      }
+    }
 
     return true;
 

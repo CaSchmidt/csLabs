@@ -36,6 +36,8 @@
 
 #include <csCore2/csStringList.h>
 
+CS_CORE2_EXPORT bool csFileExists(const wchar_t *name);
+
 CS_CORE2_EXPORT bool csIsDirectory(const wchar_t *name);
 CS_CORE2_EXPORT bool csIsFile(const wchar_t *name);
 
