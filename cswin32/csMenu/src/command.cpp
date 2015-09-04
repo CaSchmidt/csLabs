@@ -158,9 +158,10 @@ bool executeCommand(const UINT cmd, const csWStringList& files)
                               linkFlags) == 0 ) {
         const DWORD lastError = GetLastError();
 
-        csWString msg(L"Creation of symbolic link failed (0x");
+        csWString msg(L"ERROR(0x");
         msg += csWString::number(lastError, 16);
-        msg += L")!";
+        msg += L"): ";
+        msg += formatError(lastError);
 
         MessageBoxW(NULL, msg.c_str(),
                     L"Error", MB_OK | MB_ICONERROR);

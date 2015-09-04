@@ -56,4 +56,6 @@ wchar_t *resolveUNC(const wchar_t *filename);
 
 HBITMAP createBitmapFromIcon(const HICON icon, const int width, const int height);
 
+csWString formatError(const DWORD error);
+
 #endif // __UTIL_HPP__

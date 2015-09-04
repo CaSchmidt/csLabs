@@ -221,3 +221,20 @@ HBITMAP createBitmapFromIcon(const HICON icon, const int width, const int height
 
   return bitmap;
 }
+
+csWString formatError(const DWORD error)
+{
+  csWString res;
+
+  wchar_t *s = 0;
+  if( FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER
+                     | FORMAT_MESSAGE_FROM_SYSTEM
+                     | FORMAT_MESSAGE_IGNORE_INSERTS,
+                     NULL, error, 0, (LPWSTR)&s, 128, 0) > 0  &&  s != 0 ) {
+    res = s;
+  }
+  if( s != 0 ) {
+    LocalFree(s);
+  }
+  return res;
+}
