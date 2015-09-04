@@ -90,7 +90,6 @@ protected:
 
 private slots:
   void selectArea(QRect rect, QPointF fromScene, QPointF toScene);
-  void watchVScroll(int value);
 
 private:
   bool followLink(const QPointF& scenePos);

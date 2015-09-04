@@ -136,8 +136,6 @@ csPdfUiDocumentView::csPdfUiDocumentView(QWidget *parent)
 
   connect(this, SIGNAL(rubberBandChanged(QRect,QPointF,QPointF)),
           SLOT(selectArea(QRect,QPointF,QPointF)));
-  connect(verticalScrollBar(), SIGNAL(valueChanged(int)),
-          SLOT(watchVScroll(int)));
 }
 
 csPdfUiDocumentView::~csPdfUiDocumentView()
@@ -486,12 +484,28 @@ void csPdfUiDocumentView::removeItems(const int id)
 
 void csPdfUiDocumentView::wheelEvent(QWheelEvent *event)
 {
+  // Configuration
+  const int cfg_maxPageBounces(1);
+
+  // Conditions
+  const bool condVScrollVisible
+      = verticalScrollBar()->isVisible();
+  const bool condPageChange
+      = (event->modifiers() == Qt::NoModifier  &&  !condVScrollVisible)
+      || event->modifiers() == Qt::ShiftModifier;
+  const bool condZoom
+      = event->modifiers() == Qt::ControlModifier;
+  const bool condPageBounce
+      = event->modifiers() == Qt::NoModifier  &&  condVScrollVisible;
+
   // dy > 0: Away From User; dy < 0: Toward User
   const int dy = event->angleDelta().y() / 8; // [Degree]
 
-  if( (event->modifiers() == Qt::NoModifier  &&
-       !verticalScrollBar()->isVisible())
-      ||  event->modifiers() == Qt::ShiftModifier) {
+  if( !condVScrollVisible ) {
+    _pageBounces = 0;
+  }
+
+  if(        condPageChange ) {
     if(        dy < 0 ) {
       showNextPage();
       event->accept();
@@ -501,7 +515,8 @@ void csPdfUiDocumentView::wheelEvent(QWheelEvent *event)
       event->accept();
       return;
     }
-  } else if( event->modifiers() == Qt::ControlModifier ) {
+
+  } else if( condZoom ) {
     if(        dy < 0 ) {
       zoomOut();
       event->accept();
@@ -510,6 +525,37 @@ void csPdfUiDocumentView::wheelEvent(QWheelEvent *event)
       zoomIn();
       event->accept();
       return;
+    }
+
+  } else if( condPageBounce ) {
+    const int value = verticalScrollBar()->value();
+
+    if(        value <= verticalScrollBar()->minimum() ) {
+      if( _pageBounces > 0 ) {
+        _pageBounces = -1;
+      } else {
+        _pageBounces--;
+      }
+      if( qAbs(_pageBounces) > cfg_maxPageBounces ) {
+        showPreviousPage();
+        _pageBounces = 0;
+        return;
+      }
+
+    } else if( value >= verticalScrollBar()->maximum() ) {
+      if( _pageBounces < 0 ) {
+        _pageBounces = 1;
+      } else {
+        _pageBounces++;
+      }
+      if( qAbs(_pageBounces) > cfg_maxPageBounces ) {
+        showNextPage();
+        _pageBounces = 0;
+        return;
+      }
+
+    } else {
+      _pageBounces = 0;
     }
   }
 
@@ -532,40 +578,6 @@ void csPdfUiDocumentView::selectArea(QRect rect, QPointF fromScene, QPointF toSc
   removeItems(SelectionId);
   foreach(const csPDFiumText t, _page.texts(QRectF(x, y, w, h))) {
     priv::addSelection(_scene, t);
-  }
-}
-
-void csPdfUiDocumentView::watchVScroll(int value)
-{
-  const int cfg_maxPageBounces(1);
-
-  if( !verticalScrollBar()->isVisible() ) {
-    _pageBounces = 0;
-    return;
-  }
-
-  if(        value == verticalScrollBar()->minimum() ) {
-    if( _pageBounces > 0 ) {
-      _pageBounces = -1;
-    } else {
-      _pageBounces--;
-    }
-    if( qAbs(_pageBounces) > cfg_maxPageBounces ) {
-      showPreviousPage();
-      _pageBounces = 0;
-    }
-  } else if( value == verticalScrollBar()->maximum() ) {
-    if( _pageBounces < 0 ) {
-      _pageBounces = 1;
-    } else {
-      _pageBounces++;
-    }
-    if( qAbs(_pageBounces) > cfg_maxPageBounces ) {
-      showNextPage();
-      _pageBounces = 0;
-    }
-  } else {
-    _pageBounces = 0;
   }
 }
 
