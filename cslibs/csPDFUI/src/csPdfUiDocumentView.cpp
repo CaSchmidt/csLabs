@@ -112,7 +112,6 @@ csPdfUiDocumentView::csPdfUiDocumentView(QWidget *parent)
   , _scene(0)
   , _doc()
   , _page()
-  , _multiView(false)
   , _zoom(ZOOM_INIT)
   , _pageBounces(0)
   , _linkHistory()
@@ -173,6 +172,11 @@ QString csPdfUiDocumentView::selectedText() const
   return text;
 }
 
+const csPDFiumDocument& csPdfUiDocumentView::document() const
+{
+  return _doc;
+}
+
 void csPdfUiDocumentView::setDocument(const csPDFiumDocument& doc)
 {
   _scene->clear();
@@ -189,11 +193,6 @@ void csPdfUiDocumentView::setDocument(const csPDFiumDocument& doc)
   showFirstPage();
 }
 
-void csPdfUiDocumentView::setMultiView(const bool on)
-{
-  _multiView = on;
-}
-
 void csPdfUiDocumentView::setItemId(QGraphicsItem *item, const int id)
 {
   item->setData(DATA_ID, id);
@@ -208,10 +207,6 @@ int csPdfUiDocumentView::itemId(const QGraphicsItem *item)
 
 void csPdfUiDocumentView::gotoLinkSource()
 {
-  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
-    return;
-  }
-
   if( !_linkHistory.isEmpty() ) {
     const ReverseLink revLink = _linkHistory.pop();
     showPage(revLink.page);
@@ -221,10 +216,6 @@ void csPdfUiDocumentView::gotoLinkSource()
 
 void csPdfUiDocumentView::highlightText(const QString& text)
 {
-  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
-    return;
-  }
-
   removeItems(HighlightId);
 
   if( _page.isEmpty() ) {
@@ -256,38 +247,22 @@ void csPdfUiDocumentView::highlightText(const QString& text)
 
 void csPdfUiDocumentView::removeMarks()
 {
-  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
-    return;
-  }
-
   removeItems(HighlightId);
   removeItems(SelectionId);
 }
 
 void csPdfUiDocumentView::showFirstPage()
 {
-  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
-    return;
-  }
-
   showPage(1);
 }
 
 void csPdfUiDocumentView::showLastPage()
 {
-  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
-    return;
-  }
-
   showPage(_doc.pageCount());
 }
 
 void csPdfUiDocumentView::showNextPage()
 {
-  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
-    return;
-  }
-
   if( _doc.isEmpty()  ||  _page.isEmpty() ) {
     emit pageChanged(1);
     return;
@@ -304,10 +279,6 @@ void csPdfUiDocumentView::showNextPage()
 
 void csPdfUiDocumentView::showPage(int no)
 {
-  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
-    return;
-  }
-
   _pageBounces = 0;
 
   if( _doc.isEmpty() ) {
@@ -336,10 +307,6 @@ void csPdfUiDocumentView::showPage(int no)
 
 void csPdfUiDocumentView::showPreviousPage()
 {
-  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
-    return;
-  }
-
   if( _doc.isEmpty()  ||  _page.isEmpty() ) {
     emit pageChanged(1);
     return;
@@ -356,10 +323,6 @@ void csPdfUiDocumentView::showPreviousPage()
 
 void csPdfUiDocumentView::zoom(double level)
 {
-  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
-    return;
-  }
-
   const double oldZoom = _zoom;
   _zoom = qMax(ZOOM_MIN, level);
 
@@ -373,19 +336,11 @@ void csPdfUiDocumentView::zoom(double level)
 
 void csPdfUiDocumentView::zoomIn()
 {
-  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
-    return;
-  }
-
   zoom(_zoom+ZOOM_STEP);
 }
 
 void csPdfUiDocumentView::zoomOut()
 {
-  if( _multiView  &&  (!isVisible() || !hasFocus()) ) {
-    return;
-  }
-
   zoom(_zoom-ZOOM_STEP);
 }
 
