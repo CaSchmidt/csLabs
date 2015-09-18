@@ -53,13 +53,26 @@ bool csPDFiumDocument::isEmpty() const
   return impl.isNull();
 }
 
+bool csPDFiumDocument::isMemory() const
+{
+  if( isEmpty() ) {
+    return false;
+  }
+
+  CSPDFIUM_DOCIMPL();
+
+  return !impl->data.isEmpty();
+}
+
 void csPDFiumDocument::clear()
 {
   if( isEmpty() ) {
     return;
   }
 
-  CSPDFIUM_DOCIMPL();
+  // CAUTION: Upon on a successful lock we may delete 'mutex'!
+  impl->mutex.lock();
+  impl->mutex.unlock();
 
   impl.clear();
 }

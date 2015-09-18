@@ -56,7 +56,9 @@ void csPDFiumPage::clear()
     return;
   }
 
-  CSPDFIUM_PAGEIMPL();
+  // CAUTION: Upon on a successful lock we may delete 'mutex'!
+  impl->doc->mutex.lock();
+  impl->doc->mutex.unlock();
 
   impl.clear();
 }

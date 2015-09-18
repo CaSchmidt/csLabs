@@ -48,6 +48,7 @@ public:
   ~csPDFiumDocument();
 
   bool isEmpty() const;
+  bool isMemory() const;
   void clear();
   QString fileName() const;
   int pageCount() const;

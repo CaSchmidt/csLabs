@@ -35,6 +35,8 @@
 
 namespace csPDFium {
 
+  CS_PDFIUM_EXPORT const double DPI(72.0);
+
   CS_PDFIUM_EXPORT void initialize()
   {
     FPDF_InitLibrary();
