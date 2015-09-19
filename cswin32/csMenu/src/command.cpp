@@ -111,6 +111,26 @@ bool executeCommand(const UINT cmd, const csWStringList& files)
     if( hr == S_OK ) {
       saveDialog->SetTitle(L"Create symbolic link");
 
+      const int index = files.front().lastIndexOf(L'\\');
+      if( index >= 0 ) {
+        const csWString path = files.front().mid(0, index);
+        const csWString name = files.front().mid(index+1);
+
+        PIDLIST_ABSOLUTE pidl = NULL;
+        SHParseDisplayName(path.c_str(), NULL, &pidl, 0, NULL);
+        if( pidl != NULL ) {
+          IShellItem *item = NULL;
+          SHCreateItemFromIDList(pidl, IID_IShellItem, (LPVOID*)&item);
+          if( item != NULL ) {
+            saveDialog->SetFolder(item);
+            item->Release();
+          }
+          CoTaskMemFree(pidl);
+        }
+
+        saveDialog->SetFileName(name.c_str());
+      }
+
       const COMDLG_FILTERSPEC filterSpec = {
         L"All files", L"*.*"
       };
