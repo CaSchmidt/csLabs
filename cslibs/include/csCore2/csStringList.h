@@ -49,13 +49,13 @@ public:
 };
 
 #ifdef HAVE_CHAR
-extern template class CS_CORE2_EXPORT csBasicStringList<char>;
+extern template class CS_CORE2_EXPORT csBasicStringList<csString>;
 
 typedef csBasicStringList<csString> csStringList;
 #endif
 
 #ifdef HAVE_WCHAR_T
-extern template class CS_CORE2_EXPORT csBasicStringList<wchar_t>;
+extern template class CS_CORE2_EXPORT csBasicStringList<csWString>;
 
 typedef csBasicStringList<csWString> csWStringList;
 #endif
