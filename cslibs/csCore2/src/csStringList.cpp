@@ -33,75 +33,38 @@
 
 ////// Implementation ////////////////////////////////////////////////////////
 
-template<typename CharT>
-csBasicStringList<CharT>::csBasicStringList()
-  : std::list<csBasicString<CharT> >()
+template<class StringT>
+csBasicStringList<StringT>::csBasicStringList()
+  : std::list<StringT>()
 {
 }
 
-template<typename CharT>
-csBasicStringList<CharT>::csBasicStringList(const csBasicStringList<CharT>& other)
-  : std::list<csBasicString<CharT> >(other)
+template<class StringT>
+csBasicStringList<StringT>::csBasicStringList(const csBasicStringList<StringT>& other)
+  : std::list<StringT>(other)
 {
 }
 
-template<typename CharT>
-csBasicStringList<CharT>::csBasicStringList(const std::list<csBasicString<CharT> >& other)
-  : std::list<csBasicString<CharT> >(other)
+template<class StringT>
+csBasicStringList<StringT>::~csBasicStringList()
 {
 }
 
-template<typename CharT>
-csBasicStringList<CharT>::~csBasicStringList()
-{
-}
-
-template<typename CharT>
-csBasicStringList<CharT>& csBasicStringList<CharT>::operator=(const csBasicStringList<CharT>& other)
+template<class StringT>
+csBasicStringList<StringT>& csBasicStringList<StringT>::operator=(const csBasicStringList<StringT>& other)
 {
   if( this != &other ) {
-    std::list<csBasicString<CharT> >::operator=(other);
+    std::list<StringT>::operator=(other);
   }
   return *this;
-}
-
-template<typename CharT>
-csBasicStringList<CharT>& csBasicStringList<CharT>::operator=(const std::list<csBasicString<CharT> >& other)
-{
-  std::list<csBasicString<CharT> >::operator=(other);
-  return *this;
-}
-
-template<typename CharT>
-void csBasicStringList<CharT>::push_back(const csBasicString<CharT>& s)
-{
-  std::list<csBasicString<CharT> >::push_back(s);
-}
-
-template<typename CharT>
-void csBasicStringList<CharT>::push_back(const CharT *data)
-{
-  std::list<csBasicString<CharT> >::push_back(csBasicString<CharT>(data));
-}
-
-template<typename CharT>
-void csBasicStringList<CharT>::push_front(const csBasicString<CharT>& s)
-{
-  std::list<csBasicString<CharT> >::push_front(s);
-}
-
-template<typename CharT>
-void csBasicStringList<CharT>::push_front(const CharT *data)
-{
-  std::list<csBasicString<CharT> >::push_front(csBasicString<CharT>(data));
 }
 
 ////// Explicit instantiation ////////////////////////////////////////////////
 
 #ifdef HAVE_CHAR
-template class CS_CORE2_EXPORT csBasicStringList<char>;
+template class CS_CORE2_EXPORT csBasicStringList<csString>;
 #endif
 
 #ifdef HAVE_WCHAR_T
-template class CS_CORE2_EXPORT csBasicStringList<wchar_t>;
+template class CS_CORE2_EXPORT csBasicStringList<csWString>;
 #endif

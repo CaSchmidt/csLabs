@@ -38,37 +38,26 @@
 
 #include <csCore2/csString.h>
 
-template<typename CharT>
-class csBasicStringList : public std::list<csBasicString<CharT> > {
+template<class StringT>
+class csBasicStringList : public std::list<StringT> {
 public:
   csBasicStringList();
-  csBasicStringList(const csBasicStringList<CharT>& other);
-
-  csBasicStringList(const std::list<csBasicString<CharT> >& other);
-
+  csBasicStringList(const csBasicStringList<StringT>& other);
   ~csBasicStringList();
 
-  csBasicStringList<CharT>& operator=(const csBasicStringList<CharT>& other);
-
-  csBasicStringList<CharT>& operator=(const std::list<csBasicString<CharT> >& other);
-
-  void push_back(const csBasicString<CharT>& s);
-  void push_back(const CharT *data);
-
-  void push_front(const csBasicString<CharT>& s);
-  void push_front(const CharT *data);
+  csBasicStringList& operator=(const csBasicStringList<StringT>& other);
 };
 
 #ifdef HAVE_CHAR
 extern template class CS_CORE2_EXPORT csBasicStringList<char>;
 
-typedef csBasicStringList<char> csStringList;
+typedef csBasicStringList<csString> csStringList;
 #endif
 
 #ifdef HAVE_WCHAR_T
 extern template class CS_CORE2_EXPORT csBasicStringList<wchar_t>;
 
-typedef csBasicStringList<wchar_t> csWStringList;
+typedef csBasicStringList<csWString> csWStringList;
 #endif
 
 #endif // __CSSTRINGLIST_H__
