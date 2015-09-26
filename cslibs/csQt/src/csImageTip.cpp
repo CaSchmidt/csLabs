@@ -141,8 +141,7 @@ void csTipWidget::placeTip(const QPoint& globalPos, QWidget *widget)
 
   QPoint placePos(offset+globalPos);
 
-  const QRect screenRect =
-      QApplication::desktop()->screenGeometry(csScreenNumber(globalPos, widget));
+  const QRect screenRect = csScreenGeometry(globalPos, widget);
 
   if( placePos.x() + width() > screenRect.right()  &&
       width() < screenRect.width() ) {

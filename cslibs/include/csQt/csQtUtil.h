@@ -34,6 +34,7 @@
 
 #include <QtCore/QLocale>
 #include <QtCore/QModelIndex>
+#include <QtCore/QRect>
 #include <QtCore/QString>
 #include <QtWidgets/QWidget>
 
@@ -57,6 +58,8 @@ class QPoint;
 class QTableView;
 class QVariant;
 class QWidget;
+
+CS_QT_EXPORT QRect csScreenGeometry(const QPoint& globalPos, QWidget *widget);
 
 CS_QT_EXPORT int csScreenNumber(const QPoint& globalPos, QWidget *widget);
 

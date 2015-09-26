@@ -39,6 +39,15 @@
 
 ////// Public ////////////////////////////////////////////////////////////////
 
+CS_QT_EXPORT QRect csScreenGeometry(const QPoint& globalPos, QWidget *widget)
+{
+  const int no = csScreenNumber(globalPos, widget);
+  if( no < 0 ) {
+    return QRect();
+  }
+  return QApplication::desktop()->screenGeometry(no);
+}
+
 CS_QT_EXPORT int csScreenNumber(const QPoint& globalPos, QWidget *widget)
 {
   if( QApplication::desktop()->isVirtualDesktop() ) {
