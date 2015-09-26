@@ -203,13 +203,13 @@ bool csPdfUiSearchWidget::event(QEvent *event)
         csImageTip::Flags flags = csImageTip::DrawBorder;
         // Position
         QPoint tipPos = help->globalPos();
-        const int dockPos = dockPosition();
-        if(        dockPos > 0 ) { // Right
+        const int helpPos = helpPosition(help->globalPos());
+        if(        helpPos > 0 ) { // Right
           tipPos = mapToGlobal(QPoint()-QPoint(helpImage.width(), 0));
-        } else if( dockPos < 0 ) { // Left
+        } else if( helpPos < 0 ) { // Left
           tipPos = mapToGlobal(QPoint(width(), 0));
         }
-        if( dockPos != 0 ) {
+        if( helpPos != 0 ) {
           flags |= csImageTip::ForcePosition;
         }
         // Tool Tip
@@ -226,19 +226,15 @@ bool csPdfUiSearchWidget::event(QEvent *event)
 
 ////// private ///////////////////////////////////////////////////////////////
 
-int csPdfUiSearchWidget::dockPosition()
+int csPdfUiSearchWidget::helpPosition(const QPoint& globalPos)
 {
-  QDockWidget *dockWidget = csFindParentWidget<QDockWidget>(this);
-  QMainWindow *mainWindow = csFindParentWidget<QMainWindow>(this);
-  if( dockWidget != 0  &&  mainWindow != 0  &&  !dockWidget->isFloating() ) {
-    if(        mainWindow->dockWidgetArea(dockWidget)
-               == Qt::LeftDockWidgetArea ) {
-      return -1;
-    } else if( mainWindow->dockWidgetArea(dockWidget)
-               == Qt::RightDockWidgetArea ) {
-      return 1;
+  const QRect screenRect = csScreenGeometry(globalPos, this);
+  if( !screenRect.isNull() ) {
+    if( globalPos.x() < screenRect.center().x() ) {
+      return -1; // Left
+    } else {
+      return 1; // Right
     }
   }
-
   return 0;
 }

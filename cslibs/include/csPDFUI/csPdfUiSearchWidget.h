@@ -67,7 +67,7 @@ signals:
   void pageRequested(int no);
 
 private:
-  int dockPosition();
+  int helpPosition(const QPoint& globalPos);
 
   Ui::csPdfUiSearchWidget *ui;
   class csHighlightingDelegate *_delegate;
