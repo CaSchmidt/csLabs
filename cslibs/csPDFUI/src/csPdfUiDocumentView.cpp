@@ -29,6 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <cmath>
+
 #include <QtCore/QCoreApplication>
 #include <QtGui/QKeyEvent>
 #include <QtGui/QMouseEvent>
@@ -113,6 +115,7 @@ csPdfUiDocumentView::csPdfUiDocumentView(QWidget *parent)
   , _doc()
   , _page()
   , _zoom(ZOOM_INIT)
+  , _zoomMode(ZoomUser)
   , _pageBounces(0)
   , _linkHistory()
 {
@@ -205,6 +208,13 @@ int csPdfUiDocumentView::itemId(const QGraphicsItem *item)
 
 ////// public slots //////////////////////////////////////////////////////////
 
+void csPdfUiDocumentView::fitToPageWidth()
+{
+  if( zoom(_zoom, ZoomFitToPageWidth) ) {
+    renderPage();
+  }
+}
+
 void csPdfUiDocumentView::gotoLinkSource()
 {
   if( !_linkHistory.isEmpty() ) {
@@ -294,6 +304,7 @@ void csPdfUiDocumentView::showPage(int no)
 
   const int pageNo = qBound(0, no-1, _doc.pageCount()-1); // 0-based
   _page = _doc.page(pageNo);
+  zoom(_zoom, _zoomMode);
   renderPage();
 
   foreach(const csPDFiumLink link, _page.links()) {
@@ -323,15 +334,9 @@ void csPdfUiDocumentView::showPreviousPage()
 
 void csPdfUiDocumentView::zoom(double level)
 {
-  const double oldZoom = _zoom;
-  _zoom = qMax(ZOOM_MIN, level);
-
-  if( oldZoom != _zoom ) {
+  if( zoom(level, ZoomUser) ) {
     renderPage();
-    setTransform(QTransform::fromScale(_SCALE, _SCALE));
   }
-
-  emit zoomChanged(_zoom);
 }
 
 void csPdfUiDocumentView::zoomIn()
@@ -433,6 +438,15 @@ void csPdfUiDocumentView::removeItems(const int id)
     if( itemId(item) == id ) {
       _scene->removeItem(item);
       delete item;
+    }
+  }
+}
+
+void csPdfUiDocumentView::resizeEvent(QResizeEvent *)
+{
+  if( _zoomMode == ZoomFitToPageWidth ) {
+    if( zoom(_zoom, _zoomMode) ) {
+      renderPage();
     }
   }
 }
@@ -578,18 +592,25 @@ void csPdfUiDocumentView::renderPage()
   setItemId(item, PageId);
 
   setSceneRect(_page.rect());
+}
 
-#if 0
-  // DEBUG
-  QList<QPainterPath> ext = _page.extractPaths();
-  foreach(const QPainterPath& path, ext) {
-    QGraphicsItem *item =
-        _scene->addPath(path,
-                        QPen(QBrush(Qt::red, Qt::SolidPattern),
-                             2.0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin),
-                        QBrush(Qt::NoBrush)/*QBrush(Qt::red, Qt::SolidPattern)*/);
-    item->setZValue(100.0);
-    item->setCursor(Qt::CrossCursor);
+bool csPdfUiDocumentView::zoom(const double level, const int newMode)
+{
+  const double oldZoom = _zoom;
+
+  _zoomMode = newMode;
+  if( _zoomMode == ZoomFitToPageWidth  &&  !_page.isEmpty() ) {
+    const double   pageWidth = _page.size().width();
+    const double screenWidth = viewport()->width();
+    _zoom = qMax(ZOOM_MIN, std::floor(screenWidth / pageWidth * 100.0));
+  } else { // Default: User defined
+    _zoom = qMax(ZOOM_MIN, level);
   }
-#endif
+  setTransform(QTransform::fromScale(_SCALE, _SCALE));
+
+  if( oldZoom != _zoom ) {
+    emit zoomChanged(_zoom);
+  }
+
+  return oldZoom != _zoom;
 }

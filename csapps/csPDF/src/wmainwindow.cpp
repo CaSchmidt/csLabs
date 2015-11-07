@@ -107,6 +107,9 @@ WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
   connect(ui->quitAction, SIGNAL(triggered()), SLOT(close()));
 
   connect(ui->copyAction, SIGNAL(triggered()), SLOT(copySelection()));
+
+  connect(ui->zoomFitToPageWidthAction, &QAction::triggered,
+          ui->pdfView, &csPdfUiDocumentView::fitToPageWidth);
 }
 
 WMainWindow::~WMainWindow()

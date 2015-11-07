@@ -68,6 +68,7 @@ public:
   static int itemId(const QGraphicsItem *item);
 
 public slots:
+  void fitToPageWidth();
   void gotoLinkSource();
   void highlightText(const QString& text);
   void removeMarks();
@@ -85,6 +86,7 @@ protected:
   void keyPressEvent(QKeyEvent *event);
   QList<QGraphicsItem*> listItems(const int id) const;
   void removeItems(const int id);
+  void resizeEvent(QResizeEvent *);
   void wheelEvent(QWheelEvent *event);
 
 private slots:
@@ -93,6 +95,7 @@ private slots:
 private:
   bool followLink(const QPointF& scenePos);
   void renderPage();
+  bool zoom(const double level, const int newMode);
 
 protected:
   QGraphicsScene *_scene;
@@ -100,6 +103,11 @@ protected:
   csPDFiumPage _page;
 
 private:
+  enum ZoomMode {
+    ZoomUser = 0,
+    ZoomFitToPageWidth
+  };
+
   struct ReverseLink {
     ReverseLink(const int _page = 0, const QPointF& _center = QPointF())
       : page(_page)
@@ -112,6 +120,7 @@ private:
   };
 
   double _zoom; // [%]
+  int _zoomMode;
   int _pageBounces;
   QStack<ReverseLink> _linkHistory; // [1, _doc.pageCount()]
 

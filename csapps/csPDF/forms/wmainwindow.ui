@@ -71,8 +71,15 @@
     <addaction name="handToolAction"/>
     <addaction name="rectangleToolAction"/>
    </widget>
+   <widget class="QMenu" name="menu_View">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="zoomFitToPageWidthAction"/>
+   </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
+   <addaction name="menu_View"/>
    <addaction name="menu_Window"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -205,6 +212,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="zoomFitToPageWidthAction">
+   <property name="text">
+    <string>Fit to page &amp;width</string>
    </property>
   </action>
  </widget>
