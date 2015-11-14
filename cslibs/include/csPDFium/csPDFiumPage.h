@@ -53,7 +53,7 @@ public:
   bool isEmpty() const;
   void clear();
   int number() const;
-  QImage renderToImage(const double scale = 1.0) const;
+  QImage renderToImage(const qreal scale = 1.0) const;
   csPDFiumLinks links() const;
   csPDFiumTexts texts(const QRectF& area = QRectF()) const;
   QRectF rect() const;

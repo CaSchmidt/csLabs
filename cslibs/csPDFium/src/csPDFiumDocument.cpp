@@ -122,7 +122,7 @@ csPDFiumPage csPDFiumDocument::page(const int no) const
     return csPDFiumPage();
   }
 
-  const double h = FPDF_GetPageHeight(pimpl->page);
+  const qreal h = FPDF_GetPageHeight(pimpl->page);
   pimpl->ctm = QMatrix(1, 0, 0, -1, 0, h);
   pimpl->doc = impl;
   pimpl->no  = no;
@@ -174,7 +174,7 @@ csPDFiumTextPages csPDFiumDocument::textPages(const int first, const int count) 
       continue;
     }
 
-    const double    h = FPDF_GetPageHeight(page);
+    const qreal    h = FPDF_GetPageHeight(page);
     const QMatrix ctm = QMatrix(1, 0, 0, -1, 0, h);
 
     results.push_back(csPDFiumTextPage(pageNo,

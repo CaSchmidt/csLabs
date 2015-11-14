@@ -325,7 +325,7 @@ void csPdfUiDocumentView::showPreviousPage()
   }
 }
 
-void csPdfUiDocumentView::zoom(double level)
+void csPdfUiDocumentView::zoom(qreal level)
 {
   if( zoom(level, ZoomUser) ) {
     renderPage();
@@ -548,10 +548,10 @@ void csPdfUiDocumentView::selectArea(QRect rect, QPointF fromScene, QPointF toSc
     return;
   }
 
-  const double x = qMin(fromScene.x(), toScene.x());
-  const double y = qMin(fromScene.y(), toScene.y());
-  const double w = qAbs(fromScene.x() - toScene.x());
-  const double h = qAbs(fromScene.y() - toScene.y());
+  const qreal x = qMin(fromScene.x(), toScene.x());
+  const qreal y = qMin(fromScene.y(), toScene.y());
+  const qreal w = qAbs(fromScene.x() - toScene.x());
+  const qreal h = qAbs(fromScene.y() - toScene.y());
 
   removeItems(SelectionId);
   foreach(const csPDFiumText t, _page.texts(QRectF(x, y, w, h))) {
@@ -603,9 +603,9 @@ void csPdfUiDocumentView::renderPage()
   setSceneRect(_page.rect());
 }
 
-bool csPdfUiDocumentView::zoom(const double level, const int newMode)
+bool csPdfUiDocumentView::zoom(const qreal level, const int newMode)
 {
-  const double oldZoom = _zoom;
+  const qreal oldZoom = _zoom;
 
   _zoomMode = newMode;
   if(        _zoomMode == ZoomBestFit         &&  !_page.isEmpty() ) {
@@ -622,8 +622,8 @@ bool csPdfUiDocumentView::zoom(const double level, const int newMode)
     _zoom = qMax(ZOOM_MIN, std::floor(ratio*100.0));
 
   } else if( _zoomMode == ZoomFitToPageWidth  &&  !_page.isEmpty() ) {
-    const double   pageWidth = _page.size().width();
-    const double screenWidth = viewport()->width();
+    const qreal   pageWidth = _page.size().width();
+    const qreal screenWidth = viewport()->width();
     _zoom = qMax(ZOOM_MIN, std::floor(screenWidth / pageWidth * 100.0));
 
   } else { // Default: User defined

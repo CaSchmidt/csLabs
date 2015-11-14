@@ -74,7 +74,7 @@ int csPDFiumPage::number() const
   return impl->no;
 }
 
-QImage csPDFiumPage::renderToImage(const double scale) const
+QImage csPDFiumPage::renderToImage(const qreal scale) const
 {
   if( isEmpty() ) {
     return QImage();
@@ -82,8 +82,8 @@ QImage csPDFiumPage::renderToImage(const double scale) const
 
   CSPDFIUM_PAGEIMPL();
 
-  const double w = FPDF_GetPageWidth(impl->page);
-  const double h = FPDF_GetPageHeight(impl->page);
+  const qreal w = FPDF_GetPageWidth(impl->page);
+  const qreal h = FPDF_GetPageHeight(impl->page);
 
   QImage image(w*scale, h*scale, QImage::Format_RGBA8888);
   if( image.isNull() ) {
@@ -176,8 +176,8 @@ QRectF csPDFiumPage::rect() const
 
   CSPDFIUM_PAGEIMPL();
 
-  const double w = FPDF_GetPageWidth(impl->page);
-  const double h = FPDF_GetPageHeight(impl->page);
+  const qreal w = FPDF_GetPageWidth(impl->page);
+  const qreal h = FPDF_GetPageHeight(impl->page);
 
   return QRectF(QPointF(0, 0), QSizeF(w, h));
 }
@@ -190,8 +190,8 @@ QSizeF csPDFiumPage::size() const
 
   CSPDFIUM_PAGEIMPL();
 
-  const double w = FPDF_GetPageWidth(impl->page);
-  const double h = FPDF_GetPageHeight(impl->page);
+  const qreal w = FPDF_GetPageWidth(impl->page);
+  const qreal h = FPDF_GetPageHeight(impl->page);
 
   return QSizeF(w, h);
 }

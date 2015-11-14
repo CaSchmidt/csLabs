@@ -196,8 +196,8 @@ bool csPdfUiSearchWidget::event(QEvent *event)
       if( pageNo > 0 ) {
         // Image of Page
         const csPDFiumPage helpPage = _doc.page(pageNo-1);
-        const double s = qMin((double)height() / helpPage.size().width(),
-                              (double)height() / helpPage.size().height());
+        const qreal s = qMin((qreal)height() / helpPage.size().width(),
+                             (qreal)height() / helpPage.size().height());
         const QImage helpImage = helpPage.renderToImage(s);
         // Flags
         csImageTip::Flags flags = csImageTip::DrawBorder;

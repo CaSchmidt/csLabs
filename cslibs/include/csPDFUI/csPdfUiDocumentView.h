@@ -76,7 +76,7 @@ public slots:
   void showNextPage();
   virtual void showPage(int no); // [1, _doc.pageCount()]
   void showPreviousPage();
-  void zoom(double level); // [%]
+  void zoom(qreal level); // [%]
   void zoomBestFit();
   void zoomFitToPageWidth();
   void zoomIn();
@@ -96,7 +96,7 @@ private slots:
 private:
   bool followLink(const QPointF& scenePos);
   void renderPage();
-  bool zoom(const double level, const int newMode);
+  bool zoom(const qreal level, const int newMode);
 
 protected:
   QGraphicsScene *_scene;
@@ -121,14 +121,14 @@ private:
     QPointF center;
   };
 
-  double _zoom; // [%]
+  qreal _zoom; // [%]
   int _zoomMode;
   int _pageBounces;
   QStack<ReverseLink> _linkHistory; // [1, _doc.pageCount()]
 
 signals:
   void pageChanged(int no); // [1, _doc.pageCount()]
-  void zoomChanged(double zoom); // [%]
+  void zoomChanged(qreal zoom); // [%]
 };
 
 #endif // __CSPDFUIDOCUMENTVIEW_H__

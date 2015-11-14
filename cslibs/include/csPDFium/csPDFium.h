@@ -38,7 +38,7 @@
 
 namespace csPDFium {
 
-  CS_PDFIUM_EXPORT extern const double DPI;
+  CS_PDFIUM_EXPORT extern const qreal DPI;
 
   enum PathExtractionFlag {
     NoPathExtractionFlags = 0,
