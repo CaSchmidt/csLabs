@@ -208,20 +208,6 @@ int csPdfUiDocumentView::itemId(const QGraphicsItem *item)
 
 ////// public slots //////////////////////////////////////////////////////////
 
-void csPdfUiDocumentView::bestFit()
-{
-  if( zoom(_zoom, ZoomBestFit) ) {
-    renderPage();
-  }
-}
-
-void csPdfUiDocumentView::fitToPageWidth()
-{
-  if( zoom(_zoom, ZoomFitToPageWidth) ) {
-    renderPage();
-  }
-}
-
 void csPdfUiDocumentView::gotoLinkSource()
 {
   if( !_linkHistory.isEmpty() ) {
@@ -342,6 +328,20 @@ void csPdfUiDocumentView::showPreviousPage()
 void csPdfUiDocumentView::zoom(double level)
 {
   if( zoom(level, ZoomUser) ) {
+    renderPage();
+  }
+}
+
+void csPdfUiDocumentView::zoomBestFit()
+{
+  if( zoom(_zoom, ZoomBestFit) ) {
+    renderPage();
+  }
+}
+
+void csPdfUiDocumentView::zoomFitToPageWidth()
+{
+  if( zoom(_zoom, ZoomFitToPageWidth) ) {
     renderPage();
   }
 }

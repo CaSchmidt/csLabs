@@ -68,8 +68,6 @@ public:
   static int itemId(const QGraphicsItem *item);
 
 public slots:
-  void bestFit();
-  void fitToPageWidth();
   void gotoLinkSource();
   void highlightText(const QString& text);
   void removeMarks();
@@ -79,6 +77,8 @@ public slots:
   virtual void showPage(int no); // [1, _doc.pageCount()]
   void showPreviousPage();
   void zoom(double level); // [%]
+  void zoomBestFit();
+  void zoomFitToPageWidth();
   void zoomIn();
   void zoomOut();
 
