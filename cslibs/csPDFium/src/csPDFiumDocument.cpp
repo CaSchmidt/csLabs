@@ -272,7 +272,12 @@ csPDFiumDocument csPDFiumDocument::load(const QString& filename,
                                           impl->data.size(), NULL);
 
   } else {
+#ifndef Q_OS_WIN // ASSUMPTION: All other OSes treat paths as UTF-8...
     impl->document = FPDF_LoadDocument(filename.toUtf8().constData(), NULL);
+#else
+    // NOTE: PDFium uses UTF-16LE encoding!
+    impl->document = FPDF_LoadDocumentW(filename.utf16(), NULL);
+#endif
   }
 
   if( impl->document == NULL ) {
