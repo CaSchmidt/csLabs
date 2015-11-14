@@ -68,6 +68,7 @@ public:
   static int itemId(const QGraphicsItem *item);
 
 public slots:
+  void bestFit();
   void fitToPageWidth();
   void gotoLinkSource();
   void highlightText(const QString& text);
@@ -86,7 +87,7 @@ protected:
   void keyPressEvent(QKeyEvent *event);
   QList<QGraphicsItem*> listItems(const int id) const;
   void removeItems(const int id);
-  void resizeEvent(QResizeEvent *);
+  void resizeEvent(QResizeEvent *event);
   void wheelEvent(QWheelEvent *event);
 
 private slots:
@@ -105,6 +106,7 @@ protected:
 private:
   enum ZoomMode {
     ZoomUser = 0,
+    ZoomBestFit,
     ZoomFitToPageWidth
   };
 
