@@ -150,6 +150,33 @@ csPDFiumContentsNode *csPDFiumDocument::tableOfContents() const
   return root;
 }
 
+csPDFiumTextPage csPDFiumDocument::texPage(const int no) const
+{
+  if( isEmpty() ) {
+    return csPDFiumTextPage();
+  }
+
+  CSPDFIUM_DOCIMPL();
+
+  if( no < 0  ||  no >= FPDF_GetPageCount(impl->document) ) {
+    return csPDFiumTextPage();
+  }
+
+  const FPDF_PAGE page = FPDF_LoadPage(impl->document, no);
+  if( page == NULL ) {
+    return csPDFiumTextPage();
+  }
+
+  const qreal     h = FPDF_GetPageHeight(page);
+  const QMatrix ctm = QMatrix(1, 0, 0, -1, 0, h);
+
+  const csPDFiumTextPage result(no, util::extractTexts(page, ctm));
+
+  FPDF_ClosePage(page);
+
+  return result;
+}
+
 csPDFiumTextPages csPDFiumDocument::textPages(const int first, const int count) const
 {
   if( isEmpty() ) {
@@ -174,7 +201,7 @@ csPDFiumTextPages csPDFiumDocument::textPages(const int first, const int count) 
       continue;
     }
 
-    const qreal    h = FPDF_GetPageHeight(page);
+    const qreal     h = FPDF_GetPageHeight(page);
     const QMatrix ctm = QMatrix(1, 0, 0, -1, 0, h);
 
     results.push_back(csPDFiumTextPage(pageNo,

@@ -54,6 +54,7 @@ public:
   int pageCount() const;
   csPDFiumPage page(const int no) const; // no == [0, pageCount()-1]
   csPDFiumContentsNode *tableOfContents() const;
+  csPDFiumTextPage texPage(const int no) const; // no == [0, pageCount()-1]
   csPDFiumTextPages textPages(const int first, const int count = -1) const;
   int resolveBookmark(const void *pointer) const;
   int resolveLink(const void *pointer) const;
