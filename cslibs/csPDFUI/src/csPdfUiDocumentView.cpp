@@ -196,6 +196,11 @@ void csPdfUiDocumentView::setDocument(const csPDFiumDocument& doc)
   showFirstPage();
 }
 
+const csPDFiumPage& csPdfUiDocumentView::page() const
+{
+  return _page;
+}
+
 void csPdfUiDocumentView::setItemId(QGraphicsItem *item, const int id)
 {
   item->setData(DATA_ID, id);

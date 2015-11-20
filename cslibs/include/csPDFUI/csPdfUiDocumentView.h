@@ -61,8 +61,11 @@ public:
   ~csPdfUiDocumentView();
 
   QString selectedText() const;
+
   const csPDFiumDocument& document() const;
   void setDocument(const csPDFiumDocument& doc);
+
+  const csPDFiumPage& page() const;
 
   static void setItemId(QGraphicsItem *item, const int id);
   static int itemId(const QGraphicsItem *item);

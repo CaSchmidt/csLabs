@@ -150,7 +150,7 @@ csPDFiumContentsNode *csPDFiumDocument::tableOfContents() const
   return root;
 }
 
-csPDFiumTextPage csPDFiumDocument::texPage(const int no) const
+csPDFiumTextPage csPDFiumDocument::textPage(const int no) const
 {
   if( isEmpty() ) {
     return csPDFiumTextPage();
