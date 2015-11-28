@@ -36,7 +36,8 @@ SOURCES += \
     src/csTrie.cpp \
     src/csTreeItem.cpp \
     src/csFlatTrie.cpp \
-    src/csCollapser.cpp
+    src/csCollapser.cpp \
+    src/csProgressLineEdit.cpp
 
 HEADERS += \
     ../include/csQt/csTableCopier.h \
@@ -53,4 +54,5 @@ HEADERS += \
     ../include/csQt/csTreeItem.h \
     include/private/csFlatTriePrivate.h \
     ../include/csQt/csFlatTrie.h \
-    ../include/csQt/csCollapser.h
+    ../include/csQt/csCollapser.h \
+    ../include/csQt/csProgressLineEdit.h
