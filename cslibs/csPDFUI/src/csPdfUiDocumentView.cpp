@@ -568,8 +568,11 @@ void csPdfUiDocumentView::selectArea(QRect rect, QPointF fromScene, QPointF toSc
 
 bool csPdfUiDocumentView::followLink(const QPointF& scenePos)
 {
-  const QGraphicsItem *item = _scene->itemAt(scenePos, QTransform());
-  if( item != 0  &&  itemId(item) == LinkId ) {
+  foreach (QGraphicsItem *item, _scene->items(scenePos)) {
+    if( item == 0  ||  itemId(item) != LinkId ) {
+      continue;
+    }
+
     const void *pointer = item->data(DATA_LINKPOINTER).value<void*>();
     const QPointF  dest = item->data(DATA_LINKDEST).toPointF();
     const int      page = _doc.resolveLink(pointer);

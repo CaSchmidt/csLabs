@@ -35,6 +35,7 @@
 #include <QtCore/QLocale>
 #include <QtCore/QModelIndex>
 #include <QtCore/QRect>
+#include <QtCore/QRectF>
 #include <QtCore/QString>
 #include <QtWidgets/QWidget>
 
@@ -58,6 +59,15 @@ class QPoint;
 class QTableView;
 class QVariant;
 class QWidget;
+
+inline qreal csScale(const QSizeF& from, const QSizeF& to)
+{
+  const qreal sh = to.width() /from.width();
+  const qreal sv = to.height()/from.height();
+  return from.height()*sh > to.height()
+      ? sv
+      : sh;
+}
 
 CS_QT_EXPORT QRect csScreenGeometry(const QPoint& globalPos, QWidget *widget);
 
