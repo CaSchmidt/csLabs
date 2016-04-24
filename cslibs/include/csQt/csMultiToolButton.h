@@ -29,3 +29,34 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#ifndef __CSMULTITOOLBUTTON_H__
+#define __CSMULTITOOLBUTTON_H__
+
+#include <QtCore/QList>
+#include <QtCore/QPair>
+#include <QtWidgets/QToolButton>
+
+#include <csQt/csqt_config.h>
+
+typedef QPair<QString,int> csMultiItem;
+typedef QList<csMultiItem> csMultiItems;
+
+class CS_QT_EXPORT csMultiToolButton : public QToolButton {
+  Q_OBJECT
+public:
+  csMultiToolButton(const csMultiItems& items, const int invalidId, QWidget *parent);
+  ~csMultiToolButton();
+
+  int currentSelection();
+
+private slots:
+  void activateSelection();
+
+signals:
+  void selectionChanged(int id);
+
+private:
+  int _currentSelection;
+};
+
+#endif // __CSMULTITOOLBUTTON_H__

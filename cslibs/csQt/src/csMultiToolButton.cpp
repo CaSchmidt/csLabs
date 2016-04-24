@@ -29,3 +29,57 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <QtWidgets/QMenu>
+
+#include "csQt/csMultiToolButton.h"
+
+////// public ////////////////////////////////////////////////////////////////
+
+csMultiToolButton::csMultiToolButton(const csMultiItems& items, const int invalidId,
+                                   QWidget *parent)
+  : QToolButton(parent)
+  , _currentSelection(invalidId)
+{
+  setAutoRaise(true);
+  setPopupMode(QToolButton::InstantPopup);
+  setToolButtonStyle(Qt::ToolButtonTextOnly);
+
+  QAction *defaultAction(0);
+
+  QMenu *menu = new QMenu(this);
+  foreach (const csMultiItem& item, items) {
+    QAction *action = menu->addAction(item.first);
+    action->setData(item.second);
+    connect(action, &QAction::triggered, this, &csMultiToolButton::activateSelection);
+    if( defaultAction == 0 ) {
+      defaultAction = action;
+    }
+  }
+  setMenu(menu);
+
+  if( defaultAction != 0 ) {
+    defaultAction->trigger();
+  }
+}
+
+csMultiToolButton::~csMultiToolButton()
+{
+}
+
+int csMultiToolButton::currentSelection()
+{
+  return _currentSelection;
+}
+
+////// private slots /////////////////////////////////////////////////////////
+
+void csMultiToolButton::activateSelection()
+{
+  QAction *action = dynamic_cast<QAction*>(sender());
+  if( action == 0 ) {
+    return;
+  }
+  setText(action->text());
+  _currentSelection = action->data().toInt();
+  emit selectionChanged(_currentSelection);
+}
