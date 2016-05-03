@@ -36,9 +36,11 @@
 ////// public ////////////////////////////////////////////////////////////////
 
 csMultiToolButton::csMultiToolButton(const csMultiItems& items, const int invalidId,
-                                   QWidget *parent)
+                                     QWidget *parent)
   : QToolButton(parent)
+  , _actions()
   , _currentSelection(invalidId)
+  , _invalidId(invalidId)
 {
   setAutoRaise(true);
   setPopupMode(QToolButton::InstantPopup);
@@ -54,6 +56,7 @@ csMultiToolButton::csMultiToolButton(const csMultiItems& items, const int invali
     if( defaultAction == 0 ) {
       defaultAction = action;
     }
+    _actions.push_back(action);
   }
   setMenu(menu);
 
@@ -71,12 +74,27 @@ int csMultiToolButton::currentSelection()
   return _currentSelection;
 }
 
+////// public slots //////////////////////////////////////////////////////////
+
+void csMultiToolButton::setCurrentSelection(int id)
+{
+  _currentSelection = _invalidId;
+  foreach(QAction *action, _actions) {
+    if( action->data().toInt() == id ) {
+      setText(action->text());
+      _currentSelection = action->data().toInt();
+      return;
+    }
+  }
+}
+
 ////// private slots /////////////////////////////////////////////////////////
 
 void csMultiToolButton::activateSelection()
 {
   QAction *action = dynamic_cast<QAction*>(sender());
   if( action == 0 ) {
+    _currentSelection = _invalidId;
     return;
   }
   setText(action->text());

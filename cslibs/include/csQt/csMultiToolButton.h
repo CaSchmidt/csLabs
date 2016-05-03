@@ -49,6 +49,9 @@ public:
 
   int currentSelection();
 
+public slots:
+  void setCurrentSelection(int id);
+
 private slots:
   void activateSelection();
 
@@ -56,7 +59,9 @@ signals:
   void selectionChanged(int id);
 
 private:
+  QList<QAction*> _actions;
   int _currentSelection;
+  const int _invalidId;
 };
 
 #endif // __CSMULTITOOLBUTTON_H__
