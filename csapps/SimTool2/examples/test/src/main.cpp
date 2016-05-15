@@ -19,6 +19,10 @@ extern "C" SIM_MOD_EXPORT void sim_init(int argc, char **argv, void *ctx)
   sim_printf2(ctx, Warning, "Warning");
   sim_printf2(ctx, Error, "Error");
 
+  for(int i = 0; i <= argc; i++) {
+    sim_printf(ctx, "%d: %s", i, argv[i]);
+  }
+
   t = 0;
 
   sim_use_double("Test_Double", &Test_Double, Input, ctx);

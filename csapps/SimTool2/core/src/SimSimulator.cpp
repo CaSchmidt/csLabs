@@ -29,13 +29,100 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <QtCore/QByteArray>
+#include <QtCore/QStringList>
+
 #include "SimCore/SimSimulator.h"
 
 #include "SimCore/SimContext.h"
+#include "SimCore/SimModule.h"
 
 ////// Macros ////////////////////////////////////////////////////////////////
 
 #define CONFIG_OFFLINE_BLOCK  10
+
+////// Private ///////////////////////////////////////////////////////////////
+
+namespace priv {
+
+  QByteArray parseArguments(int& argc, const QString& argv0, const QString& argStr)
+  {
+    argc = 0;
+    if( argv0.isEmpty()  ||  !SimModule::isValidArguments(argStr) ) {
+      return QByteArray();
+    }
+
+    // (1) Parse Argument String into StringList /////////////////////////////
+
+    QStringList args;
+    {
+      QString arg;
+      bool quote = false;
+
+      for(int i = 0; i < argStr.size(); i++) {
+        const QChar ch = argStr[i];
+
+        if( ch == QChar::fromLatin1('"') ) {
+          quote = quote  ?  false : true;
+        } else if( ch.isSpace()  &&  quote ) {
+          arg.push_back(ch);
+        } else if( ch.isSpace() ) {
+          if( !arg.isEmpty() ) {
+            args.push_back(arg);
+            arg.clear();
+          }
+        } else {
+          arg.push_back(ch);
+        }
+      } // foreach character
+
+      if( !arg.isEmpty() ) {
+        args.push_back(arg);
+        arg.clear();
+      }
+    } // args
+
+    // (2) Argument Count ////////////////////////////////////////////////////
+
+    argc = args.size()+1;
+
+    // (3) Construct **argv //////////////////////////////////////////////////
+
+    // (3.1) Size ////////////////////////////////////////////////////////////
+
+    int size;
+    {
+      size  = (argc+1)*sizeof(char*);
+      size += argv0.toUtf8().size()+1;
+      for(int i = 0; i < args.size(); i++) {
+        size += args[i].toUtf8().size()+1;
+      }
+    }
+
+    // (3.2) Data ////////////////////////////////////////////////////////////
+
+    QByteArray result(size, 0);
+    {
+      char **argv = (char**)result.data();
+      char  *data = &result.data()[(argc+1)*sizeof(char*)];
+
+      *argv++ = data;
+      qstrcpy(data, argv0.toUtf8().constData());
+      data += argv0.toUtf8().size()+1;
+
+      for(int i = 0; i < args.size(); i++) {
+        *argv++ = data;
+        qstrcpy(data, args[i].toUtf8().constData());
+        data += args[i].toUtf8().size()+1;
+      }
+    }
+
+    // Done! /////////////////////////////////////////////////////////////////
+
+    return result;
+  }
+
+}; // namespace priv
 
 ////// public ////////////////////////////////////////////////////////////////
 
@@ -153,7 +240,9 @@ void SimSimulator::init()
     // (2.3) Store Module ////////////////////////////////////////////////////
     _runners.push_back(runner);
     // (2.4) Initialize Module ///////////////////////////////////////////////
-    runner->init(0, 0); // TODO: arguments
+    int argc;
+    QByteArray argv = priv::parseArguments(argc, mod.fileName(), mod.arguments());
+    runner->init(argc, (char**)argv.data());
   }
   ctx->db.unlock();
 
