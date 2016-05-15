@@ -40,8 +40,12 @@ SimModulesModel::SimModulesModel(SimContext *simctx, QObject *parent)
   , _names()
   , _simctx(simctx)
 {
-  connect(&_simctx->env, &SimEnvironment::modulesChanged,
-          this, &SimModulesModel::updateModules);
+  connect(&_simctx->env, &SimEnvironment::modulesCleared,
+          this, &SimModulesModel::clearModules);
+  connect(&_simctx->env, &SimEnvironment::moduleInserted,
+          this, &SimModulesModel::insertModule);
+  connect(&_simctx->env, &SimEnvironment::moduleRemoved,
+          this, &SimModulesModel::removeModule);
 }
 
 SimModulesModel::~SimModulesModel()
@@ -56,7 +60,7 @@ QVariant SimModulesModel::data(const QModelIndex& index, int role) const
   if(        role == Qt::DisplayRole ) {
     return _names.at(index.row());
   } else if( role == Qt::CheckStateRole ) {
-    return _simctx->env.module(_names.at(index.row())).isActive()
+    return _simctx->env.isModuleActive(_names.at(index.row()))
         ? Qt::Checked
         : Qt::Unchecked;
   }
@@ -84,7 +88,8 @@ bool SimModulesModel::setData(const QModelIndex& index, const QVariant& value, i
     return false;
   }
   if( role == Qt::CheckStateRole ) {
-    _simctx->env.module(_names.at(index.row())).setActive(value.toInt() != Qt::Unchecked);
+    _simctx->env.setModuleActive(_names.at(index.row()),
+                                 value.toInt() != Qt::Unchecked);
     emit dataChanged(index, index);
     return true;
   }
@@ -93,10 +98,37 @@ bool SimModulesModel::setData(const QModelIndex& index, const QVariant& value, i
 
 ////// private slots /////////////////////////////////////////////////////////
 
-void SimModulesModel::updateModules(const QStringList& names)
+void SimModulesModel::clearModules()
 {
   beginResetModel();
-  _names = names;
-  qSort(_names);
+  _names.clear();
   endResetModel();
+}
+
+void SimModulesModel::insertModule(const QString& name)
+{
+  if(_names.contains(name) ) {
+    return;
+  }
+
+  int insertAt = 0;
+  while( insertAt < _names.size()  &&  name > _names.at(insertAt) ) {
+    insertAt++;
+  }
+
+  beginInsertRows(QModelIndex(), insertAt, insertAt);
+  _names.insert(insertAt, name);
+  endInsertRows();
+}
+
+void SimModulesModel::removeModule(const QString& name)
+{
+  const int index = _names.indexOf(name);
+  if( index < 0 ) {
+    return;
+  }
+
+  beginRemoveRows(QModelIndex(), index, index);
+  _names.removeAt(index);
+  endRemoveRows();
 }

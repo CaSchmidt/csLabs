@@ -51,7 +51,9 @@ public:
   bool setData(const QModelIndex& index, const QVariant& value, int role);
 
 private slots:
-  void updateModules(const QStringList& names);
+  void clearModules();
+  void insertModule(const QString& name);
+  void removeModule(const QString& name);
 
 private:
   QStringList _names;

@@ -59,7 +59,7 @@ void SimEnvironment::clear()
   emit variablesCleared();
 
   _modules.clear();
-  emit modulesChanged(QStringList());
+  emit modulesCleared();
 }
 
 bool SimEnvironment::insertModule(const SimModule& mod)
@@ -68,8 +68,16 @@ bool SimEnvironment::insertModule(const SimModule& mod)
     return false;
   }
   _modules.insert(mod.name(), mod);
-  emit modulesChanged(_modules.keys());
+  emit moduleInserted(mod.name());
   return true;
+}
+
+bool SimEnvironment::isModuleActive(const QString& name) const
+{
+  if( !_modules.contains(name) ) {
+    return false;
+  }
+  return _modules[name].isActive();
 }
 
 bool SimEnvironment::isValidModuleFileName(const QString& filename) const
@@ -87,16 +95,6 @@ QStringList SimEnvironment::listModules() const
   return l;
 }
 
-SimModule& SimEnvironment::module(const QString& name)
-{
-  if( !_modules.contains(name) ) {
-    _module0 = SimModule();
-    _module0.setActive(false);
-    return _module0;
-  }
-  return _modules[name];
-}
-
 SimModules SimEnvironment::modules() const
 {
   return _modules.values();
@@ -105,8 +103,15 @@ SimModules SimEnvironment::modules() const
 SimModule SimEnvironment::removeModule(const QString& name)
 {
   const SimModule mod = _modules.take(name);
-  emit modulesChanged(_modules.keys());
+  emit moduleRemoved(name);
   return mod;
+}
+
+void SimEnvironment::setModuleActive(const QString& name, const bool active)
+{
+  if( _modules.contains(name) ) {
+    _modules[name].setActive(active);
+  }
 }
 
 bool SimEnvironment::insertVariable(const SimVariable& var)

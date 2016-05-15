@@ -50,11 +50,12 @@ public:
   void clear();
 
   bool insertModule(const SimModule& mod);
+  bool isModuleActive(const QString& name) const;
   bool isValidModuleFileName(const QString& filename) const;
   QStringList listModules() const;
-  SimModule& module(const QString& name);
   SimModules modules() const;
   SimModule removeModule(const QString& name);
+  void setModuleActive(const QString& name, const bool active);
 
   bool insertVariable(const SimVariable& var);
   bool isValidVariableName(const QString& name) const;
@@ -64,7 +65,9 @@ public:
   SimVariables variables() const;
 
 signals:
-  void modulesChanged(const QStringList&);
+  void moduleInserted(const QString& name);
+  void moduleRemoved(const QString& name);
+  void modulesCleared();
   void variableInserted(const QString& name);
   void variableRemoved(const QString& name);
   void variablesCleared();

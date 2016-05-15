@@ -50,7 +50,7 @@ public:
   QStringList mimeTypes() const;
   int rowCount(const QModelIndex& parent) const;
 
-public slots:
+private slots:
   void clearVariables();
   void insertVariable(const QString& name);
   void removeVariable(const QString& name);

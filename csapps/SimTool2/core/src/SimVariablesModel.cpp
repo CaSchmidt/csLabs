@@ -109,7 +109,7 @@ int SimVariablesModel::rowCount(const QModelIndex& /*parent*/) const
   return _names.size();
 }
 
-////// public slots //////////////////////////////////////////////////////////
+////// private slots /////////////////////////////////////////////////////////
 
 void SimVariablesModel::clearVariables()
 {
