@@ -70,6 +70,7 @@ private:
   void step();
   void stepModules();
   void stop();
+  void syncInits();
   void syncInputs();
   void syncOutputs();
 

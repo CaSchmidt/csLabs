@@ -6,10 +6,10 @@
     },
     "variables": [
         {
-            "init": 1,
-            "name": "Test_Double",
-            "type": "Double",
-            "unit": "Double"
+            "init": 4,
+            "name": "Test_UInt",
+            "type": "UInt",
+            "unit": "UInt"
         },
         {
             "init": 0,
@@ -18,16 +18,16 @@
             "unit": ""
         },
         {
-            "init": 0,
-            "name": "Test_Summand",
+            "init": 7,
+            "name": "Test_Sum",
             "type": "Double",
             "unit": ""
         },
         {
-            "init": 0,
-            "name": "Test_Sum",
+            "init": 1,
+            "name": "Test_Double",
             "type": "Double",
-            "unit": ""
+            "unit": "Double"
         },
         {
             "init": 2,
@@ -42,10 +42,10 @@
             "unit": "Int"
         },
         {
-            "init": 4,
-            "name": "Test_UInt",
-            "type": "UInt",
-            "unit": "UInt"
+            "init": 0,
+            "name": "Test_Summand",
+            "type": "Double",
+            "unit": ""
         }
     ]
 }

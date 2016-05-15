@@ -99,6 +99,13 @@ bool SimModuleRunner::isXfer(void *pointer) const
   return _xfers.contains(pointer);
 }
 
+void SimModuleRunner::syncInits()
+{
+  foreach(const SimVariableXferRef& xfer, _xfers.values()) {
+    xfer->syncInit();
+  }
+}
+
 void SimModuleRunner::syncInputs()
 {
   foreach(const SimVariableXferRef& xfer, _xfers.values()) {

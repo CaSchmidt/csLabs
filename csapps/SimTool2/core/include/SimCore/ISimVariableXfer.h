@@ -52,6 +52,7 @@ public:
   void on();
   void off();
 
+  virtual void syncInit() = 0;
   virtual void syncInput() = 0;
   virtual void syncOutput() = 0;
   virtual SimDataType type() const = 0;

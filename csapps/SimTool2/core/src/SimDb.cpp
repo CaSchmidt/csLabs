@@ -117,6 +117,11 @@ namespace priv {
     {
     }
 
+    void syncInit()
+    {
+      _db->get(_pointer, _dbIndex);
+    }
+
     void syncInput()
     {
       if( _dir & Input ) {

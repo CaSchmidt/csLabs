@@ -51,6 +51,7 @@ public:
 
   bool isXfer(void *pointer) const;
 
+  void syncInits();
   void syncInputs();
   void syncOutputs();
 

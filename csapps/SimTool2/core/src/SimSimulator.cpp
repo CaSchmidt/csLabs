@@ -173,7 +173,7 @@ void SimSimulator::pause()
 
 void SimSimulator::start()
 {
-  syncInputs();
+  syncInits();
   foreach(const SimModuleRunnerRef& runner, _runners) {
     runner->start();
   }
@@ -215,6 +215,16 @@ void SimSimulator::stop()
   // (2) Release Modules /////////////////////////////////////////////////////
 
   _runners.clear();
+}
+
+void SimSimulator::syncInits()
+{
+  SimContext *ctx = qobject_cast<SimContext*>(parent());
+  ctx->db.lock();
+  foreach(const SimModuleRunnerRef& runner, _runners) {
+    runner->syncInits();
+  }
+  ctx->db.unlock();
 }
 
 void SimSimulator::syncInputs()

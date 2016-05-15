@@ -38,7 +38,6 @@ extern "C" SIM_MOD_EXPORT void sim_start(void *ctx)
 {
   sim_printf(ctx, "sim_start");
   Test_State = 1000;
-  Test_Sum = 0;
 }
 
 extern "C" SIM_MOD_EXPORT void sim_step(double dt, void *ctx)
