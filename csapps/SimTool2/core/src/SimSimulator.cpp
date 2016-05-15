@@ -125,7 +125,6 @@ void SimSimulator::offlineStep()
 
 void SimSimulator::idle()
 {
-  printf("%s: idle\n", __FUNCSIG__); fflush(stdout); // TODO
 }
 
 void SimSimulator::init()
@@ -166,13 +165,10 @@ void SimSimulator::init()
     _offNumSteps = (int)(ctx->cfg.duration/ctx->cfg.step) + 1;
     _offCntStep = 0;
   }
-
-  printf("%s: init\n", __FUNCSIG__); fflush(stdout); // TODO
 }
 
 void SimSimulator::pause()
 {
-  printf("%s: pause\n", __FUNCSIG__); fflush(stdout); // TODO
 }
 
 void SimSimulator::start()
@@ -182,8 +178,6 @@ void SimSimulator::start()
     runner->start();
   }
   syncOutputs();
-
-  printf("%s: start\n", __FUNCSIG__); fflush(stdout); // TODO
 }
 
 void SimSimulator::step()
@@ -196,8 +190,6 @@ void SimSimulator::step()
     _rtTimer.start(ctx->cfg.step*1000.0, this);
     _rtTimerId = _rtTimer.timerId();
   }
-
-  printf("%s: step\n", __FUNCSIG__); fflush(stdout); // TODO
 }
 
 void SimSimulator::stepModules()
@@ -223,8 +215,6 @@ void SimSimulator::stop()
   // (2) Release Modules /////////////////////////////////////////////////////
 
   _runners.clear();
-
-  printf("%s: stop\n", __FUNCSIG__); fflush(stdout); // TODO
 }
 
 void SimSimulator::syncInputs()

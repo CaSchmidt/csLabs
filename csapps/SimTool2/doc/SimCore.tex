@@ -1,0 +1,42 @@
+%% -*- coding: utf-8 -*-
+\documentclass[a4paper,german,12pt]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[german]{babel}
+\usepackage{tikz}
+%\usetikzlibrary{positioning}
+
+\tikzset{reset/.style={circle,fill=black}}
+\tikzset{state/.style={thick,draw=black,rectangle,rounded corners=4pt,font=\ttfamily}}
+\tikzset{transition/.style={thick,line cap=round,line join=round}}
+\tikzset{user/.style={rectangle,rounded corners=4pt,fill=gray!50,fill opacity=0.75,text opacity=1.0}}
+
+\begin{document}
+
+\section{Simulation states}
+
+\begin{center}
+  \begin{tikzpicture}
+    \matrix[row sep=1.5cm,column sep=1.5cm] {
+      & \node (reset) [reset] {};     & \\
+      & \node (idle)  [state] {idle}; & \\
+      & \node (init)  [state] {init}; & \\
+      \node (stop) [state] {stop}; & & \node (start) [state] {start}; \\
+      & \node (step)  [state] {step}; & \\
+      & \node (pause) [state] {pause}; & \\
+    };
+
+    \draw [transition,->] (reset) -- (idle);
+    \draw [transition,->] (idle)  -- node[right=2pt,user] {Start} (init);
+    \draw [transition,->] (init)  to[out=0,in=90]       (start);
+    \draw [transition,->] (start) to[out=-90,in=0]      (step);
+    \draw [transition,->] (step)  to[out=180,in=-90] node[right=2pt,user] {Stop} (stop);
+    \draw [transition,->] (stop)  to[out=90,in=180]     (idle);
+    \draw [transition,->] (step)  -- node[left=2pt,user] {Pause} (pause);
+    \draw [transition,->] (pause) to[out=0,in=0] node[right=2pt,user] {Start} (step);
+    \draw [transition,->] (pause) to[out=180,in=-90] node[left=2pt,user] {Stop} (stop);
+  \end{tikzpicture}
+\end{center}
+
+\end{document}

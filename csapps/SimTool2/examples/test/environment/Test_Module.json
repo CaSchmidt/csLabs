@@ -1,0 +1,51 @@
+{
+    "configuration": {
+        "duration": 10,
+        "mode": "RealTime",
+        "step": 1
+    },
+    "variables": [
+        {
+            "init": 1,
+            "name": "Test_Double",
+            "type": "Double",
+            "unit": "Double"
+        },
+        {
+            "init": 0,
+            "name": "Test_State",
+            "type": "Int",
+            "unit": ""
+        },
+        {
+            "init": 0,
+            "name": "Test_Summand",
+            "type": "Double",
+            "unit": ""
+        },
+        {
+            "init": 0,
+            "name": "Test_Sum",
+            "type": "Double",
+            "unit": ""
+        },
+        {
+            "init": 2,
+            "name": "Test_Single",
+            "type": "Single",
+            "unit": "Single"
+        },
+        {
+            "init": 3,
+            "name": "Test_Int",
+            "type": "Int",
+            "unit": "Int"
+        },
+        {
+            "init": 4,
+            "name": "Test_UInt",
+            "type": "UInt",
+            "unit": "UInt"
+        }
+    ]
+}
