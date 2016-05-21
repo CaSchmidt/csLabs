@@ -4,13 +4,14 @@
         "mode": "RealTime",
         "step": 1
     },
-    "variables": [
+    "modules": [
         {
-            "init": 4,
-            "name": "Test_UInt",
-            "type": "UInt",
-            "unit": "UInt"
-        },
+            "active": true,
+            "arguments": "one --with=\"white space\" three",
+            "filename": "../../../../../bin/test-x64.dll"
+        }
+    ],
+    "variables": [
         {
             "init": 0,
             "name": "Test_State",
@@ -18,22 +19,10 @@
             "unit": ""
         },
         {
-            "init": 7,
-            "name": "Test_Sum",
-            "type": "Double",
-            "unit": ""
-        },
-        {
-            "init": 1,
-            "name": "Test_Double",
-            "type": "Double",
-            "unit": "Double"
-        },
-        {
-            "init": 2,
-            "name": "Test_Single",
-            "type": "Single",
-            "unit": "Single"
+            "init": 4,
+            "name": "Test_UInt",
+            "type": "UInt",
+            "unit": "UInt"
         },
         {
             "init": 3,
@@ -42,8 +31,26 @@
             "unit": "Int"
         },
         {
+            "init": 2,
+            "name": "Test_Single",
+            "type": "Single",
+            "unit": "Single"
+        },
+        {
+            "init": 1,
+            "name": "Test_Double",
+            "type": "Double",
+            "unit": "Double"
+        },
+        {
             "init": 0,
             "name": "Test_Summand",
+            "type": "Double",
+            "unit": ""
+        },
+        {
+            "init": 7,
+            "name": "Test_Sum",
             "type": "Double",
             "unit": ""
         }

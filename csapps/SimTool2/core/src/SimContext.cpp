@@ -29,7 +29,9 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <QtCore/QDir>
 #include <QtCore/QFile>
+#include <QtCore/QFileInfo>
 #include <QtCore/QJsonArray>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
@@ -72,6 +74,8 @@ SimContext::~SimContext()
 
 bool SimContext::open(const QString& filename)
 {
+  const QDir configDir(QFileInfo(filename).absoluteDir());
+
   // (1) Input ///////////////////////////////////////////////////////////////
 
   QFile file(filename);
@@ -119,6 +123,26 @@ bool SimContext::open(const QString& filename)
 
   // (5) Modules /////////////////////////////////////////////////////////////
 
+  const QJsonArray modsObj = ctxObj[QStringLiteral("modules")].toArray();
+  foreach(const QJsonValue& valObj, modsObj) {
+    const QJsonObject modObj = valObj.toObject();
+    SimModule mod;
+
+    const QString rawFilename = modObj[QStringLiteral("filename")].toString();
+    mod.setFileName(QFileInfo(rawFilename).isAbsolute()
+                    ? QDir::cleanPath(rawFilename)
+                    : QDir::cleanPath(configDir.absoluteFilePath(rawFilename)));
+    if( !SimModule::isValidModule(mod.fileName()) ) {
+      logError(tr("Invalid module \"%1\"!").arg(mod.fileName()));
+      continue;
+    }
+    mod.setActive(modObj[QStringLiteral("active")].toBool());
+    mod.setArguments(modObj[QStringLiteral("arguments")].toString());
+    if( !env.insertModule(mod) ) {
+      logError(tr("Unable to insert module \"%1\"!").arg(mod.name()));
+    }
+  }
+
   // Done ////////////////////////////////////////////////////////////////////
 
   return true;
@@ -127,6 +151,7 @@ bool SimContext::open(const QString& filename)
 bool SimContext::save(const QString& filename) const
 {
   QJsonObject ctxObj;
+  const QDir configDir(QFileInfo(filename).absoluteDir());
 
   // (1) Configuration ///////////////////////////////////////////////////////
 
@@ -150,6 +175,16 @@ bool SimContext::save(const QString& filename) const
   ctxObj[QStringLiteral("variables")] = varsObj;
 
   // (3) Modules /////////////////////////////////////////////////////////////
+
+  QJsonArray modsObj;
+  foreach(const SimModule& mod, env.modules()) {
+    QJsonObject modObj;
+    modObj[QStringLiteral("filename")]  = configDir.relativeFilePath(mod.fileName());
+    modObj[QStringLiteral("active")]    = mod.isActive();
+    modObj[QStringLiteral("arguments")] = mod.arguments();
+    modsObj.append(modObj);
+  }
+  ctxObj[QStringLiteral("modules")] = modsObj;
 
   // (4) Output //////////////////////////////////////////////////////////////
 
