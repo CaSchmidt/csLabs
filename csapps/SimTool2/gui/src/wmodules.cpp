@@ -83,6 +83,9 @@ void WModules::keyPressEvent(QKeyEvent *event)
 
 void WModules::addModule()
 {
+  if( global::simctx->sim.activeState() != IdleState ) {
+    return;
+  }
   WModuleEditor editor(this);
   if( editor.exec() == QDialog::Accepted  &&
       !global::simctx->env.insertModule(editor.get()) ) {
@@ -94,6 +97,9 @@ void WModules::addModule()
 
 void WModules::editModule(const QModelIndex& index)
 {
+  if( global::simctx->sim.activeState() != IdleState ) {
+    return;
+  }
   const QString name = ui->modulesView->model()->data(index).toString();
   const SimModule oldMod = global::simctx->env.removeModule(name);
   WModuleEditor editor(this);
@@ -116,6 +122,9 @@ void WModules::editModule(const QModelIndex& index)
 
 void WModules::removeModule()
 {
+  if( global::simctx->sim.activeState() != IdleState ) {
+    return;
+  }
   const QModelIndexList indexes = ui->modulesView->selectionModel()->selectedRows();
   if( indexes.size() > 1  &&
       QMessageBox::question(this,

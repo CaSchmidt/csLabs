@@ -84,6 +84,9 @@ void WVariables::keyPressEvent(QKeyEvent *event)
 
 void WVariables::addVariable()
 {
+  if( global::simctx->sim.activeState() != IdleState ) {
+    return;
+  }
   WVariableEditor editor(this);
   if( editor.exec() == QDialog::Accepted  &&
       !global::simctx->env.insertVariable(editor.get()) ) {
@@ -95,6 +98,9 @@ void WVariables::addVariable()
 
 void WVariables::editVariable(const QModelIndex& index)
 {
+  if( global::simctx->sim.activeState() != IdleState ) {
+    return;
+  }
   const QString name = ui->variablesView->model()->data(index).toString();
   const SimVariable oldVar = global::simctx->env.removeVariable(name);
   WVariableEditor editor(this);
@@ -117,6 +123,9 @@ void WVariables::editVariable(const QModelIndex& index)
 
 void WVariables::removeVariables()
 {
+  if( global::simctx->sim.activeState() != IdleState ) {
+    return;
+  }
   const QModelIndexList indexes = ui->variablesView->selectionModel()->selectedRows();
   if( indexes.size() > 1  &&
       QMessageBox::question(this,
