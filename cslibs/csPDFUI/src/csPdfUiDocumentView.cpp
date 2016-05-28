@@ -116,7 +116,7 @@ csPdfUiDocumentView::csPdfUiDocumentView(QWidget *parent)
   , _page()
   , _zoom(ZOOM_INIT)
   , _zoomMode(ZoomUser)
-  , _pageBounces(0)
+  , _wheelBounces(0)
   , _linkHistory()
 {
   // Graphics Scene //////////////////////////////////////////////////////////
@@ -287,7 +287,7 @@ void csPdfUiDocumentView::showNextPage()
 
 void csPdfUiDocumentView::showPage(int no)
 {
-  _pageBounces = 0;
+  _wheelBounces = 0;
 
   if( _doc.isEmpty() ) {
     emit pageChanged(1);
@@ -485,7 +485,7 @@ void csPdfUiDocumentView::wheelEvent(QWheelEvent *event)
   const int dy = event->angleDelta().y() / 8; // [Degree]
 
   if( !condVScrollVisible ) {
-    _pageBounces = 0;
+    _wheelBounces = 0;
   }
 
   if(        condPageChange ) {
@@ -514,31 +514,31 @@ void csPdfUiDocumentView::wheelEvent(QWheelEvent *event)
     const int value = verticalScrollBar()->value();
 
     if(        value <= verticalScrollBar()->minimum() ) {
-      if( _pageBounces > 0 ) {
-        _pageBounces = -1;
+      if( _wheelBounces > 0 ) {
+        _wheelBounces = -1;
       } else {
-        _pageBounces--;
+        _wheelBounces--;
       }
-      if( qAbs(_pageBounces) > cfg_maxPageBounces ) {
+      if( qAbs(_wheelBounces) > cfg_maxPageBounces ) {
         showPreviousPage();
-        _pageBounces = 0;
+        _wheelBounces = 0;
         return;
       }
 
     } else if( value >= verticalScrollBar()->maximum() ) {
-      if( _pageBounces < 0 ) {
-        _pageBounces = 1;
+      if( _wheelBounces < 0 ) {
+        _wheelBounces = 1;
       } else {
-        _pageBounces++;
+        _wheelBounces++;
       }
-      if( qAbs(_pageBounces) > cfg_maxPageBounces ) {
+      if( qAbs(_wheelBounces) > cfg_maxPageBounces ) {
         showNextPage();
-        _pageBounces = 0;
+        _wheelBounces = 0;
         return;
       }
 
     } else {
-      _pageBounces = 0;
+      _wheelBounces = 0;
     }
   }
 

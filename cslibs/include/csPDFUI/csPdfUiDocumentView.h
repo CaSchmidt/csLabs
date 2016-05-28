@@ -126,7 +126,7 @@ private:
 
   qreal _zoom; // [%]
   int _zoomMode;
-  int _pageBounces;
+  int _wheelBounces;
   QStack<ReverseLink> _linkHistory; // [1, _doc.pageCount()]
 
 signals:
