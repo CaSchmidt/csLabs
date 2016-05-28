@@ -139,6 +139,7 @@ private:
 
   qreal _zoom; // [%]
   int _zoomMode;
+  int _keyBounces;
   int _wheelBounces;
   QStack<ReverseLink> _linkHistory; // [1, _doc.pageCount()]
   static csPdfUiDocumentViewConfig _cfg;

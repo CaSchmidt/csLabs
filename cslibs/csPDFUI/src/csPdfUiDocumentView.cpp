@@ -120,6 +120,7 @@ csPdfUiDocumentView::csPdfUiDocumentView(QWidget *parent)
   , _page()
   , _zoom(ZOOM_INIT)
   , _zoomMode(ZoomUser)
+  , _keyBounces(0)
   , _wheelBounces(0)
   , _linkHistory()
 {
@@ -136,7 +137,6 @@ csPdfUiDocumentView::csPdfUiDocumentView(QWidget *parent)
   // Event Filter ////////////////////////////////////////////////////////////
 
   _scene->installEventFilter(this);
-  verticalScrollBar()->installEventFilter(this);
 
   // Signals & Slots /////////////////////////////////////////////////////////
 
@@ -296,6 +296,7 @@ void csPdfUiDocumentView::showNextPage()
 
 void csPdfUiDocumentView::showPage(int no)
 {
+  _keyBounces = 0;
   _wheelBounces = 0;
 
   if( _doc.isEmpty() ) {
@@ -382,24 +383,6 @@ bool csPdfUiDocumentView::eventFilter(QObject *watched, QEvent *event)
         followLink(mev->scenePos()) ) {
       return true;
     }
-  } else if( event->type() == QEvent::MouseButtonDblClick ) {
-    QMouseEvent *mev = dynamic_cast<QMouseEvent*>(event);
-    if( mev->button() == Qt::LeftButton ) {
-      const int btnRng = verticalScrollBar()->size().width()-1;
-      const int max    = verticalScrollBar()->maximum();
-      const int maxY   = verticalScrollBar()->height()-1;
-      const int min    = verticalScrollBar()->minimum();
-      const int val    = verticalScrollBar()->value();
-      const int y      = mev->pos().y();
-
-      if(        val == min  &&  0 <= y  &&  y <= btnRng ) {
-        showPreviousPage();
-        return true;
-      } else if( val == max  &&  maxY-btnRng <= y  &&  y <= maxY) {
-        showNextPage();
-        return true;
-      }
-    }
   }
 
   return QGraphicsView::eventFilter(watched, event);
@@ -407,6 +390,18 @@ bool csPdfUiDocumentView::eventFilter(QObject *watched, QEvent *event)
 
 void csPdfUiDocumentView::keyPressEvent(QKeyEvent *event)
 {
+  // Conditions & State
+  const bool condVScrollVisible = verticalScrollBar()->isVisible();
+  const int vScroll = condVScrollVisible
+      ? verticalScrollBar()->value()
+      : 0;
+
+  // Clean state
+  if( !condVScrollVisible ) {
+    _keyBounces = 0;
+  }
+
+  // Events
   if(        event->matches(QKeySequence::MoveToStartOfDocument) ) {
     showFirstPage();
     event->accept();
@@ -437,6 +432,44 @@ void csPdfUiDocumentView::keyPressEvent(QKeyEvent *event)
     gotoLinkSource();
     event->accept();
     return;
+  } else if( event->matches(QKeySequence::MoveToPreviousLine) ) {
+    if( !condVScrollVisible ) {
+      showPreviousPage();
+    } else {
+      if( vScroll <= verticalScrollBar()->minimum() ) {
+        if( _keyBounces > 0 ) {
+          _keyBounces = -1;
+        } else {
+          _keyBounces--;
+        }
+        if( qAbs(_keyBounces) > _cfg.maxKeyBounces ) {
+          showPreviousPage();
+          _keyBounces = 0;
+        }
+      } else {
+        _keyBounces = 0;
+      }
+    }
+    // NOTE: We do not return to let the event be processed by QGraphicsView!
+  } else if( event->matches(QKeySequence::MoveToNextLine) ) {
+    if( !condVScrollVisible ) {
+      showNextPage();
+    } else {
+      if( vScroll >= verticalScrollBar()->maximum() ) {
+        if( _keyBounces < 0 ) {
+          _keyBounces = 1;
+        } else {
+          _keyBounces++;
+        }
+        if( qAbs(_keyBounces) > _cfg.maxKeyBounces ) {
+          showNextPage();
+          _keyBounces = 0;
+        }
+      } else {
+        _keyBounces = 0;
+      }
+    }
+    // NOTE: We do not return to let the event be processed by QGraphicsView!
   }
 
   QGraphicsView::keyPressEvent(event);
