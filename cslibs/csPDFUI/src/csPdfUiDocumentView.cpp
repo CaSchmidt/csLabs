@@ -107,6 +107,10 @@ namespace priv {
 
 }; // namespace priv
 
+////// Static ////////////////////////////////////////////////////////////////
+
+csPdfUiDocumentViewConfig csPdfUiDocumentView::_cfg;
+
 ////// public ////////////////////////////////////////////////////////////////
 
 csPdfUiDocumentView::csPdfUiDocumentView(QWidget *parent)
@@ -209,6 +213,11 @@ void csPdfUiDocumentView::setItemId(QGraphicsItem *item, const int id)
 int csPdfUiDocumentView::itemId(const QGraphicsItem *item)
 {
   return item->data(DATA_ID).toInt();
+}
+
+void csPdfUiDocumentView::setConfig(const csPdfUiDocumentViewConfig& config)
+{
+  _cfg = config;
 }
 
 ////// public slots //////////////////////////////////////////////////////////
@@ -467,9 +476,6 @@ void csPdfUiDocumentView::resizeEvent(QResizeEvent *event)
 
 void csPdfUiDocumentView::wheelEvent(QWheelEvent *event)
 {
-  // Configuration
-  const int cfg_maxPageBounces(1);
-
   // Conditions
   const bool condVScrollVisible
       = verticalScrollBar()->isVisible();
@@ -519,7 +525,7 @@ void csPdfUiDocumentView::wheelEvent(QWheelEvent *event)
       } else {
         _wheelBounces--;
       }
-      if( qAbs(_wheelBounces) > cfg_maxPageBounces ) {
+      if( qAbs(_wheelBounces) > _cfg.maxWheelBounces ) {
         showPreviousPage();
         _wheelBounces = 0;
         return;
@@ -531,7 +537,7 @@ void csPdfUiDocumentView::wheelEvent(QWheelEvent *event)
       } else {
         _wheelBounces++;
       }
-      if( qAbs(_wheelBounces) > cfg_maxPageBounces ) {
+      if( qAbs(_wheelBounces) > _cfg.maxWheelBounces ) {
         showNextPage();
         _wheelBounces = 0;
         return;

@@ -38,6 +38,17 @@
 #include <csPDFUI/cspdfui_config.h>
 #include <csPDFium/csPDFiumDocument.h>
 
+struct csPdfUiDocumentViewConfig {
+  csPdfUiDocumentViewConfig()
+    : maxKeyBounces(1)
+    , maxWheelBounces(1)
+  {
+  }
+
+  int maxKeyBounces;
+  int maxWheelBounces;
+};
+
 class  CS_PDFUI_EXPORT csPdfUiDocumentView : public QGraphicsView {
   Q_OBJECT
 public:
@@ -69,6 +80,8 @@ public:
 
   static void setItemId(QGraphicsItem *item, const int id);
   static int itemId(const QGraphicsItem *item);
+
+  static void setConfig(const csPdfUiDocumentViewConfig& config);
 
 public slots:
   void gotoLinkSource();
@@ -128,6 +141,7 @@ private:
   int _zoomMode;
   int _wheelBounces;
   QStack<ReverseLink> _linkHistory; // [1, _doc.pageCount()]
+  static csPdfUiDocumentViewConfig _cfg;
 
 signals:
   void pageChanged(int no); // [1, _doc.pageCount()]
