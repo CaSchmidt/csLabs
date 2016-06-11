@@ -43,6 +43,8 @@ template<typename T>
 class SimDbStore {
 public:
   SimDbStore()
+    : _index()
+    , _table()
   {
   }
 
@@ -72,10 +74,15 @@ public:
     _table.clear();
   }
 
+  inline int index(const QString& name) const
+  {
+    return _index.value(name, -1);
+  }
+
   bool insert(const QString& name, const T initialValue)
   {
     if( _index.contains(name) ) {
-      return false;
+      return true;
     }
     const int pos = _table.size();
     _table.append(initialValue);
@@ -83,7 +90,7 @@ public:
       return false;
     }
     _index.insert(name, pos);
-    return true;
+    return _index.contains(name);
   }
 
   bool remove(const QString& name)
@@ -91,17 +98,12 @@ public:
     return _index.remove(name) > 0;
   }
 
-  int index(const QString& name) const
-  {
-    return _index.value(name, -1);
-  }
-
-  T& operator[](const int index)
+  inline T& operator[](const int index)
   {
     return _table[index];
   }
 
-  const T& operator[](const int index) const
+  inline const T& operator[](const int index) const
   {
     return _table[index];
   }

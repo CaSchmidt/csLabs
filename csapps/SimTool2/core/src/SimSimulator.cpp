@@ -128,6 +128,7 @@ namespace priv {
 
 SimSimulator::SimSimulator(SimContext *simctx)
   : QObject(simctx)
+  , _logTimeStamp()
   , _offCntStep()
   , _offNumSteps()
   , _rtTimer()
@@ -251,7 +252,7 @@ void SimSimulator::init()
   _offCntStep = _offNumSteps = _rtTimerId = 0;
 
   if( ctx->cfg.mode == OfflineMode ) {
-    _offNumSteps = (int)(ctx->cfg.duration/ctx->cfg.step) + 1;
+    _offNumSteps = (int)(ctx->cfg.duration/ctx->cfg.step);
     _offCntStep = 0;
   }
 }
@@ -262,11 +263,16 @@ void SimSimulator::pause()
 
 void SimSimulator::start()
 {
+  SimContext *ctx = qobject_cast<SimContext*>(parent());
+
   syncInits();
   foreach(const SimModuleRunnerRef& runner, _runners) {
     runner->start();
   }
   syncOutputs();
+
+  _logTimeStamp = 0;
+  // ctx->logger.writeLog(_logTimeStamp); // TODO
 }
 
 void SimSimulator::step()
@@ -284,11 +290,15 @@ void SimSimulator::step()
 void SimSimulator::stepModules()
 {
   SimContext *ctx = qobject_cast<SimContext*>(parent());
+
   syncInputs();
   foreach(const SimModuleRunnerRef& runner, _runners) {
     runner->step(ctx->cfg.step);
   }
   syncOutputs();
+
+  _logTimeStamp += ctx->cfg.step;
+  // ctx->logger.writeLog(_logTimeStamp); // TODO
 }
 
 void SimSimulator::stop()

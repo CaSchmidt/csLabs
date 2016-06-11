@@ -76,7 +76,7 @@ SimValuesModel::~SimValuesModel()
 bool SimValuesModel::addValue(const QString& name)
 {
   if( _values.contains(name) ) {
-    return false;
+    return true;
   }
 
   _simctx->db.lock();
@@ -251,7 +251,7 @@ void SimValuesModel::updateValues()
   }
   _simctx->db.lock();
   foreach(const SimValueRef& value, _values.values()) {
-    value->getNonBlocking();
+    value->getAsync();
   }
   _simctx->db.unlock();
   const QModelIndex from = index(0, 1);

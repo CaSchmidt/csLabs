@@ -35,9 +35,9 @@
 #include <QtCore/QMutex>
 #include <QtCore/QObject>
 
-#include <SimCore/SimDbStore.h>
 #include <SimCore/ISimValue.h>
 #include <SimCore/ISimVariableXfer.h>
+#include <SimCore/SimDbStore.h>
 
 class SimContext;
 

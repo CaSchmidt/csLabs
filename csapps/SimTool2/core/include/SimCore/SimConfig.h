@@ -35,20 +35,24 @@
 #include <QtCore/QMetaType>
 
 #include <SimCore/Sim.h>
+#include <SimCore/SimDataSeries.h>
 
 struct SimConfig {
   SimConfig(const SimOperationMode _mode = InvalidOperationMode,
             const double _step = 0.0,
-            const double _duration = 0.0)
+            const double _duration = 0.0,
+            const int _logDepth = SimDataSeries::minDepth())
     : mode(_mode)
     , step(_step)
     , duration(_duration)
+    , logDepth(_logDepth)
   {
   }
 
   SimOperationMode mode;
   double step;
   double duration;
+  int logDepth;
 };
 
 Q_DECLARE_METATYPE(SimConfig)

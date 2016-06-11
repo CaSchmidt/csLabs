@@ -74,6 +74,7 @@ private:
   void syncInputs();
   void syncOutputs();
 
+  double _logTimeStamp;
   int _offCntStep;
   int _offNumSteps;
   QBasicTimer _rtTimer;

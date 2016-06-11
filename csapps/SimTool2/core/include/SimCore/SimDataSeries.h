@@ -29,54 +29,47 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __ISIMVALUE_H__
-#define __ISIMVALUE_H__
+#ifndef __SIMDATASERIES_H__
+#define __SIMDATASERIES_H__
 
-#include <QtCore/QSharedPointer>
+#include <QtCore/QHash>
+#include <QtCore/QSharedDataPointer>
 
-#include <SimCore/Sim.h>
+#include <SimCore/simcore_config.h>
 
-class SimDb;
+class SimDataSeriesPriv;
 
-class ISimValue {
+class SIM_CORE_EXPORT SimDataSeries {
 public:
-  virtual ~ISimValue();
+  SimDataSeries(SimDataSeriesPriv *data = 0);
+  SimDataSeries(const SimDataSeries& other);
+  ~SimDataSeries();
 
-  const QString& name() const;
+  SimDataSeries& operator=(const SimDataSeries& other);
 
-  void invalidate();
-  bool isValid() const;
+  bool initialize(const int depth, const double value);
 
-  int precision() const;
-  void setPrecision(int precision);
+  bool isNull() const;
 
-  QString display() const;
+  void clear();
 
-  virtual void get() = 0;
-  virtual void getAsync() = 0;
-  virtual void set() const = 0;
+  int depth() const;
+  int mask() const;
+  int position() const;
+  int size() const;
 
-  virtual double value() const = 0;
-  virtual void setValue(const double value) = 0;
+  void append(const double value);
+  double value(const int i) const;
 
-  virtual double minValue() const = 0;
-  virtual double maxValue() const = 0;
-
-  virtual SimDataType type() const = 0;
-
-protected:
-  ISimValue(const QString& name, SimDb *db, const int dbIndex);
-
-  SimDb *_db;
-  int _dbIndex;
-  QString _name;
-  int _precision;
+  static int minDepth();
+  static int maxDepth();
+  static int calculateDepth(const int size);
+  static int calculateSize(const int depth);
 
 private:
-  ISimValue(const ISimValue&);
-  ISimValue& operator=(const ISimValue&);
+  QSharedDataPointer<SimDataSeriesPriv> d;
 };
 
-typedef QSharedPointer<ISimValue> SimValueRef;
+typedef QHash<QString,SimDataSeries> SimDataSeriesStore;
 
-#endif // __ISIMVALUE_H__
+#endif // __SIMDATASERIES_H__

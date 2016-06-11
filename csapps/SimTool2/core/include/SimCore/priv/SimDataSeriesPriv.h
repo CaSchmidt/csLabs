@@ -29,54 +29,37 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __ISIMVALUE_H__
-#define __ISIMVALUE_H__
+#ifndef __SIMDATASERIESPRIV_H__
+#define __SIMDATASERIESPRIV_H__
 
-#include <QtCore/QSharedPointer>
+#include <QtCore/QSharedData>
+#include <QtCore/QVector>
 
-#include <SimCore/Sim.h>
-
-class SimDb;
-
-class ISimValue {
+class SimDataSeriesPriv : public QSharedData {
 public:
-  virtual ~ISimValue();
+  SimDataSeriesPriv()
+    : QSharedData()
+    , data()
+    , mask()
+    , pos()
+  {
+  }
 
-  const QString& name() const;
+  SimDataSeriesPriv(const SimDataSeriesPriv& other)
+    : QSharedData(other)
+    , data(other.data)
+    , mask(other.mask)
+    , pos(other.pos)
+  {
+  }
 
-  void invalidate();
-  bool isValid() const;
+  ~SimDataSeriesPriv()
+  {
+  }
 
-  int precision() const;
-  void setPrecision(int precision);
-
-  QString display() const;
-
-  virtual void get() = 0;
-  virtual void getAsync() = 0;
-  virtual void set() const = 0;
-
-  virtual double value() const = 0;
-  virtual void setValue(const double value) = 0;
-
-  virtual double minValue() const = 0;
-  virtual double maxValue() const = 0;
-
-  virtual SimDataType type() const = 0;
-
-protected:
-  ISimValue(const QString& name, SimDb *db, const int dbIndex);
-
-  SimDb *_db;
-  int _dbIndex;
-  QString _name;
-  int _precision;
-
-private:
-  ISimValue(const ISimValue&);
-  ISimValue& operator=(const ISimValue&);
+  QVector<double> data;
+  int mask;
+  int pos; // index of next write; "oldest" value
 };
 
-typedef QSharedPointer<ISimValue> SimValueRef;
-
-#endif // __ISIMVALUE_H__
+#endif // __SIMDATASERIESPRIV_H__

@@ -46,8 +46,8 @@ extern "C" SIM_MOD_EXPORT void sim_start(void *ctx)
 
 extern "C" SIM_MOD_EXPORT void sim_step(double dt, void *ctx)
 {
-  sim_printf(ctx, "sim_step(%.3fs,%.3fs)", dt, t);
   t += dt;
+  sim_printf(ctx, "sim_step(%.3fs,%.3fs)", dt, t);
 
   Test_State++;
 

@@ -63,7 +63,7 @@ namespace priv {
       _db->unlock();
     }
 
-    void getNonBlocking()
+    void getAsync()
     {
       _db->get(&_value, _dbIndex);
     }
@@ -319,6 +319,7 @@ void SimDb::removeVariable(const QString& name)
 
 SimValueRef SimDb::value(const QString& name) const
 {
+  QMutexLocker locker(const_cast<QMutex*>(&_mutex));
   SimContext *ctx = qobject_cast<SimContext*>(parent());
 
   const SimVariable& var = ctx->env.variable(name);

@@ -52,6 +52,8 @@ SimContext::SimContext(QObject *parent)
 
   // Signals & Slots /////////////////////////////////////////////////////////
 
+  // NOTE: Slots are Executed in Order of Connection!
+
   connect(&ctrl, &SimControl::stateEntered,
           &sim, &SimSimulator::enterState);
   connect(&ctrl, &SimControl::stateExited,
