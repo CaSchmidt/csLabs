@@ -127,11 +127,12 @@ WMainWindow::~WMainWindow()
 {
   WValuesWindow::closeAllWindows();
 
+  global::simctx->deleteLater();
+
   _simThread->quit();
   _simThread->wait();
-
-  delete global::simctx;
   delete _simThread;
+
   delete ui;
 }
 

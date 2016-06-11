@@ -79,9 +79,7 @@ bool SimValuesModel::addValue(const QString& name)
     return true;
   }
 
-  _simctx->db.lock();
   SimValueRef value = _simctx->db.value(name);
-  _simctx->db.unlock();
   if( value.isNull() ) {
     return false;
   }
