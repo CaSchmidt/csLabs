@@ -38,6 +38,7 @@
 #include "SimCore/SimContext.h"
 #include "SimCore/SimDataTypeId.h"
 #include "SimCore/sim_mod.h"
+#include "SimCore/priv/SimDataSeriesPriv.h"
 
 ////// Private ///////////////////////////////////////////////////////////////
 
@@ -175,6 +176,22 @@ namespace priv {
     return SimValueRef(new SimValue<T>(name, index, mutex, store));
   }
 
+  SimDataSeries createLogTime(const int depth, const double dt)
+  {
+    SimDataSeries time(new SimDataSeriesPriv());
+    if( time.isNull() ) {
+      return SimDataSeries();
+    }
+    if( !time.initialize(depth, 0) ) {
+      return SimDataSeries();
+    }
+    const double T0 = -(double)time.size()*dt;
+    for(int i = 0; i < time.size(); i++) {
+      time.append(T0 + (double)i*dt);
+    }
+    return time;
+  }
+
 }; // namespace priv
 
 ////// public ////////////////////////////////////////////////////////////////
@@ -186,6 +203,8 @@ SimDb::SimDb(SimContext *simctx)
   , _intStore()
   , _uintStore()
   , _mutex()
+  , _logTime()
+  , _logs()
 {
 }
 
@@ -245,23 +264,73 @@ SimVariableXferRef SimDb::use(const QString& name, uint32_t *pointer,
 SimValueRef SimDb::value(const QString& name) const
 {
   QMutexLocker locker(const_cast<QMutex*>(&_mutex));
+  return valueImpl(name);
+}
+
+bool SimDb::addLog(const QString& name)
+{
+  QMutexLocker locker(const_cast<QMutex*>(&_mutex));
   SimContext *ctx = qobject_cast<SimContext*>(parent());
 
-  const SimVariable& var = ctx->env.variable(name);
-  if(        var.type() == DoubleType ) {
-    return priv::value_impl<double>(name, const_cast<QMutex*>(&_mutex),
-                                    const_cast<SimDbStore<double>*>(&_doubleStore));
-  } else if( var.type() == SingleType ) {
-    return priv::value_impl<float>(name, const_cast<QMutex*>(&_mutex),
-                                   const_cast<SimDbStore<float>*>(&_singleStore));
-  } else if( var.type() == IntType ) {
-    return priv::value_impl<int32_t>(name, const_cast<QMutex*>(&_mutex),
-                                     const_cast<SimDbStore<int32_t>*>(&_intStore));
-  } else if( var.type() == UIntType ) {
-    return priv::value_impl<uint32_t>(name, const_cast<QMutex*>(&_mutex),
-                                      const_cast<SimDbStore<uint32_t>*>(&_uintStore));
+  if( _logs.contains(name) ) {
+    return true;
   }
-  return SimValueRef();
+
+  const SimVariable var = ctx->env.variable(name);
+  if( var.isEmpty() ) {
+    return false;
+  }
+
+  if( _logTime.isNull() ) {
+    _logTime = priv::createLogTime(ctx->cfg.logDepth, ctx->cfg.step);
+  }
+  if( _logTime.isNull() ) {
+    return false;
+  }
+
+  SimDataLog log(valueImpl(name), SimDataSeries(new SimDataSeriesPriv()));
+  if( log.first.isNull()   ||  log.second.isNull()  ||
+      !log.second.initialize(_logTime.depth(), var.initialValue()) ) {
+    if( _logs.isEmpty() ) {
+      _logTime.clear();
+    }
+    return false;
+  }
+  _logs.insert(name, log);
+
+  return _logs.contains(name);
+}
+
+void SimDb::removeLog(const QString& name)
+{
+  QMutexLocker locker(const_cast<QMutex*>(&_mutex));
+  removeLogImpl(name);
+}
+
+SimDataSeries SimDb::logSeries(const QString& name) const
+{
+  SimDataLog log = _logs.value(name, SimDataLog());
+  return log.second.isNull() ? SimDataSeries() : log.second.copy();
+}
+
+SimDataSeries SimDb::logTime() const
+{
+  return _logTime.isNull() ? SimDataSeries() : _logTime.copy();
+}
+
+void SimDb::syncLog(const double time)
+{
+  QMutexLocker locker(&_mutex);
+  if( _logTime.isNull()  || _logs.isEmpty() ) {
+    return;
+  }
+
+  _logTime.append(time);
+
+  for(SimDataLogIter it = _logs.begin(); it != _logs.end(); it++) {
+    it->first->getAsync();
+    it->second.append(it->first->value());
+  }
 }
 
 ////// public slots //////////////////////////////////////////////////////////
@@ -274,6 +343,45 @@ void SimDb::clear()
   _singleStore.clear();
   _intStore.clear();
   _uintStore.clear();
+
+  _logTime.clear();
+  _logs.clear();
+}
+
+void SimDb::exitState(int state)
+{
+  if( state == IdleState ) {
+    QMutexLocker locker(&_mutex);
+    SimContext *ctx = qobject_cast<SimContext*>(parent());
+
+    if( _logTime.depth() == ctx->cfg.logDepth ) {
+      return;
+    }
+
+    _logTime = priv::createLogTime(ctx->cfg.logDepth, ctx->cfg.step);
+    if( _logTime.isNull() ) {
+      if( !_logs.isEmpty() ) {
+        _logs.clear();
+      }
+      return;
+    }
+
+    foreach(const QString& name, _logs.keys()) {
+      const SimVariable var = ctx->env.variable(name);
+      if( var.isEmpty() ) {
+        continue;
+      }
+
+      if( !_logs[name].second.initialize(_logTime.depth(), var.initialValue()) ) {
+        _logs.remove(name);
+        continue;
+      }
+    }
+
+    if( _logs.isEmpty() ) {
+      _logTime.clear();
+    }
+  }
 }
 
 void SimDb::insertVariable(const QString& name)
@@ -301,4 +409,37 @@ void SimDb::removeVariable(const QString& name)
   _singleStore.remove(name);
   _intStore.remove(name);
   _uintStore.remove(name);
+
+  removeLogImpl(name);
+}
+
+////// private ///////////////////////////////////////////////////////////////
+
+void SimDb::removeLogImpl(const QString& name)
+{
+  _logs.remove(name);
+  if( _logs.isEmpty() ) {
+    _logTime.clear();
+  }
+}
+
+SimValueRef SimDb::valueImpl(const QString& name) const
+{
+  SimContext *ctx = qobject_cast<SimContext*>(parent());
+
+  const SimVariable& var = ctx->env.variable(name);
+  if(        var.type() == DoubleType ) {
+    return priv::value_impl<double>(name, const_cast<QMutex*>(&_mutex),
+                                    const_cast<SimDbStore<double>*>(&_doubleStore));
+  } else if( var.type() == SingleType ) {
+    return priv::value_impl<float>(name, const_cast<QMutex*>(&_mutex),
+                                   const_cast<SimDbStore<float>*>(&_singleStore));
+  } else if( var.type() == IntType ) {
+    return priv::value_impl<int32_t>(name, const_cast<QMutex*>(&_mutex),
+                                     const_cast<SimDbStore<int32_t>*>(&_intStore));
+  } else if( var.type() == UIntType ) {
+    return priv::value_impl<uint32_t>(name, const_cast<QMutex*>(&_mutex),
+                                      const_cast<SimDbStore<uint32_t>*>(&_uintStore));
+  }
+  return SimValueRef();
 }

@@ -53,6 +53,8 @@ public:
 
   void clear();
 
+  SimDataSeries copy() const;
+
   int depth() const;
   int mask() const;
   int position() const;

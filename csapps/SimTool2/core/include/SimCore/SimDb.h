@@ -34,12 +34,18 @@
 
 #include <QtCore/QMutex>
 #include <QtCore/QObject>
+#include <QtCore/QPair>
 
 #include <SimCore/ISimValue.h>
 #include <SimCore/ISimVariableXfer.h>
+#include <SimCore/SimDataSeries.h>
 #include <SimCore/SimDbStore.h>
 
 class SimContext;
+
+typedef QPair<SimValueRef,SimDataSeries>    SimDataLog;
+typedef QHash<QString,SimDataLog>           SimDataLogs;
+typedef QHash<QString,SimDataLog>::iterator SimDataLogIter;
 
 class SimDb : public QObject {
   Q_OBJECT
@@ -63,17 +69,29 @@ public:
 
   SimValueRef value(const QString& name) const;
 
+  bool addLog(const QString& name);
+  void removeLog(const QString& name);
+  SimDataSeries logSeries(const QString& name) const;
+  SimDataSeries logTime() const;
+  void syncLog(const double time);
+
 public slots:
   void clear();
+  void exitState(int state);
   void insertVariable(const QString& name);
   void removeVariable(const QString& name);
 
 private:
+  void removeLogImpl(const QString& name);
+  SimValueRef valueImpl(const QString& name) const;
+
   SimDbStore<double> _doubleStore;
   SimDbStore<float> _singleStore;
   SimDbStore<int32_t> _intStore;
   SimDbStore<uint32_t> _uintStore;
   QMutex _mutex;
+  SimDataSeries _logTime;
+  SimDataLogs _logs;
 };
 
 #endif // __SIMDB_H__

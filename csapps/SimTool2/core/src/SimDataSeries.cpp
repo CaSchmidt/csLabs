@@ -83,6 +83,11 @@ void SimDataSeries::clear()
   d = 0;
 }
 
+SimDataSeries SimDataSeries::copy() const
+{
+  return SimDataSeries(new SimDataSeriesPriv(d->data, d->mask, d->pos));
+}
+
 int SimDataSeries::depth() const
 {
   return calculateDepth(d->data.size());

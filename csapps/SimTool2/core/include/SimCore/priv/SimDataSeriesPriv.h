@@ -53,6 +53,20 @@ public:
   {
   }
 
+  SimDataSeriesPriv(const QVector<double>& _data,
+                    const int _mask, const int _pos)
+    : QSharedData()
+    , data()
+    , mask()
+    , pos()
+  {
+    data += _data;
+    if( !data.isEmpty() ) {
+      mask = _mask;
+      pos  = _pos;
+    }
+  }
+
   ~SimDataSeriesPriv()
   {
   }

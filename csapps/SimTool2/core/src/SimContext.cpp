@@ -57,6 +57,8 @@ SimContext::SimContext(QObject *parent)
   connect(&ctrl, &SimControl::stateEntered,
           &sim, &SimSimulator::enterState);
   connect(&ctrl, &SimControl::stateExited,
+          &db, &SimDb::exitState);
+  connect(&ctrl, &SimControl::stateExited,
           &sim, &SimSimulator::exitState);
 
   connect(&env, &SimEnvironment::variablesCleared,
