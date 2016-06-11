@@ -38,8 +38,6 @@
 
 #include <SimCore/Sim.h>
 
-class SimDb;
-
 class ISimVariableXfer {
 public:
   virtual ~ISimVariableXfer();
@@ -58,10 +56,9 @@ public:
   virtual SimDataType type() const = 0;
 
 protected:
-  ISimVariableXfer(const uint32_t dir, SimDb *db, const int dbIndex);
+  ISimVariableXfer(const uint32_t dir, const int index);
 
-  SimDb *_db;
-  int _dbIndex;
+  int _index;
   uint32_t _dir;
   uint32_t _outputMask; // NOTE: Either 'Output' or '0'!
 

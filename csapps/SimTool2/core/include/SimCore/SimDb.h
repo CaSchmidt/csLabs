@@ -52,16 +52,6 @@ public:
   void lock();
   void unlock();
 
-  void get(double *pointer, const int index) const;
-  void get(float *pointer, const int index) const;
-  void get(int32_t *pointer, const int index) const;
-  void get(uint32_t *pointer, const int index) const;
-
-  void set(const int index, const double *pointer);
-  void set(const int index, const float *pointer);
-  void set(const int index, const int32_t *pointer);
-  void set(const int index, const uint32_t *pointer);
-
   SimVariableXferRef use(const QString& name, double *pointer,
                          const uint32_t direction) const;
   SimVariableXferRef use(const QString& name, float *pointer,

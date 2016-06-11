@@ -35,10 +35,9 @@
 
 ////// protected /////////////////////////////////////////////////////////////
 
-ISimVariableXfer::ISimVariableXfer(const uint32_t dir, SimDb *db, const int dbIndex)
-  : _db(db)
-  , _dbIndex(dbIndex)
-  , _dir(dir)
+ISimVariableXfer::ISimVariableXfer(const uint32_t dir, const int index)
+  : _dir(dir)
+  , _index(index)
   , _outputMask(Output)
 {
 }
@@ -51,7 +50,7 @@ ISimVariableXfer::~ISimVariableXfer()
 
 bool ISimVariableXfer::isValid() const
 {
-  return _dbIndex >= 0;
+  return _index >= 0;
 }
 
 uint32_t ISimVariableXfer::direction() const

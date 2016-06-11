@@ -36,7 +36,7 @@
 
 #include <SimCore/Sim.h>
 
-class SimDb;
+class QMutex;
 
 class ISimValue {
 public:
@@ -65,10 +65,10 @@ public:
   virtual SimDataType type() const = 0;
 
 protected:
-  ISimValue(const QString& name, SimDb *db, const int dbIndex);
+  ISimValue(const QString& name, const int index, QMutex *mutex);
 
-  SimDb *_db;
-  int _dbIndex;
+  int _index;
+  QMutex *_mutex;
   QString _name;
   int _precision;
 

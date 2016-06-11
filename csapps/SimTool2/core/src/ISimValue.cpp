@@ -35,10 +35,10 @@
 
 ////// protected /////////////////////////////////////////////////////////////
 
-ISimValue::ISimValue(const QString& name, SimDb *db, const int dbIndex)
-  : _db(db)
-  , _dbIndex(dbIndex)
+ISimValue::ISimValue(const QString& name, const int index, QMutex *mutex)
+  : _index(index)
   , _name(name)
+  , _mutex(mutex)
   , _precision(3)
 {
 }
@@ -56,12 +56,12 @@ const QString& ISimValue::name() const
 
 void ISimValue::invalidate()
 {
-  _dbIndex = -1;
+  _index = -1;
 }
 
 bool ISimValue::isValid() const
 {
-  return _dbIndex >= 0;
+  return _index >= 0;
 }
 
 int ISimValue::precision() const

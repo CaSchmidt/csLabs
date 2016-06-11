@@ -46,8 +46,10 @@ namespace priv {
   template<typename T>
   class SimValue : public ISimValue {
   public:
-    SimValue(const QString& name, SimDb *db, const int dbIndex)
-      : ISimValue(name, db, dbIndex)
+    SimValue(const QString& name, const int index, QMutex *mutex,
+             SimDbStore<T> *store)
+      : ISimValue(name, index, mutex)
+      , _store(store)
       , _value()
     {
     }
@@ -58,21 +60,21 @@ namespace priv {
 
     void get()
     {
-      _db->lock();
-      _db->get(&_value, _dbIndex);
-      _db->unlock();
+      _mutex->lock();
+      _value = _store->operator[](_index);
+      _mutex->unlock();
     }
 
     void getAsync()
     {
-      _db->get(&_value, _dbIndex);
+      _value = _store->operator[](_index);
     }
 
     void set() const
     {
-      _db->lock();
-      _db->set(_dbIndex, &_value);
-      _db->unlock();
+      _mutex->lock();
+      _store->operator[](_index) = _value;
+      _mutex->unlock();
     }
 
     double value() const
@@ -101,15 +103,17 @@ namespace priv {
     }
 
   private:
+    SimDbStore<T> *_store;
     T _value;
   };
 
   template<typename T>
   class SimVariableXfer : public ISimVariableXfer {
   public:
-    SimVariableXfer(T *pointer, const uint32_t dir, SimDb *db, const int dbIndex)
-      : ISimVariableXfer(dir, db, dbIndex)
+    SimVariableXfer(T *pointer, SimDbStore<T> *store, const uint32_t dir, const int index)
+      : ISimVariableXfer(dir, index)
       , _pointer(pointer)
+      , _store(store)
     {
     }
 
@@ -119,20 +123,20 @@ namespace priv {
 
     void syncInit()
     {
-      _db->get(_pointer, _dbIndex);
+      *_pointer = _store->operator[](_index);
     }
 
     void syncInput()
     {
       if( _dir & Input ) {
-        _db->get(_pointer, _dbIndex);
+        *_pointer = _store->operator[](_index);
       }
     }
 
     void syncOutput()
     {
       if( _dir & _outputMask ) {
-        _db->set(_dbIndex, _pointer);
+        _store->operator[](_index) = *_pointer;
       }
     }
 
@@ -143,32 +147,32 @@ namespace priv {
 
   private:
     T *_pointer;
+    SimDbStore<T> *_store;
   };
 
   template<typename T>
   inline SimVariableXferRef use_impl(const QString& name,
                                      T *pointer,
                                      const uint32_t direction,
-                                     SimDb *db,
-                                     const SimDbStore<T>& store)
+                                     SimDbStore<T> *store)
   {
-    const int dbIndex = store.index(name);
+    const int dbIndex = store->index(name);
     if( dbIndex < 0 ) {
       return SimVariableXferRef();
     }
-    return SimVariableXferRef(new SimVariableXfer<T>(pointer, direction, db, dbIndex));
+    return SimVariableXferRef(new SimVariableXfer<T>(pointer, store, direction, dbIndex));
   }
 
   template<typename T>
   inline SimValueRef value_impl(const QString& name,
-                                SimDb *db,
-                                const SimDbStore<T>& store)
+                                QMutex *mutex,
+                                SimDbStore<T> *store)
   {
-    const int dbIndex = store.index(name);
-    if( dbIndex < 0 ) {
+    const int index = store->index(name);
+    if( index < 0 ) {
       return SimValueRef();
     }
-    return SimValueRef(new SimValue<T>(name, db, dbIndex));
+    return SimValueRef(new SimValue<T>(name, index, mutex, store));
   }
 
 }; // namespace priv
@@ -210,72 +214,53 @@ void SimDb::unlock()
   _mutex.unlock();
 }
 
-void SimDb::get(double *pointer, const int index) const
-{
-  *pointer = _doubleStore[index];
-}
-
-void SimDb::get(float *pointer, const int index) const
-{
-  *pointer = _singleStore[index];
-}
-
-void SimDb::get(int32_t *pointer, const int index) const
-{
-  *pointer = _intStore[index];
-}
-
-void SimDb::get(uint32_t *pointer, const int index) const
-{
-  *pointer = _uintStore[index];
-}
-
-void SimDb::set(const int index, const double *pointer)
-{
-  _doubleStore[index] = *pointer;
-}
-
-void SimDb::set(const int index, const float *pointer)
-{
-  _singleStore[index] = *pointer;
-}
-
-void SimDb::set(const int index, const int32_t *pointer)
-{
-  _intStore[index] = *pointer;
-}
-
-void SimDb::set(const int index, const uint32_t *pointer)
-{
-  _uintStore[index] = *pointer;
-}
-
 SimVariableXferRef SimDb::use(const QString& name, double *pointer,
                               const uint32_t direction) const
 {
-  return priv::use_impl<double>(name, pointer, direction, const_cast<SimDb*>(this),
-                                _doubleStore);
+  return priv::use_impl<double>(name, pointer, direction,
+                                const_cast<SimDbStore<double>*>(&_doubleStore));
 }
 
 SimVariableXferRef SimDb::use(const QString& name, float *pointer,
                               const uint32_t direction) const
 {
-  return priv::use_impl<float>(name, pointer, direction, const_cast<SimDb*>(this),
-                               _singleStore);
+  return priv::use_impl<float>(name, pointer, direction,
+                               const_cast<SimDbStore<float>*>(&_singleStore));
 }
 
 SimVariableXferRef SimDb::use(const QString& name, int32_t *pointer,
                               const uint32_t direction) const
 {
-  return priv::use_impl<int32_t>(name, pointer, direction, const_cast<SimDb*>(this),
-                                 _intStore);
+  return priv::use_impl<int32_t>(name, pointer, direction,
+                                 const_cast<SimDbStore<int32_t>*>(&_intStore));
 }
 
 SimVariableXferRef SimDb::use(const QString& name, uint32_t *pointer,
                               const uint32_t direction) const
 {
-  return priv::use_impl<uint32_t>(name, pointer, direction, const_cast<SimDb*>(this),
-                                  _uintStore);
+  return priv::use_impl<uint32_t>(name, pointer, direction,
+                                  const_cast<SimDbStore<uint32_t>*>(&_uintStore));
+}
+
+SimValueRef SimDb::value(const QString& name) const
+{
+  SimContext *ctx = qobject_cast<SimContext*>(parent());
+
+  const SimVariable& var = ctx->env.variable(name);
+  if(        var.type() == DoubleType ) {
+    return priv::value_impl<double>(name, const_cast<QMutex*>(&_mutex),
+                                    const_cast<SimDbStore<double>*>(&_doubleStore));
+  } else if( var.type() == SingleType ) {
+    return priv::value_impl<float>(name, const_cast<QMutex*>(&_mutex),
+                                   const_cast<SimDbStore<float>*>(&_singleStore));
+  } else if( var.type() == IntType ) {
+    return priv::value_impl<int32_t>(name, const_cast<QMutex*>(&_mutex),
+                                     const_cast<SimDbStore<int32_t>*>(&_intStore));
+  } else if( var.type() == UIntType ) {
+    return priv::value_impl<uint32_t>(name, const_cast<QMutex*>(&_mutex),
+                                      const_cast<SimDbStore<uint32_t>*>(&_uintStore));
+  }
+  return SimValueRef();
 }
 
 ////// public slots //////////////////////////////////////////////////////////
@@ -315,22 +300,4 @@ void SimDb::removeVariable(const QString& name)
   _singleStore.remove(name);
   _intStore.remove(name);
   _uintStore.remove(name);
-}
-
-SimValueRef SimDb::value(const QString& name) const
-{
-  QMutexLocker locker(const_cast<QMutex*>(&_mutex));
-  SimContext *ctx = qobject_cast<SimContext*>(parent());
-
-  const SimVariable& var = ctx->env.variable(name);
-  if(        var.type() == DoubleType ) {
-    return priv::value_impl<double>(name, const_cast<SimDb*>(this), _doubleStore);
-  } else if( var.type() == SingleType ) {
-    return priv::value_impl<float>(name, const_cast<SimDb*>(this), _singleStore);
-  } else if( var.type() == IntType ) {
-    return priv::value_impl<int32_t>(name, const_cast<SimDb*>(this), _intStore);
-  } else if( var.type() == UIntType ) {
-    return priv::value_impl<uint32_t>(name, const_cast<SimDb*>(this), _uintStore);
-  }
-  return SimValueRef();
 }
