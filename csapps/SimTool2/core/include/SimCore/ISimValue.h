@@ -52,8 +52,8 @@ public:
 
   QString display() const;
 
-  virtual void get() = 0;
-  virtual void getAsync() = 0;
+  virtual double get() = 0;
+  virtual double getAsync() = 0;
   virtual void set() const = 0;
 
   virtual double value() const = 0;

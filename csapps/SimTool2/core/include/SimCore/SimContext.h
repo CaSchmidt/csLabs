@@ -37,6 +37,7 @@
 #include <SimCore/simcore_config.h>
 #include <SimCore/SimConfig.h>
 #include <SimCore/SimControl.h>
+#include <SimCore/SimDataLogger.h>
 #include <SimCore/SimDb.h>
 #include <SimCore/SimEnvironment.h>
 #include <SimCore/SimSimulator.h>
@@ -55,6 +56,7 @@ public:
   SimControl ctrl;
   SimDb db;
   SimEnvironment env;
+  SimDataLogger logger;
   SimSimulator sim;
 
 public slots:

@@ -272,7 +272,7 @@ void SimSimulator::start()
   syncOutputs();
 
   _logTimeStamp = 0;
-  ctx->db.syncLog(_logTimeStamp);
+  ctx->logger.syncLog(_logTimeStamp);
 }
 
 void SimSimulator::step()
@@ -298,7 +298,7 @@ void SimSimulator::stepModules()
   syncOutputs();
 
   _logTimeStamp += ctx->cfg.step;
-  ctx->db.syncLog(_logTimeStamp);
+  ctx->logger.syncLog(_logTimeStamp);
 }
 
 void SimSimulator::stop()

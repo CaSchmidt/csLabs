@@ -46,6 +46,7 @@ SimContext::SimContext(QObject *parent)
   , ctrl(this)
   , db(this)
   , env(this)
+  , logger(this)
   , sim(this)
 {
   qRegisterMetaType<SimConfig>("SimConfig");
@@ -57,14 +58,18 @@ SimContext::SimContext(QObject *parent)
   connect(&ctrl, &SimControl::stateEntered,
           &sim, &SimSimulator::enterState);
   connect(&ctrl, &SimControl::stateExited,
-          &db, &SimDb::exitState);
+          &logger, &SimDataLogger::exitState);
   connect(&ctrl, &SimControl::stateExited,
           &sim, &SimSimulator::exitState);
 
   connect(&env, &SimEnvironment::variablesCleared,
+          &logger, &SimDataLogger::clear);
+  connect(&env, &SimEnvironment::variablesCleared,
           &db, &SimDb::clear);
   connect(&env, &SimEnvironment::variableInserted,
           &db, &SimDb::insertVariable);
+  connect(&env, &SimEnvironment::variableRemoved,
+          &logger, &SimDataLogger::removeLog);
   connect(&env, &SimEnvironment::variableRemoved,
           &db, &SimDb::removeVariable);
 

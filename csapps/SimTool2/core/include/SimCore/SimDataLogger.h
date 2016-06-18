@@ -29,51 +29,48 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __SIMDB_H__
-#define __SIMDB_H__
+#ifndef __SIMDATALOGGER_H__
+#define __SIMDATALOGGER_H__
 
+#include <QtCore/QHash>
 #include <QtCore/QMutex>
 #include <QtCore/QObject>
+#include <QtCore/QPair>
+
+#include <SimCore/simcore_config.h>
 
 #include <SimCore/ISimValue.h>
-#include <SimCore/ISimVariableXfer.h>
-#include <SimCore/SimDbStore.h>
+#include <SimCore/SimDataSeries.h>
 
 class SimContext;
 
-class SimDb : public QObject {
+typedef QPair<SimValueRef,SimDataSeries>    SimDataLog;
+typedef QHash<QString,SimDataLog>           SimDataLogs;
+typedef QHash<QString,SimDataLog>::iterator SimDataLogIter;
+
+class SIM_CORE_EXPORT SimDataLogger : public QObject {
   Q_OBJECT
 public:
-  SimDb(SimContext *simctx);
-  ~SimDb();
-
-  void initialize();
+  SimDataLogger(SimContext *simctx);
+  ~SimDataLogger();
 
   void lock();
   void unlock();
 
-  SimVariableXferRef use(const QString& name, double *pointer,
-                         const uint32_t direction) const;
-  SimVariableXferRef use(const QString& name, float *pointer,
-                         const uint32_t direction) const;
-  SimVariableXferRef use(const QString& name, int32_t *pointer,
-                         const uint32_t direction) const;
-  SimVariableXferRef use(const QString& name, uint32_t *pointer,
-                         const uint32_t direction) const;
-
-  SimValueRef value(const QString& name) const;
+  bool addLog(const QString& name);
+  SimDataSeries logSeries(const QString& name) const;
+  SimDataSeries logTime() const;
+  void syncLog(const double time);
 
 public slots:
   void clear();
-  void insertVariable(const QString& name);
-  void removeVariable(const QString& name);
+  void exitState(int state);
+  void removeLog(const QString& name);
 
 private:
-  SimDbStore<double> _doubleStore;
-  SimDbStore<float> _singleStore;
-  SimDbStore<int32_t> _intStore;
-  SimDbStore<uint32_t> _uintStore;
+  SimDataLogs _logs;
+  SimDataSeries _logTime;
   QMutex _mutex;
 };
 
-#endif // __SIMDB_H__
+#endif // __SIMDATALOGGER_H__

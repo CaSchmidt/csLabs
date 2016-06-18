@@ -38,7 +38,8 @@ SOURCES += \
     src/SimValuesModel.cpp \
     src/SimVariable.cpp \
     src/SimVariablesModel.cpp \
-    src/SimDataSeries.cpp
+    src/SimDataSeries.cpp \
+    src/SimDataLogger.cpp
 
 HEADERS += \
     include/SimCore/ISimLogger.h \
@@ -63,4 +64,5 @@ HEADERS += \
     include/SimCore/SimVariable.h \
     include/SimCore/SimVariablesModel.h \
     include/SimCore/SimDataSeries.h \
-    include/SimCore/priv/SimDataSeriesPriv.h
+    include/SimCore/priv/SimDataSeriesPriv.h \
+    include/SimCore/SimDataLogger.h
