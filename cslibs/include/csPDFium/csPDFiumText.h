@@ -68,7 +68,7 @@ public:
   {
     // NOTE:
     // QRectF::isEmpty() is TRUE if ONE  dimension  is  0
-    // QRectF::isNull()  is TRUE is BOTH dimensions are 0
+    // QRectF::isNull()  is TRUE if BOTH dimensions are 0
     return _rect.isNull()  ||  _text.isEmpty();
   }
 
