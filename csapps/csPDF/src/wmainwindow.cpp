@@ -57,35 +57,35 @@ WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
 
   // Document View ///////////////////////////////////////////////////////////
 
-  connect(ui->pdfView, SIGNAL(pageChanged(int)),
-          ui->searchWidget, SLOT(setStartPage(int)));
+  connect(ui->pdfView, &csPdfUiDocumentView::pageChanged,
+          ui->searchWidget, &csPdfUiSearchWidget::setStartPage);
 
   // Quick Search ////////////////////////////////////////////////////////////
 
   ui->pdfView->installEventFilter(ui->quickSearchWidget);
   ui->quickSearchWidget->hide();
 
-  connect(ui->quickSearchWidget, SIGNAL(searchTextEdited(const QString&)),
-          ui->pdfView, SLOT(highlightText(const QString&)));
+  connect(ui->quickSearchWidget, &WQuickSearch::searchTextEdited,
+          ui->pdfView, &csPdfUiDocumentView::highlightText);
 
   // Table of Contents ///////////////////////////////////////////////////////
 
-  connect(ui->contentsWidget, SIGNAL(pageRequested(int)),
-          ui->pdfView, SLOT(showPage(int)));
+  connect(ui->contentsWidget, &csPdfUiTocWidget::pageRequested,
+          ui->pdfView, &csPdfUiDocumentView::showPage);
 
-  connect(ui->showTocAction, SIGNAL(triggered()),
-          ui->contentsDock, SLOT(show()));
+  connect(ui->showTocAction, &QAction::triggered,
+          ui->contentsDock, &QDockWidget::show);
 
   // Document Search /////////////////////////////////////////////////////////
 
-  connect(ui->showSearchAction, SIGNAL(triggered()),
-          ui->searchDock, SLOT(show()));
-  connect(ui->showSearchAction, SIGNAL(triggered()),
-          ui->searchWidget, SLOT(selectSearchText()));
-  connect(ui->searchWidget, SIGNAL(pageRequested(int)),
-          ui->pdfView, SLOT(showPage(int)));
-  connect(ui->searchWidget, SIGNAL(highlightRequested(const QString&)),
-          ui->pdfView, SLOT(highlightText(const QString&)));
+  connect(ui->showSearchAction, &QAction::triggered,
+          ui->searchDock, &QDockWidget::show);
+  connect(ui->showSearchAction, &QAction::triggered,
+          ui->searchWidget, &csPdfUiSearchWidget::selectSearchText);
+  connect(ui->searchWidget, &csPdfUiSearchWidget::pageRequested,
+          ui->pdfView, &csPdfUiDocumentView::showPage);
+  connect(ui->searchWidget, &csPdfUiSearchWidget::highlightRequested,
+          ui->pdfView, &csPdfUiDocumentView::highlightText);
 
   // Edit Mode ///////////////////////////////////////////////////////////////
 
@@ -95,18 +95,18 @@ WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
   ui->handToolAction->setChecked(true);
   setEditMode(false);
 
-  connect(ui->handToolAction, SIGNAL(triggered(bool)),
-          SLOT(setEditMode(bool)));
-  connect(ui->rectangleToolAction, SIGNAL(triggered(bool)),
-          SLOT(setEditMode(bool)));
+  connect(ui->handToolAction, &QAction::triggered,
+          this, &WMainWindow::setEditMode);
+  connect(ui->rectangleToolAction, &QAction::triggered,
+          this, &WMainWindow::setEditMode);
 
 
   // Signals & Slots /////////////////////////////////////////////////////////
 
-  connect(ui->openAction, SIGNAL(triggered()), SLOT(openFile()));
-  connect(ui->quitAction, SIGNAL(triggered()), SLOT(close()));
+  connect(ui->openAction, &QAction::triggered, this, static_cast<void (WMainWindow::*)()>(&WMainWindow::openFile));
+  connect(ui->quitAction, &QAction::triggered, this, &WMainWindow::close);
 
-  connect(ui->copyAction, SIGNAL(triggered()), SLOT(copySelection()));
+  connect(ui->copyAction, &QAction::triggered, this, &WMainWindow::copySelection);
 
   connect(ui->zoomBestFitAction, &QAction::triggered,
           ui->pdfView, &csPdfUiDocumentView::zoomBestFit);

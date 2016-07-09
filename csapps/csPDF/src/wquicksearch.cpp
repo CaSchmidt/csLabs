@@ -46,8 +46,8 @@ WQuickSearch::WQuickSearch(QWidget *parent, Qt::WindowFlags f)
 
   // Signals & Slots /////////////////////////////////////////////////////////
 
-  connect(ui->searchEdit, SIGNAL(textEdited(const QString&)),
-          SIGNAL(searchTextEdited(const QString&)));
+  connect(ui->searchEdit, &QLineEdit::textEdited,
+          this, &WQuickSearch::searchTextEdited);
 }
 
 WQuickSearch::~WQuickSearch()

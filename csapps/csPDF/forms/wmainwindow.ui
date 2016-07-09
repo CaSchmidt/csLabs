@@ -219,10 +219,16 @@
    <property name="text">
     <string>Fit to page &amp;width</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+2</string>
+   </property>
   </action>
   <action name="zoomBestFitAction">
    <property name="text">
     <string>&amp;Best fit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+1</string>
    </property>
   </action>
  </widget>
