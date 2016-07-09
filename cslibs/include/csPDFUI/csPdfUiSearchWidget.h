@@ -64,7 +64,7 @@ protected:
 
 signals:
   void highlightRequested(const QString& text);
-  void pageRequested(int no);
+  void pageRequested(int no, bool history = true);
 
 private:
   int helpPosition(const QPoint& globalPos);

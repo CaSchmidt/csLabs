@@ -122,7 +122,7 @@ csPdfUiDocumentView::csPdfUiDocumentView(QWidget *parent)
   , _zoomMode(ZoomUser)
   , _keyBounces(0)
   , _wheelBounces(0)
-  , _linkHistory()
+  , _history()
 {
   // Graphics Scene //////////////////////////////////////////////////////////
 
@@ -189,7 +189,7 @@ void csPdfUiDocumentView::setDocument(const csPDFiumDocument& doc)
   _scene->clear();
   _doc.clear();
   _page.clear();
-  _linkHistory.clear();
+  _history.clear();
 
   _doc = doc;
 
@@ -224,10 +224,10 @@ void csPdfUiDocumentView::setConfig(const csPdfUiDocumentViewConfig& config)
 
 void csPdfUiDocumentView::gotoLinkSource()
 {
-  if( !_linkHistory.isEmpty() ) {
-    const ReverseLink revLink = _linkHistory.pop();
-    showPage(revLink.page);
-    centerOn(revLink.center);
+  if( !_history.isEmpty() ) {
+    const PageHistory back = _history.pop();
+    showPage(back.page, false);
+    centerOn(back.center);
   }
 }
 
@@ -270,12 +270,12 @@ void csPdfUiDocumentView::removeMarks()
 
 void csPdfUiDocumentView::showFirstPage()
 {
-  showPage(1);
+  showPage(1, false);
 }
 
 void csPdfUiDocumentView::showLastPage()
 {
-  showPage(_doc.pageCount());
+  showPage(_doc.pageCount(), false);
 }
 
 void csPdfUiDocumentView::showNextPage()
@@ -287,14 +287,14 @@ void csPdfUiDocumentView::showNextPage()
 
   const int oldNo = _page.number();
   const int newNo = qBound(0, oldNo+1, _doc.pageCount()-1);
-  showPage(newNo+1);
+  showPage(newNo+1, false);
 
   if( oldNo != newNo ) {
     centerOn(_scene->sceneRect().center().x(), _scene->sceneRect().top());
   }
 }
 
-void csPdfUiDocumentView::showPage(int no)
+void csPdfUiDocumentView::showPage(int no, bool updateHistory)
 {
   _keyBounces = 0;
   _wheelBounces = 0;
@@ -306,6 +306,10 @@ void csPdfUiDocumentView::showPage(int no)
 
   if( !_page.isEmpty()  &&  _page.number() == no-1 ) {
     return;
+  }
+
+  if( updateHistory ) {
+    _history.push(PageHistory(_page.number()+1, sceneRect().center()));
   }
 
   _scene->clear();
@@ -333,7 +337,7 @@ void csPdfUiDocumentView::showPreviousPage()
 
   const int oldNo = _page.number();
   const int newNo = qBound(0, oldNo-1, _doc.pageCount()-1);
-  showPage(newNo+1);
+  showPage(newNo+1, false);
 
   if( oldNo != newNo ) {
     centerOn(_scene->sceneRect().center().x(), _scene->sceneRect().bottom());
@@ -619,8 +623,7 @@ bool csPdfUiDocumentView::followLink(const QPointF& scenePos)
       return false;
     }
 
-    _linkHistory.push(ReverseLink(_page.number()+1, item->boundingRect().center()));
-    showPage(page+1);
+    showPage(page+1, true);
     if( dest.isNull() ) {
       centerOn(_page.rect().center().x(), _page.rect().top());
     } else {

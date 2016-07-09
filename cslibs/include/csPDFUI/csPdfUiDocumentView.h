@@ -90,7 +90,7 @@ public slots:
   void showFirstPage();
   void showLastPage();
   void showNextPage();
-  virtual void showPage(int no); // [1, _doc.pageCount()]
+  virtual void showPage(int no, bool updateHistory); // [1, _doc.pageCount()]
   void showPreviousPage();
   void zoom(qreal level); // [%]
   void zoomBestFit();
@@ -126,8 +126,8 @@ private:
     ZoomFitToPageWidth
   };
 
-  struct ReverseLink {
-    ReverseLink(const int _page = 0, const QPointF& _center = QPointF())
+  struct PageHistory {
+    PageHistory(const int _page = 0, const QPointF& _center = QPointF())
       : page(_page)
       , center(_center)
     {
@@ -141,7 +141,7 @@ private:
   int _zoomMode;
   int _keyBounces;
   int _wheelBounces;
-  QStack<ReverseLink> _linkHistory; // [1, _doc.pageCount()]
+  QStack<PageHistory> _history; // [1, _doc.pageCount()]
   static csPdfUiDocumentViewConfig _cfg;
 
 signals:
