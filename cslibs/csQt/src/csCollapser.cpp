@@ -102,7 +102,7 @@ csCollapser::csCollapser(QSplitter *splitter, QWidget *widget,
 
   // Signals & Slots /////////////////////////////////////////////////////////
 
-  connect(this, SIGNAL(clicked()), SLOT(collapse()));
+  connect(this, &csCollapser::clicked, this, &csCollapser::collapse);
 }
 
 csCollapser::~csCollapser()

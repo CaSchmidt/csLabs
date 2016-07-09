@@ -50,13 +50,13 @@ csPdfUiTocWidget::csPdfUiTocWidget(QWidget *parent, Qt::WindowFlags f)
   _contentsModel = new csPDFiumContentsModel(ui->contentsView);
   ui->contentsView->setModel(_contentsModel);
 
-  connect(ui->contentsView, SIGNAL(activated(const QModelIndex&)),
-          SLOT(activateTocItem(const QModelIndex&)));
+  connect(ui->contentsView, &QTreeView::activated,
+          this, &csPdfUiTocWidget::activateTocItem);
 
   // Filter //////////////////////////////////////////////////////////////////
 
-  connect(ui->filterEdit, SIGNAL(textChanged(const QString&)),
-          _contentsModel, SLOT(filter(const QString&)));
+  connect(ui->filterEdit, &QLineEdit::textChanged,
+          _contentsModel, static_cast<void (csPDFiumContentsModel::*)(const QString&)>(&csPDFiumContentsModel::filter));
 }
 
 csPdfUiTocWidget::~csPdfUiTocWidget()

@@ -66,12 +66,12 @@ csPdfUiSearchWidget::csPdfUiSearchWidget(QWidget *parent, Qt::WindowFlags f)
   ui->progressBar->setVisible(false);
   ui->cancelButton->setVisible(false);
 
-  connect(ui->searchEdit, SIGNAL(returnPressed()), SLOT(start()));
-  connect(ui->startButton, SIGNAL(clicked()), SLOT(start()));
-  connect(ui->cancelButton, SIGNAL(clicked()), SLOT(cancel()));
+  connect(ui->searchEdit, &QLineEdit::returnPressed, this, &csPdfUiSearchWidget::start);
+  connect(ui->startButton, &QPushButton::clicked, this, &csPdfUiSearchWidget::start);
+  connect(ui->cancelButton, &QPushButton::clicked, this, &csPdfUiSearchWidget::cancel);
 
-  connect(ui->resultsView, SIGNAL(activated(const QModelIndex&)),
-          SLOT(activateResult(const QModelIndex&)));
+  connect(ui->resultsView, &QTableView::activated,
+          this, &csPdfUiSearchWidget::activateResult);
 
   // Highlighting Delegate ///////////////////////////////////////////////////
 
@@ -86,11 +86,11 @@ csPdfUiSearchWidget::csPdfUiSearchWidget(QWidget *parent, Qt::WindowFlags f)
   _search  = new csPdfSearch();
   _search->moveToThread(_thread);
 
-  connect(_search, SIGNAL(finished()), SLOT(cancel()));
-  connect(_search, SIGNAL(found(const csPdfSearchResults&)),
-          _results, SLOT(insertResults(const csPdfSearchResults&)));
-  connect(_search, SIGNAL(processed(int)),
-          ui->progressBar, SLOT(setValue(int)));
+  connect(_search, &csPdfSearch::finished, this, &csPdfUiSearchWidget::cancel);
+  connect(_search, &csPdfSearch::found,
+          _results, &csPdfSearchResultsModel::insertResults);
+  connect(_search, &csPdfSearch::processed,
+          ui->progressBar, &QProgressBar::setValue);
 }
 
 csPdfUiSearchWidget::~csPdfUiSearchWidget()

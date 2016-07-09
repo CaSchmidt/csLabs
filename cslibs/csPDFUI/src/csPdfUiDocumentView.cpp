@@ -140,8 +140,8 @@ csPdfUiDocumentView::csPdfUiDocumentView(QWidget *parent)
 
   // Signals & Slots /////////////////////////////////////////////////////////
 
-  connect(this, SIGNAL(rubberBandChanged(QRect,QPointF,QPointF)),
-          SLOT(selectArea(QRect,QPointF,QPointF)));
+  connect(this, &csPdfUiDocumentView::rubberBandChanged,
+          this, &csPdfUiDocumentView::selectArea);
 }
 
 csPdfUiDocumentView::~csPdfUiDocumentView()
