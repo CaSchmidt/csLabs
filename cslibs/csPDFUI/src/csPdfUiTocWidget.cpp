@@ -50,7 +50,7 @@ csPdfUiTocWidget::csPdfUiTocWidget(QWidget *parent, Qt::WindowFlags f)
   _contentsModel = new csPDFiumContentsModel(ui->contentsView);
   ui->contentsView->setModel(_contentsModel);
 
-  connect(ui->contentsView, &QTreeView::activated,
+  connect(ui->contentsView, &QTreeView::clicked,
           this, &csPdfUiTocWidget::activateTocItem);
 
   // Filter //////////////////////////////////////////////////////////////////
