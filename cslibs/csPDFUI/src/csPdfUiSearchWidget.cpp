@@ -70,6 +70,8 @@ csPdfUiSearchWidget::csPdfUiSearchWidget(QWidget *parent, Qt::WindowFlags f)
   connect(ui->startButton, &QPushButton::clicked, this, &csPdfUiSearchWidget::start);
   connect(ui->cancelButton, &QPushButton::clicked, this, &csPdfUiSearchWidget::cancel);
 
+  connect(ui->resultsView, &QTableView::activated,
+          this, &csPdfUiSearchWidget::activateResult);
   connect(ui->resultsView, &QTableView::clicked,
           this, &csPdfUiSearchWidget::activateResult);
 
