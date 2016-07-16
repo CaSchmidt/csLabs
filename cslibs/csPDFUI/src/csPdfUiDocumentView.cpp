@@ -243,15 +243,6 @@ qreal csPdfUiDocumentView::zoomStep()
 
 ////// public slots //////////////////////////////////////////////////////////
 
-void csPdfUiDocumentView::gotoLinkSource()
-{
-  if( !_history.isEmpty() ) {
-    const PageHistory back = _history.pop();
-    showPage(back.page, false);
-    centerOn(back.center);
-  }
-}
-
 void csPdfUiDocumentView::highlightText(const QString& text)
 {
   removeItems(HighlightId);
@@ -287,6 +278,15 @@ void csPdfUiDocumentView::removeMarks()
 {
   removeItems(HighlightId);
   removeItems(SelectionId);
+}
+
+void csPdfUiDocumentView::reverseHistory()
+{
+  if( !_history.isEmpty() ) {
+    const PageHistory back = _history.pop();
+    showPage(back.page, false);
+    centerOn(back.center);
+  }
 }
 
 void csPdfUiDocumentView::showFirstPage()
@@ -325,12 +325,13 @@ void csPdfUiDocumentView::showPage(int no, bool updateHistory)
     return;
   }
 
-  if( !_page.isEmpty()  &&  _page.number() == no-1 ) {
-    return;
+  if( !_page.isEmpty()  &&  updateHistory ) {
+    _history.push(PageHistory(_page.number()+1,
+                              mapToScene(viewport()->rect().center())));
   }
 
-  if( updateHistory ) {
-    _history.push(PageHistory(_page.number()+1, sceneRect().center()));
+  if( !_page.isEmpty()  &&  _page.number() == no-1 ) {
+    return;
   }
 
   _scene->clear();
@@ -446,7 +447,7 @@ void csPdfUiDocumentView::keyPressEvent(QKeyEvent *event)
     event->accept();
     return;
   } else if( event->matches(QKeySequence::Back) ) {
-    gotoLinkSource();
+    reverseHistory();
     event->accept();
     return;
   } else if( event->matches(QKeySequence::MoveToPreviousLine) ) {

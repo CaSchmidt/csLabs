@@ -90,9 +90,9 @@ public:
   static qreal zoomStep();
 
 public slots:
-  void gotoLinkSource();
   void highlightText(const QString& text);
   void removeMarks();
+  void reverseHistory();
   void showFirstPage();
   void showLastPage();
   void showNextPage();
