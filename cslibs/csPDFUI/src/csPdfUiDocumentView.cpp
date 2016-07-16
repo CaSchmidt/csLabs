@@ -416,15 +416,7 @@ bool csPdfUiDocumentView::eventFilter(QObject *watched, QEvent *event)
 void csPdfUiDocumentView::keyPressEvent(QKeyEvent *event)
 {
   // Conditions & State
-  const bool condVScrollVisible = verticalScrollBar()->isVisible();
-  const int vScroll = condVScrollVisible
-      ? verticalScrollBar()->value()
-      : 0;
-
-  // Clean state
-  if( !condVScrollVisible ) {
-    _keyBounces = 0;
-  }
+  const bool condVScrollRequired = isVScrollRequired();
 
   // Events
   if(        event->matches(QKeySequence::MoveToStartOfDocument) ) {
@@ -458,10 +450,10 @@ void csPdfUiDocumentView::keyPressEvent(QKeyEvent *event)
     event->accept();
     return;
   } else if( event->matches(QKeySequence::MoveToPreviousLine) ) {
-    if( !condVScrollVisible ) {
+    if( !condVScrollRequired ) {
       showPreviousPage();
     } else {
-      if( vScroll <= verticalScrollBar()->minimum() ) {
+      if( isTopTouched() ) {
         if( _keyBounces > 0 ) {
           _keyBounces = -1;
         } else {
@@ -470,6 +462,7 @@ void csPdfUiDocumentView::keyPressEvent(QKeyEvent *event)
         if( qAbs(_keyBounces) > _cfg.maxKeyBounces ) {
           showPreviousPage();
           _keyBounces = 0;
+          return;
         }
       } else {
         _keyBounces = 0;
@@ -477,10 +470,10 @@ void csPdfUiDocumentView::keyPressEvent(QKeyEvent *event)
     }
     // NOTE: We do not return to let the event be processed by QGraphicsView!
   } else if( event->matches(QKeySequence::MoveToNextLine) ) {
-    if( !condVScrollVisible ) {
+    if( !condVScrollRequired ) {
       showNextPage();
     } else {
-      if( vScroll >= verticalScrollBar()->maximum() ) {
+      if( isBottomTouched() ) {
         if( _keyBounces < 0 ) {
           _keyBounces = 1;
         } else {
@@ -489,6 +482,7 @@ void csPdfUiDocumentView::keyPressEvent(QKeyEvent *event)
         if( qAbs(_keyBounces) > _cfg.maxKeyBounces ) {
           showNextPage();
           _keyBounces = 0;
+          return;
         }
       } else {
         _keyBounces = 0;
@@ -535,22 +529,17 @@ void csPdfUiDocumentView::resizeEvent(QResizeEvent *event)
 void csPdfUiDocumentView::wheelEvent(QWheelEvent *event)
 {
   // Conditions
-  const bool condVScrollVisible
-      = verticalScrollBar()->isVisible();
+  const bool condVScrollRequired = isVScrollRequired();
   const bool condPageChange
-      = (event->modifiers() == Qt::NoModifier  &&  !condVScrollVisible)
+      = (event->modifiers() == Qt::NoModifier  &&  !condVScrollRequired)
       || event->modifiers() == Qt::ShiftModifier;
   const bool condZoom
       = event->modifiers() == Qt::ControlModifier;
   const bool condPageBounce
-      = event->modifiers() == Qt::NoModifier  &&  condVScrollVisible;
+      = event->modifiers() == Qt::NoModifier  &&  condVScrollRequired;
 
   // dy > 0: Away From User; dy < 0: Toward User
   const int dy = event->angleDelta().y() / 8; // [Degree]
-
-  if( !condVScrollVisible ) {
-    _wheelBounces = 0;
-  }
 
   if(        condPageChange ) {
     if(        dy < 0 ) {
@@ -575,9 +564,7 @@ void csPdfUiDocumentView::wheelEvent(QWheelEvent *event)
     }
 
   } else if( condPageBounce ) {
-    const int value = verticalScrollBar()->value();
-
-    if(        value <= verticalScrollBar()->minimum() ) {
+    if(        isTopTouched() ) {
       if( _wheelBounces > 0 ) {
         _wheelBounces = -1;
       } else {
@@ -589,7 +576,7 @@ void csPdfUiDocumentView::wheelEvent(QWheelEvent *event)
         return;
       }
 
-    } else if( value >= verticalScrollBar()->maximum() ) {
+    } else if( isBottomTouched() ) {
       if( _wheelBounces < 0 ) {
         _wheelBounces = 1;
       } else {
@@ -655,6 +642,24 @@ bool csPdfUiDocumentView::followLink(const QPointF& scenePos)
   }
 
   return false;
+}
+
+bool csPdfUiDocumentView::isBottomTouched() const
+{
+  const QRectF view = mapToScene(viewport()->rect()).boundingRect();
+  return std::ceil(view.bottom()) >= std::floor(sceneRect().bottom());
+}
+
+bool csPdfUiDocumentView::isTopTouched() const
+{
+  const QRectF view = mapToScene(viewport()->rect()).boundingRect();
+  return std::floor(view.top()) <= std::ceil(sceneRect().top());
+}
+
+bool csPdfUiDocumentView::isVScrollRequired() const
+{
+  const int height = mapFromScene(sceneRect()).boundingRect().height();
+  return height > viewport()->height();
 }
 
 void csPdfUiDocumentView::renderPage()
