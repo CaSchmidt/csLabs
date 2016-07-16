@@ -117,6 +117,9 @@ private slots:
 
 private:
   bool followLink(const QPointF& scenePos);
+  bool isBottomTouched() const;
+  bool isTopTouched() const;
+  bool isVScrollRequired() const;
   void renderPage();
   bool setZoom(const qreal level, const int newMode);
 
