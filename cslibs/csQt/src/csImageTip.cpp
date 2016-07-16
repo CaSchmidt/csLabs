@@ -186,21 +186,25 @@ void csImageTip::showImage(const QPoint& globalPos, const QImage& image,
   }
   csTipWidget::instance->setObjectName(QLatin1String("csTipWidget"));
 
+  if( flags.testFlag(NoEffects) ) {
+    csTipWidget::instance->show();
+  } else {
 #if !defined(QT_NO_EFFECTS) && !defined(Q_WS_MAC)
 # if 1
-  qFadeEffect(csTipWidget::instance);
-# else
-  if( QApplication::isEffectEnabled(Qt::UI_FadeTooltip) ) {
     qFadeEffect(csTipWidget::instance);
-  } else if( QApplication::isEffectEnabled(Qt::UI_AnimateTooltip) ) {
-    qScrollEffect(csTipWidget::instance);
-  } else {
-    csTipWidget::instance->show();
-  }
+# else
+    if( QApplication::isEffectEnabled(Qt::UI_FadeTooltip) ) {
+      qFadeEffect(csTipWidget::instance);
+    } else if( QApplication::isEffectEnabled(Qt::UI_AnimateTooltip) ) {
+      qScrollEffect(csTipWidget::instance);
+    } else {
+      csTipWidget::instance->show();
+    }
 # endif
 #else
-  csTipWidget::instance->show();
+    csTipWidget::instance->show();
 #endif
+  }
 }
 
 #include "csImageTip.moc"

@@ -43,7 +43,8 @@ public:
   enum Flag {
     NoFlags       = 0x00,
     ForcePosition = 0x01,
-    DrawBorder    = 0x02
+    DrawBorder    = 0x02,
+    NoEffects     = 0x04
   };
   Q_DECLARE_FLAGS(Flags, Flag)
 
