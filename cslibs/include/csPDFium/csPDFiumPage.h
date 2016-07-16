@@ -58,6 +58,7 @@ public:
   csPDFiumTexts texts(const QRectF& area = QRectF()) const;
   QRectF rect() const;
   QSizeF size() const;
+  QString text() const;
 
   QList<QPainterPath> extractPaths(const csPDFium::PathExtractionFlags flags = 0) const;
 

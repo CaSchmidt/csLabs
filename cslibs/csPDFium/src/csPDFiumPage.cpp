@@ -196,6 +196,38 @@ QSizeF csPDFiumPage::size() const
   return QSizeF(w, h);
 }
 
+QString csPDFiumPage::text() const
+{
+  if( isEmpty() ) {
+    return QString();
+  }
+
+  CSPDFIUM_PAGEIMPL();
+
+  FPDF_TEXTPAGE textPage = FPDFText_LoadPage(impl->page);
+  if( textPage == NULL ) {
+    return QString();
+  }
+
+  const int numChars = FPDFText_CountChars(textPage);
+  if( numChars < 1 ) {
+    FPDFText_ClosePage(textPage);
+    return QString();
+  }
+
+  const int dataSize = (numChars+1)*sizeof(unsigned short);
+  QByteArray data(dataSize, '\0');
+  if( data.size() != dataSize ) {
+    FPDFText_ClosePage(textPage);
+    return QString();
+  }
+
+  FPDFText_GetText(textPage, 0, numChars, (unsigned short*)data.data());
+  FPDFText_ClosePage(textPage);
+
+  return QString::fromUtf16((const unsigned short*)data.constData());
+}
+
 QList<QPainterPath> csPDFiumPage::extractPaths(const csPDFium::PathExtractionFlags flags) const
 {
   if( isEmpty() ) {
