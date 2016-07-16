@@ -56,6 +56,7 @@
 
 #define ZOOM_INIT  100.0
 #define ZOOM_MIN    10.0
+#define ZOOM_MAX  1000.0
 #define ZOOM_STEP   20.0
 
 #define _SCALE  (_zoom/100.0)
@@ -220,6 +221,26 @@ void csPdfUiDocumentView::setConfig(const csPdfUiDocumentViewConfig& config)
   _cfg = config;
 }
 
+qreal csPdfUiDocumentView::zoom() const
+{
+  return _zoom;
+}
+
+qreal csPdfUiDocumentView::zoomMin()
+{
+  return ZOOM_MIN;
+}
+
+qreal csPdfUiDocumentView::zoomMax()
+{
+  return ZOOM_MAX;
+}
+
+qreal csPdfUiDocumentView::zoomStep()
+{
+  return ZOOM_STEP;
+}
+
 ////// public slots //////////////////////////////////////////////////////////
 
 void csPdfUiDocumentView::gotoLinkSource()
@@ -316,7 +337,7 @@ void csPdfUiDocumentView::showPage(int no, bool updateHistory)
 
   const int pageNo = qBound(0, no-1, _doc.pageCount()-1); // 0-based
   _page = _doc.page(pageNo);
-  zoom(_zoom, _zoomMode);
+  setZoom(_zoom, _zoomMode);
   renderPage();
 
   foreach(const csPDFiumLink link, _page.links()) {
@@ -344,35 +365,35 @@ void csPdfUiDocumentView::showPreviousPage()
   }
 }
 
-void csPdfUiDocumentView::zoom(qreal level)
+void csPdfUiDocumentView::setZoom(qreal level)
 {
-  if( zoom(level, ZoomUser) ) {
+  if( setZoom(level, ZoomUser) ) {
     renderPage();
   }
 }
 
-void csPdfUiDocumentView::zoomBestFit()
+void csPdfUiDocumentView::setZoomBestFit()
 {
-  if( zoom(_zoom, ZoomBestFit) ) {
+  if( setZoom(_zoom, ZoomBestFit) ) {
     renderPage();
   }
 }
 
-void csPdfUiDocumentView::zoomFitToPageWidth()
+void csPdfUiDocumentView::setZoomFitToPageWidth()
 {
-  if( zoom(_zoom, ZoomFitToPageWidth) ) {
+  if( setZoom(_zoom, ZoomFitToPageWidth) ) {
     renderPage();
   }
 }
 
 void csPdfUiDocumentView::zoomIn()
 {
-  zoom(_zoom+ZOOM_STEP);
+  setZoom(_zoom+ZOOM_STEP);
 }
 
 void csPdfUiDocumentView::zoomOut()
 {
-  zoom(_zoom-ZOOM_STEP);
+  setZoom(_zoom-ZOOM_STEP);
 }
 
 ////// protected /////////////////////////////////////////////////////////////
@@ -503,7 +524,7 @@ void csPdfUiDocumentView::removeItems(const int id)
 void csPdfUiDocumentView::resizeEvent(QResizeEvent *event)
 {
   if( _zoomMode == ZoomBestFit  ||  _zoomMode == ZoomFitToPageWidth ) {
-    if( zoom(_zoom, _zoomMode) ) {
+    if( setZoom(_zoom, _zoomMode) ) {
       renderPage();
     }
   }
@@ -653,7 +674,7 @@ void csPdfUiDocumentView::renderPage()
   setSceneRect(_page.rect());
 }
 
-bool csPdfUiDocumentView::zoom(const qreal level, const int newMode)
+bool csPdfUiDocumentView::setZoom(const qreal level, const int newMode)
 {
   const qreal oldZoom = _zoom;
 
@@ -669,15 +690,15 @@ bool csPdfUiDocumentView::zoom(const qreal level, const int newMode)
         ? scaleV
         : scaleH;
 
-    _zoom = qMax(ZOOM_MIN, std::floor(ratio*100.0));
+    _zoom = qBound(ZOOM_MIN, std::floor(ratio*100.0), ZOOM_MAX);
 
   } else if( _zoomMode == ZoomFitToPageWidth  &&  !_page.isEmpty() ) {
     const qreal   pageWidth = _page.size().width();
     const qreal screenWidth = viewport()->width();
-    _zoom = qMax(ZOOM_MIN, std::floor(screenWidth / pageWidth * 100.0));
+    _zoom = qBound(ZOOM_MIN, std::floor(screenWidth / pageWidth * 100.0), ZOOM_MAX);
 
   } else { // Default: User defined
-    _zoom = qMax(ZOOM_MIN, std::floor(level));
+    _zoom = qBound(ZOOM_MIN, std::floor(level), ZOOM_MAX);
 
   }
   setTransform(QTransform::fromScale(_SCALE, _SCALE));

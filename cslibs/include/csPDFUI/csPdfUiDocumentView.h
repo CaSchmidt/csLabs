@@ -83,6 +83,12 @@ public:
 
   static void setConfig(const csPdfUiDocumentViewConfig& config);
 
+  qreal zoom() const;
+
+  static qreal zoomMin();
+  static qreal zoomMax();
+  static qreal zoomStep();
+
 public slots:
   void gotoLinkSource();
   void highlightText(const QString& text);
@@ -92,9 +98,9 @@ public slots:
   void showNextPage();
   virtual void showPage(int no, bool updateHistory); // [1, _doc.pageCount()]
   void showPreviousPage();
-  void zoom(qreal level); // [%]
-  void zoomBestFit();
-  void zoomFitToPageWidth();
+  void setZoom(qreal level); // [%]
+  void setZoomBestFit();
+  void setZoomFitToPageWidth();
   void zoomIn();
   void zoomOut();
 
@@ -112,7 +118,7 @@ private slots:
 private:
   bool followLink(const QPointF& scenePos);
   void renderPage();
-  bool zoom(const qreal level, const int newMode);
+  bool setZoom(const qreal level, const int newMode);
 
 protected:
   QGraphicsScene *_scene;

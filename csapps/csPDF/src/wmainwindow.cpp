@@ -109,9 +109,9 @@ WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
   connect(ui->copyAction, &QAction::triggered, this, &WMainWindow::copySelection);
 
   connect(ui->zoomBestFitAction, &QAction::triggered,
-          ui->pdfView, &csPdfUiDocumentView::zoomBestFit);
+          ui->pdfView, &csPdfUiDocumentView::setZoomBestFit);
   connect(ui->zoomFitToPageWidthAction, &QAction::triggered,
-          ui->pdfView, &csPdfUiDocumentView::zoomFitToPageWidth);
+          ui->pdfView, &csPdfUiDocumentView::setZoomFitToPageWidth);
 }
 
 WMainWindow::~WMainWindow()
