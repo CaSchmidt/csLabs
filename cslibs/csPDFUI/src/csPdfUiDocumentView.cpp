@@ -48,9 +48,8 @@
 // Item Data
 #define DATA_ID             0
 #define DATA_LINKPOINTER    1
-#define DATA_LINKDEST       2
-#define DATA_SELECTIONTEXT  3
-#define DATA_SELECTIONPOS   4
+#define DATA_SELECTIONTEXT  2
+#define DATA_SELECTIONPOS   3
 
 // Zoom
 
@@ -86,7 +85,6 @@ namespace priv {
     item->setZValue(csPdfUiDocumentView::LinkLayer);
     csPdfUiDocumentView::setItemId(item, csPdfUiDocumentView::LinkId);
     item->setData(DATA_LINKPOINTER, QVariant::fromValue(const_cast<void*>(link.pointer())));
-    item->setData(DATA_LINKDEST, QPointF()); // TODO: Link destination
 
     return item;
   }
@@ -125,6 +123,8 @@ csPdfUiDocumentView::csPdfUiDocumentView(QWidget *parent)
   , _wheelBounces(0)
   , _history()
 {
+  qRegisterMetaType<csPDFiumDest>("csPDFiumDest");
+
   // Graphics Scene //////////////////////////////////////////////////////////
 
   _scene = new QGraphicsScene(this);
@@ -625,18 +625,17 @@ bool csPdfUiDocumentView::followLink(const QPointF& scenePos)
       continue;
     }
 
-    const void *pointer = item->data(DATA_LINKPOINTER).value<void*>();
-    const QPointF  dest = item->data(DATA_LINKDEST).toPointF();
-    const int      page = _doc.resolveLink(pointer);
-    if( page < 0 ) {
+    const void     *pointer = item->data(DATA_LINKPOINTER).value<void*>();
+    const csPDFiumDest dest = _doc.resolveLink(pointer);
+    if( dest.isEmtpy() ) {
       return false;
     }
 
-    showPage(page+1, true);
-    if( dest.isNull() ) {
+    showPage(dest.pageIndex+1, true);
+    if( dest.focusPosRaw.isNull() ) {
       centerOn(_page.rect().center().x(), _page.rect().top());
     } else {
-      centerOn(dest);
+      centerOn(_page.mapToScene(dest.focusPosRaw));
     }
 
     return true;

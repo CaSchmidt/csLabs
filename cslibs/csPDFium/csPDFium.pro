@@ -50,4 +50,5 @@ HEADERS += \
     include/internal/csPDFiumDocumentImpl.h \
     include/internal/csPDFiumPageImpl.h \
     include/internal/fpdf_util.h \
-    include/internal/config.h
+    include/internal/config.h \
+    ../include/csPDFium/csPDFiumDest.h

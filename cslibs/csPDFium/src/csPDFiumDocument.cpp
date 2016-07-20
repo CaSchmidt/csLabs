@@ -242,16 +242,16 @@ int csPDFiumDocument::resolveBookmark(const void *pointer) const
   return FPDFDest_GetPageIndex(impl->document, dest);
 }
 
-int csPDFiumDocument::resolveLink(const void *pointer) const
+csPDFiumDest csPDFiumDocument::resolveLink(const void *pointer) const
 {
   if( isEmpty() ) {
-    return -1;
+    return csPDFiumDest();
   }
 
   CSPDFIUM_DOCIMPL();
 
   if( pointer == 0 ) {
-    return -1;
+    return csPDFiumDest();
   }
 
   const FPDF_LINK link = (const FPDF_LINK)pointer;
@@ -265,10 +265,16 @@ int csPDFiumDocument::resolveLink(const void *pointer) const
   }
 
   if( dest == NULL ) {
-    return -1;
+    return csPDFiumDest();
   }
 
-  return FPDFDest_GetPageIndex(impl->document, dest);
+  csPDFiumDest d(FPDFDest_GetPageIndex(impl->document, dest));
+  if( FPDFDest_GetZoomMode(dest) == FPDF_ZOOM_XYZ ) {
+    d.focusPosRaw = QPointF(FPDFDest_GetZoomParam(dest, 0),
+                            FPDFDest_GetZoomParam(dest, 1));
+  }
+
+  return d;
 }
 
 csPDFiumWordsPages csPDFiumDocument::wordsPages(const int firstIndex,

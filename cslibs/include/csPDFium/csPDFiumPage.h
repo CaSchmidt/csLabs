@@ -52,6 +52,7 @@ public:
 
   bool isEmpty() const;
   void clear();
+  QPointF mapToScene(const QPointF& p) const;
   int number() const;
   QImage renderToImage(const qreal scale = 1.0) const;
   csPDFiumLinks links() const;

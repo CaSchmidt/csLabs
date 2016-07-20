@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2015, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2016, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,48 +29,26 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSPDFIUMDOCUMENT_H__
-#define __CSPDFIUMDOCUMENT_H__
+#ifndef __CSPDFIUMDEST_H__
+#define __CSPDFIUMDEST_H__
 
-#include <QtCore/QList>
-#include <QtCore/QPair>
-#include <QtCore/QSharedPointer>
-#include <QtCore/QString>
+#include <QtCore/QPointF>
 
-#include <csPDFium/cspdfium_config.h>
-#include <csPDFium/csPDFiumContentsNode.h>
-#include <csPDFium/csPDFiumDest.h>
-#include <csPDFium/csPDFiumPage.h>
-#include <csPDFium/csPDFiumTextPage.h>
+struct csPDFiumDest {
+  explicit csPDFiumDest(const int _pageIndex = -1,
+                        const QPointF& _focusPosRaw = QPointF())
+    : pageIndex(_pageIndex)
+    , focusPosRaw(_focusPosRaw)
+  {
+  }
 
-typedef QPair<int,QStringList>   csPDFiumWordsPage;
-typedef QList<csPDFiumWordsPage> csPDFiumWordsPages;
+  inline bool isEmtpy() const
+  {
+    return pageIndex < 0;
+  }
 
-class csPDFiumDocumentImpl;
-
-class CS_PDFIUM_EXPORT csPDFiumDocument {
-public:
-  csPDFiumDocument();
-  ~csPDFiumDocument();
-
-  bool isEmpty() const;
-  bool isMemory() const;
-  void clear();
-  QString fileName() const;
-  int pageCount() const;
-  csPDFiumPage page(const int no) const; // no == [0, pageCount()-1]
-  csPDFiumContentsNode *tableOfContents() const;
-  csPDFiumTextPage textPage(const int no) const; // no == [0, pageCount()-1]
-  csPDFiumTextPages textPages(const int first, const int count = -1) const;
-  int resolveBookmark(const void *pointer) const;
-  csPDFiumDest resolveLink(const void *pointer) const;
-  csPDFiumWordsPages wordsPages(const int firstIndex, const int count = -1) const;
-
-  static csPDFiumDocument load(const QString& filename,
-                               const bool memory = false);
-
-private:
-  QSharedPointer<csPDFiumDocumentImpl> impl;
+  int     pageIndex;
+  QPointF focusPosRaw;
 };
 
-#endif // __CSPDFIUMDOCUMENT_H__
+#endif // __CSPDFIUMDEST_H__

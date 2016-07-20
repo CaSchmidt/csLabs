@@ -63,6 +63,17 @@ void csPDFiumPage::clear()
   impl.clear();
 }
 
+QPointF csPDFiumPage::mapToScene(const QPointF& p) const
+{
+  if( isEmpty() ) {
+    return QPointF();
+  }
+
+  CSPDFIUM_PAGEIMPL();
+
+  return p*impl->ctm;
+}
+
 int csPDFiumPage::number() const
 {
   if( isEmpty() ) {
