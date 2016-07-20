@@ -50,6 +50,7 @@ public:
     , no(-1)
     , page(NULL)
     , textCache()
+    , wordCache()
   {
   }
 
@@ -66,6 +67,7 @@ public:
   int no;
   FPDF_PAGE page;
   csPDFiumTexts textCache;
+  QStringList wordCache;
 };
 
 #endif // __CSPDFIUMPAGEIMPL_H__

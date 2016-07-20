@@ -32,6 +32,8 @@
 #ifndef __CSPDFIUMDOCUMENT_H__
 #define __CSPDFIUMDOCUMENT_H__
 
+#include <QtCore/QList>
+#include <QtCore/QPair>
 #include <QtCore/QSharedPointer>
 #include <QtCore/QString>
 
@@ -39,6 +41,9 @@
 #include <csPDFium/csPDFiumContentsNode.h>
 #include <csPDFium/csPDFiumPage.h>
 #include <csPDFium/csPDFiumTextPage.h>
+
+typedef QPair<int,QStringList>   csPDFiumWordsPage;
+typedef QList<csPDFiumWordsPage> csPDFiumWordsPages;
 
 class csPDFiumDocumentImpl;
 
@@ -58,6 +63,7 @@ public:
   csPDFiumTextPages textPages(const int first, const int count = -1) const;
   int resolveBookmark(const void *pointer) const;
   int resolveLink(const void *pointer) const;
+  csPDFiumWordsPages wordsPages(const int firstIndex, const int count = -1) const;
 
   static csPDFiumDocument load(const QString& filename,
                                const bool memory = false);

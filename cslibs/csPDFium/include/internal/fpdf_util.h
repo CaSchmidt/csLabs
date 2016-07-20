@@ -55,6 +55,8 @@ namespace util {
 
   csPDFiumTexts extractTexts(const FPDF_PAGE page, const QMatrix& ctm);
 
+  QStringList extractWords(const FPDF_PAGE page);
+
   void parseContents(const FPDF_BOOKMARK bookmark, const FPDF_DOCUMENT doc,
                      csPDFiumContentsNode *parent);
 

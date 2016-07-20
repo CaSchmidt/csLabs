@@ -271,6 +271,42 @@ int csPDFiumDocument::resolveLink(const void *pointer) const
   return FPDFDest_GetPageIndex(impl->document, dest);
 }
 
+csPDFiumWordsPages csPDFiumDocument::wordsPages(const int firstIndex,
+                                                const int count) const
+{
+  if( isEmpty() ) {
+    return csPDFiumWordsPages();
+  }
+
+  CSPDFIUM_DOCIMPL();
+
+  const int pageCount = FPDF_GetPageCount(impl->document);
+  if( firstIndex < 0  ||  firstIndex >= pageCount ) {
+    csPDFiumWordsPages();
+  }
+
+  const int lastIndex = count <= 0
+      ? pageCount-1
+      : qBound(0, firstIndex+count-1, pageCount-1);
+
+  csPDFiumWordsPages result;
+  for(int index = firstIndex; index <= lastIndex; index++) {
+    const FPDF_PAGE page = FPDF_LoadPage(impl->document, index);
+    if( page == NULL ) {
+      continue;
+    }
+
+    const csPDFiumWordsPage wordsPage(index, util::extractWords(page));
+    if( !wordsPage.second.isEmpty() ) {
+      result.push_back(wordsPage);
+    }
+
+    FPDF_ClosePage(page);
+  }
+
+  return result;
+}
+
 csPDFiumDocument csPDFiumDocument::load(const QString& filename,
                                         const bool memory)
 {

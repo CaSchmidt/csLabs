@@ -142,32 +142,6 @@ csPDFiumLinks csPDFiumPage::links() const
   return links;
 }
 
-csPDFiumTexts csPDFiumPage::texts(const QRectF& area) const
-{
-  if( isEmpty() ) {
-    return csPDFiumTexts();
-  }
-
-  CSPDFIUM_PAGEIMPL();
-
-  if( impl->textCache.isEmpty() ) {
-    impl->textCache = util::extractTexts(impl->page, impl->ctm);
-  }
-
-  if( area.isNull() ) {
-    return impl->textCache;
-  }
-
-  csPDFiumTexts texts;
-  foreach(const csPDFiumText& t, impl->textCache) {
-    if( area.intersects(t.rect()) ) {
-      texts.push_back(t);
-    }
-  }
-
-  return texts;
-}
-
 QRectF csPDFiumPage::rect() const
 {
   if( isEmpty() ) {
@@ -226,6 +200,47 @@ QString csPDFiumPage::text() const
   FPDFText_ClosePage(textPage);
 
   return QString::fromUtf16((const unsigned short*)data.constData());
+}
+
+csPDFiumTexts csPDFiumPage::texts(const QRectF& area) const
+{
+  if( isEmpty() ) {
+    return csPDFiumTexts();
+  }
+
+  CSPDFIUM_PAGEIMPL();
+
+  if( impl->textCache.isEmpty() ) {
+    impl->textCache = util::extractTexts(impl->page, impl->ctm);
+  }
+
+  if( area.isNull() ) {
+    return impl->textCache;
+  }
+
+  csPDFiumTexts texts;
+  foreach(const csPDFiumText& t, impl->textCache) {
+    if( area.intersects(t.rect()) ) {
+      texts.push_back(t);
+    }
+  }
+
+  return texts;
+}
+
+QStringList csPDFiumPage::words() const
+{
+  if( isEmpty() ) {
+    return QStringList();
+  }
+
+  CSPDFIUM_PAGEIMPL();
+
+  if( impl->wordCache.isEmpty() ) {
+    impl->wordCache = util::extractWords(impl->page);
+  }
+
+  return impl->wordCache;
 }
 
 QList<QPainterPath> csPDFiumPage::extractPaths(const csPDFium::PathExtractionFlags flags) const

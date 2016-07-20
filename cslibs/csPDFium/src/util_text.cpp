@@ -35,14 +35,21 @@
 
 #include "internal/config.h"
 
-#define TEXT_COMMIT()           \
-  if( !text.isEmpty() ) {       \
-    text.setPos(texts.size());  \
-    texts.push_back(text);      \
-    text.clear();               \
+namespace util {
+
+  inline bool isSeparator(const QChar& c)
+  {
+    return c.isNull()  ||  c.isSpace();
   }
 
-namespace util {
+  inline void commit(csPDFiumTexts& texts, csPDFiumText& text)
+  {
+    if( !text.isEmpty() ) {
+      text.setPos(texts.size());
+      texts.push_back(text);
+      text.clear();
+    }
+  }
 
   csPDFiumTexts extractTexts(const FPDF_PAGE page, const QMatrix& ctm)
   {
@@ -52,11 +59,13 @@ namespace util {
     }
 
     csPDFiumTexts texts;
+
     csPDFiumText text;
-    for(int i = 0; i < FPDFText_CountChars(textPage); i++) {
+    const int count = FPDFText_CountChars(textPage);
+    for(int i = 0; i < count; i++) {
       const QChar c = QChar(FPDFText_GetUnicode(textPage, i));
-      if( c.isNull()  ||  c.isSpace() ) {
-        TEXT_COMMIT();
+      if( isSeparator(c) ) {
+        commit(texts, text);
         continue;
       }
 
@@ -69,11 +78,45 @@ namespace util {
 
       text.merge(r, c);
     }
-    TEXT_COMMIT();
+    commit(texts, text);
 
     FPDFText_ClosePage(textPage);
 
     return texts;
+  }
+
+  inline void commit(QStringList& words, QString& word)
+  {
+    if( !word.isEmpty() ) {
+      words.push_back(word);
+      word.clear();
+    }
+  }
+
+  QStringList extractWords(const FPDF_PAGE page)
+  {
+    const FPDF_TEXTPAGE textPage = FPDFText_LoadPage(page);
+    if( textPage == NULL ) {
+      return QStringList();
+    }
+
+    QStringList words;
+
+    QString word;
+    const int count = FPDFText_CountChars(textPage);
+    for(int i = 0; i < count; i++) {
+      const QChar c = QChar(FPDFText_GetUnicode(textPage, i));
+      if( isSeparator(c) ) {
+        commit(words, word);
+      } else {
+        word += c;
+      }
+    }
+    commit(words, word);
+
+    FPDFText_ClosePage(textPage);
+
+    return words;
   }
 
 }; // namespace util

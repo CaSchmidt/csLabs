@@ -55,10 +55,12 @@ public:
   int number() const;
   QImage renderToImage(const qreal scale = 1.0) const;
   csPDFiumLinks links() const;
-  csPDFiumTexts texts(const QRectF& area = QRectF()) const;
   QRectF rect() const;
   QSizeF size() const;
+
   QString text() const;
+  csPDFiumTexts texts(const QRectF& area = QRectF()) const;
+  QStringList words() const;
 
   QList<QPainterPath> extractPaths(const csPDFium::PathExtractionFlags flags = 0) const;
 
