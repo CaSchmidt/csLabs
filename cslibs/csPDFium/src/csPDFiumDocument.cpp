@@ -213,16 +213,16 @@ csPDFiumTextPages csPDFiumDocument::textPages(const int first, const int count) 
   return results;
 }
 
-int csPDFiumDocument::resolveBookmark(const void *pointer) const
+csPDFiumDest csPDFiumDocument::resolveBookmark(const void *pointer) const
 {
   if( isEmpty() ) {
-    return -1;
+    return csPDFiumDest();
   }
 
   CSPDFIUM_DOCIMPL();
 
   if( pointer == 0 ) {
-    return -1;
+    return csPDFiumDest();
   }
 
   const FPDF_BOOKMARK bookmark = (const FPDF_BOOKMARK)pointer;
@@ -236,10 +236,16 @@ int csPDFiumDocument::resolveBookmark(const void *pointer) const
   }
 
   if( dest == NULL ) {
-    return -1;
+    return csPDFiumDest();
   }
 
-  return FPDFDest_GetPageIndex(impl->document, dest);
+  csPDFiumDest result(FPDFDest_GetPageIndex(impl->document, dest));
+  if( FPDFDest_GetZoomMode(dest) == FPDF_ZOOM_XYZ ) {
+    result.focusPosPage = QPointF(FPDFDest_GetZoomParam(dest, 0),
+                                  FPDFDest_GetZoomParam(dest, 1));
+  }
+
+  return result;
 }
 
 csPDFiumDest csPDFiumDocument::resolveLink(const void *pointer) const
@@ -268,13 +274,13 @@ csPDFiumDest csPDFiumDocument::resolveLink(const void *pointer) const
     return csPDFiumDest();
   }
 
-  csPDFiumDest d(FPDFDest_GetPageIndex(impl->document, dest));
+  csPDFiumDest result(FPDFDest_GetPageIndex(impl->document, dest));
   if( FPDFDest_GetZoomMode(dest) == FPDF_ZOOM_XYZ ) {
-    d.focusPosRaw = QPointF(FPDFDest_GetZoomParam(dest, 0),
-                            FPDFDest_GetZoomParam(dest, 1));
+    result.focusPosPage = QPointF(FPDFDest_GetZoomParam(dest, 0),
+                                  FPDFDest_GetZoomParam(dest, 1));
   }
 
-  return d;
+  return result;
 }
 
 csPDFiumWordsPages csPDFiumDocument::wordsPages(const int firstIndex,

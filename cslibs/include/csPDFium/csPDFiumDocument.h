@@ -62,7 +62,7 @@ public:
   csPDFiumContentsNode *tableOfContents() const;
   csPDFiumTextPage textPage(const int no) const; // no == [0, pageCount()-1]
   csPDFiumTextPages textPages(const int first, const int count = -1) const;
-  int resolveBookmark(const void *pointer) const;
+  csPDFiumDest resolveBookmark(const void *pointer) const;
   csPDFiumDest resolveLink(const void *pointer) const;
   csPDFiumWordsPages wordsPages(const int firstIndex, const int count = -1) const;
 

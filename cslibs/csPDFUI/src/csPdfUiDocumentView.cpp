@@ -243,6 +243,20 @@ qreal csPdfUiDocumentView::zoomStep()
 
 ////// public slots //////////////////////////////////////////////////////////
 
+void csPdfUiDocumentView::gotoDestination(const csPDFiumDest& dest)
+{
+  if( dest.isEmtpy() ) {
+    return;
+  }
+
+  showPage(dest.pageIndex+1, true);
+  if( dest.focusPosPage.isNull() ) {
+    centerOn(_page.rect().center().x(), _page.rect().top());
+  } else {
+    centerOn(_page.mapToScene(dest.focusPosPage));
+  }
+}
+
 void csPdfUiDocumentView::highlightText(const QString& text)
 {
   removeItems(HighlightId);
@@ -631,12 +645,7 @@ bool csPdfUiDocumentView::followLink(const QPointF& scenePos)
       return false;
     }
 
-    showPage(dest.pageIndex+1, true);
-    if( dest.focusPosRaw.isNull() ) {
-      centerOn(_page.rect().center().x(), _page.rect().top());
-    } else {
-      centerOn(_page.mapToScene(dest.focusPosRaw));
-    }
+    gotoDestination(dest);
 
     return true;
   }

@@ -54,7 +54,7 @@ private slots:
   void activateTocItem(const QModelIndex& index);
 
 signals:
-  void pageRequested(int no, bool history = true);
+  void destinationRequested(const csPDFiumDest& dest);
 
 private:
   Ui::csPdfUiTocWidget *ui;

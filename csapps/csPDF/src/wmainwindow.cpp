@@ -70,8 +70,8 @@ WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
 
   // Table of Contents ///////////////////////////////////////////////////////
 
-  connect(ui->contentsWidget, &csPdfUiTocWidget::pageRequested,
-          ui->pdfView, &csPdfUiDocumentView::showPage);
+  connect(ui->contentsWidget, &csPdfUiTocWidget::destinationRequested,
+          ui->pdfView, &csPdfUiDocumentView::gotoDestination);
 
   connect(ui->showTocAction, &QAction::triggered,
           ui->contentsDock, &QDockWidget::show);

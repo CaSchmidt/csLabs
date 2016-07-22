@@ -90,6 +90,7 @@ public:
   static qreal zoomStep();
 
 public slots:
+  void gotoDestination(const csPDFiumDest& dest);
   void highlightText(const QString& text);
   void removeMarks();
   void reverseHistory();

@@ -36,9 +36,9 @@
 
 struct csPDFiumDest {
   explicit csPDFiumDest(const int _pageIndex = -1,
-                        const QPointF& _focusPosRaw = QPointF())
+                        const QPointF& _focusPosPage = QPointF())
     : pageIndex(_pageIndex)
-    , focusPosRaw(_focusPosRaw)
+    , focusPosPage(_focusPosPage)
   {
   }
 
@@ -48,7 +48,7 @@ struct csPDFiumDest {
   }
 
   int     pageIndex;
-  QPointF focusPosRaw;
+  QPointF focusPosPage;
 };
 
 #endif // __CSPDFIUMDEST_H__
