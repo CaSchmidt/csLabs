@@ -51,7 +51,7 @@ WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
 {
   // Create SimContext so it is Available During UI Initialization ///////////
 
-  _simThread = new QThread();
+  _simThread = new QThread(this);
 
   global::simctx = new SimContext(0);
   global::simctx->moveToThread(_simThread);
@@ -71,16 +71,16 @@ WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
 
   // Logging
 
-  connect(global::simctx, SIGNAL(errorLogged(const QString&)),
-          ui->logBrowser, SLOT(logError(const QString&)));
-  connect(global::simctx, SIGNAL(errorLogged(int,const QString&)),
-          ui->logBrowser, SLOT(logError(int,const QString&)));
-  connect(global::simctx, SIGNAL(warningLogged(const QString&)),
-          ui->logBrowser, SLOT(logWarning(const QString&)));
-  connect(global::simctx, SIGNAL(warningLogged(int,const QString&)),
-          ui->logBrowser, SLOT(logWarning(int,const QString&)));
-  connect(global::simctx, SIGNAL(textLogged(const QString&)),
-          ui->logBrowser, SLOT(logText(const QString&)));
+  connect(global::simctx, QOverload<const QString&>::of(&SimContext::errorLogged),
+          ui->logBrowser, QOverload<const QString&>::of(&WLogger::logError));
+  connect(global::simctx, QOverload<int,const QString&>::of(&SimContext::errorLogged),
+          ui->logBrowser, QOverload<int,const QString&>::of(&WLogger::logError));
+  connect(global::simctx, QOverload<const QString&>::of(&SimContext::warningLogged),
+          ui->logBrowser, QOverload<const QString&>::of(&WLogger::logWarning));
+  connect(global::simctx, QOverload<int,const QString&>::of(&SimContext::warningLogged),
+          ui->logBrowser, QOverload<int,const QString&>::of(&WLogger::logWarning));
+  connect(global::simctx, QOverload<const QString&>::of(&SimContext::textLogged),
+          ui->logBrowser, QOverload<const QString&>::of(&WLogger::logText));
 
   // Config
 

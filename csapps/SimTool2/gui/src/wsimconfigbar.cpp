@@ -98,8 +98,10 @@ WSimConfigBar::WSimConfigBar(QWidget *parent)
   // Signals & Slots /////////////////////////////////////////////////////////
 
   connect(_modeButton, &csMultiToolButton::selectionChanged, this, &WSimConfigBar::setMode);
-  connect(_stepSpin, SIGNAL(valueChanged(int)), this, SLOT(valuesChanged(int)));
-  connect(_durationSpin, SIGNAL(valueChanged(int)), this, SLOT(valuesChanged(int)));
+  connect(_stepSpin, QOverload<int>::of(&QSpinBox::valueChanged),
+          this, &WSimConfigBar::valuesChanged);
+  connect(_durationSpin, QOverload<int>::of(&QSpinBox::valueChanged),
+          this, &WSimConfigBar::valuesChanged);
 
   // Default State ///////////////////////////////////////////////////////////
 
