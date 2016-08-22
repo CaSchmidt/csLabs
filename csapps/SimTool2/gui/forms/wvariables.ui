@@ -58,7 +58,7 @@
      </property>
      <property name="icon">
       <iconset resource="../resources/resources.qrc">
-       <normaloff>:/icons/add.png</normaloff>:/icons/add.png</iconset>
+       <normaloff>:/icons/scalable/add.svg</normaloff>:/icons/scalable/add.svg</iconset>
      </property>
     </widget>
    </item>
@@ -82,7 +82,7 @@
      </property>
      <property name="icon">
       <iconset resource="../resources/resources.qrc">
-       <normaloff>:/icons/remove.png</normaloff>:/icons/remove.png</iconset>
+       <normaloff>:/icons/scalable/remove.svg</normaloff>:/icons/scalable/remove.svg</iconset>
      </property>
     </widget>
    </item>

@@ -9,16 +9,13 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="12"
-   height="12"
-   viewBox="0 0 12 12"
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="pause.svg"
-   inkscape:export-filename="D:\omarhawk\Projects\_simtool2\gui\resources\icons\pause.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   sodipodi:docname="stop.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -28,22 +25,38 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="31.678384"
-     inkscape:cx="8.9676706"
-     inkscape:cy="1.4615463"
+     inkscape:zoom="22.4"
+     inkscape:cx="15.828206"
+     inkscape:cy="14.624684"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      units="px"
      width="15px"
+     inkscape:snap-global="true"
+     inkscape:snap-bbox="false"
      inkscape:window-width="1680"
      inkscape:window-height="1026"
      inkscape:window-x="-4"
      inkscape:window-y="-4"
-     inkscape:window-maximized="1">
+     inkscape:window-maximized="1"
+     inkscape:bbox-paths="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:snap-bbox-midpoints="true"
+     inkscape:object-paths="true"
+     inkscape:snap-intersection-paths="true"
+     inkscape:object-nodes="true"
+     inkscape:snap-smooth-nodes="true"
+     inkscape:snap-midpoints="true"
+     inkscape:snap-others="true"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-center="true"
+     inkscape:snap-to-guides="false">
     <inkscape:grid
        type="xygrid"
-       id="grid4136" />
+       id="grid4136"
+       dotted="true" />
   </sodipodi:namedview>
   <metadata
      id="metadata7">
@@ -61,20 +74,14 @@
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-1040.3622)">
+     transform="translate(0,-1020.3622)">
     <rect
-       style="fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect4138"
-       width="4"
-       height="12"
-       x="0"
-       y="1040.3622" />
-    <rect
-       style="fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4140"
-       width="4"
-       height="12"
-       x="8"
-       y="1040.3622" />
+       width="26"
+       height="26.000017"
+       x="3"
+       y="1023.3622"
+       ry="0" />
   </g>
 </svg>

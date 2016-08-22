@@ -1,9 +1,9 @@
 <RCC>
     <qresource prefix="/">
-        <file>icons/add.png</file>
-        <file>icons/remove.png</file>
-        <file>icons/pause.png</file>
-        <file>icons/start.png</file>
-        <file>icons/stop.png</file>
+        <file>icons/scalable/add.svg</file>
+        <file>icons/scalable/pause.svg</file>
+        <file>icons/scalable/remove.svg</file>
+        <file>icons/scalable/start.svg</file>
+        <file>icons/scalable/stop.svg</file>
     </qresource>
 </RCC>

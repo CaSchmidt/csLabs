@@ -97,6 +97,12 @@
    <property name="allowedAreas">
     <set>Qt::TopToolBarArea</set>
    </property>
+   <property name="iconSize">
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
@@ -217,7 +223,7 @@
   <action name="simStartAction">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/start.png</normaloff>:/icons/start.png</iconset>
+     <normaloff>:/icons/scalable/start.svg</normaloff>:/icons/scalable/start.svg</iconset>
    </property>
    <property name="text">
     <string>Start</string>
@@ -229,7 +235,7 @@
   <action name="simStopAction">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/stop.png</normaloff>:/icons/stop.png</iconset>
+     <normaloff>:/icons/scalable/stop.svg</normaloff>:/icons/scalable/stop.svg</iconset>
    </property>
    <property name="text">
     <string>Stop</string>
@@ -241,7 +247,7 @@
   <action name="simPauseAction">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/pause.png</normaloff>:/icons/pause.png</iconset>
+     <normaloff>:/icons/scalable/pause.svg</normaloff>:/icons/scalable/pause.svg</iconset>
    </property>
    <property name="text">
     <string>Pause</string>
