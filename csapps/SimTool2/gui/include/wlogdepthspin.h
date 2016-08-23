@@ -29,42 +29,24 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __WSIMCONFIGBAR_H__
-#define __WSIMCONFIGBAR_H__
+#ifndef __WLOGDEPTHSPIN_H__
+#define __WLOGDEPTHSPIN_H__
 
-#include <QtWidgets/QToolBar>
+#include <QtWidgets/QSpinBox>
 
-#include <SimCore/SimConfig.h>
-
-class QSpinBox;
-class WLogDepthSpin;
-class csMultiToolButton;
-
-class WSimConfigBar : public QToolBar {
+class WLogDepthSpin : public QSpinBox {
   Q_OBJECT
 public:
-  WSimConfigBar(QWidget *parent);
-  ~WSimConfigBar();
+  WLogDepthSpin(QWidget *parent);
+  ~WLogDepthSpin();
 
-  SimConfig get() const;
+  void setSimStep(double simStep);
 
-public slots:
-  void set(const SimConfig& config);
-
-private slots:
-  void setMode(int id);
-  void valuesChanged(int);
-
-signals:
-  void configChanged(const SimConfig&);
+protected:
+  QString textFromValue(int val) const;
 
 private:
-  double simStep() const;
-
-  QSpinBox *_durationSpin;
-  WLogDepthSpin *_logDepthSpin;
-  csMultiToolButton *_modeButton;
-  QSpinBox *_stepSpin;
+  double _simStep;
 };
 
-#endif // __WSIMCONFIGBAR_H__
+#endif // __WLOGDEPTHSPIN_H__

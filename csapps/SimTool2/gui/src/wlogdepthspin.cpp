@@ -29,42 +29,44 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __WSIMCONFIGBAR_H__
-#define __WSIMCONFIGBAR_H__
+#include <QtWidgets/QLineEdit>
 
-#include <QtWidgets/QToolBar>
+#include "wlogdepthspin.h"
 
 #include <SimCore/SimConfig.h>
+#include <SimCore/SimDataSeries.h>
+#include <SimCore/SimUtil.h>
 
-class QSpinBox;
-class WLogDepthSpin;
-class csMultiToolButton;
+////// public ////////////////////////////////////////////////////////////////
 
-class WSimConfigBar : public QToolBar {
-  Q_OBJECT
-public:
-  WSimConfigBar(QWidget *parent);
-  ~WSimConfigBar();
+WLogDepthSpin::WLogDepthSpin(QWidget *parent)
+  : QSpinBox(parent)
+  , _simStep(SimConfig().step)
+{
+  setSingleStep(1);
+  setMinimum(SimDataSeries::minDepth());
+  setMaximum(SimDataSeries::maxDepth());
+  lineEdit()->setReadOnly(true);
+  setSuffix(tr("s"));
+}
 
-  SimConfig get() const;
+WLogDepthSpin::~WLogDepthSpin()
+{
+}
 
-public slots:
-  void set(const SimConfig& config);
+void WLogDepthSpin::setSimStep(double simStep)
+{
+  _simStep = simStep;
 
-private slots:
-  void setMode(int id);
-  void valuesChanged(int);
+  blockSignals(true);
+  setValue(value());
+  blockSignals(false);
+}
 
-signals:
-  void configChanged(const SimConfig&);
+////// protected /////////////////////////////////////////////////////////////
 
-private:
-  double simStep() const;
-
-  QSpinBox *_durationSpin;
-  WLogDepthSpin *_logDepthSpin;
-  csMultiToolButton *_modeButton;
-  QSpinBox *_stepSpin;
-};
-
-#endif // __WSIMCONFIGBAR_H__
+QString WLogDepthSpin::textFromValue(int val) const
+{
+  const int size = SimDataSeries::calculateSize(val);
+  return sim::locale().toString(double(size)*_simStep, 'f', 3);
+}

@@ -37,21 +37,26 @@
 #include <csQt/csMultiToolButton.h>
 
 #include <SimCore/Sim.h>
+#include <SimCore/SimConfig.h>
 
 #include "wsimconfigbar.h"
 
 #include "global.h"
+#include "wlogdepthspin.h"
 
 ////// Macros ////////////////////////////////////////////////////////////////
 
-#define DEFAULT_STEP      10 // [ms]
-#define DEFAULT_DURATION  10 // [s]
+#define DEFAULT_MODE       SimConfig().mode
+#define DEFAULT_STEP      (SimConfig().step*1000.0) // [ms]
+#define DEFAULT_DURATION   SimConfig().duration
+#define DEFAULT_LOGDEPTH   SimConfig().logDepth
 
 ////// public ////////////////////////////////////////////////////////////////
 
 WSimConfigBar::WSimConfigBar(QWidget *parent)
   : QToolBar(parent)
   , _durationSpin(0)
+  , _logDepthSpin(0)
   , _modeButton(0)
   , _stepSpin(0)
 {
@@ -64,7 +69,7 @@ WSimConfigBar::WSimConfigBar(QWidget *parent)
   modeItems.push_back(csMultiItem(tr("Real-Time"), RealTimeMode));
   modeItems.push_back(csMultiItem(tr("Offline"), OfflineMode));
 
-  _modeButton = new csMultiToolButton(modeItems, InvalidDataType, this);
+  _modeButton = new csMultiToolButton(modeItems, InvalidOperationMode, this);
   addWidget(_modeButton);
 
   // Step Size ///////////////////////////////////////////////////////////////
@@ -95,6 +100,18 @@ WSimConfigBar::WSimConfigBar(QWidget *parent)
   _durationSpin->setSuffix(tr("s"));
   addWidget(_durationSpin);
 
+  // Log Depth ///////////////////////////////////////////////////////////////
+
+  addSeparator();
+  addWidget(new QLabel(tr("Log depth:"), this));
+
+  _logDepthSpin = new WLogDepthSpin(this);
+  _logDepthSpin->setSizePolicy(_logDepthSpin->sizePolicy().horizontalPolicy(),
+                               QSizePolicy::Expanding);
+  _logDepthSpin->setValue(DEFAULT_LOGDEPTH);
+  _logDepthSpin->setSimStep(simStep());
+  addWidget(_logDepthSpin);
+
   // Signals & Slots /////////////////////////////////////////////////////////
 
   connect(_modeButton, &csMultiToolButton::selectionChanged, this, &WSimConfigBar::setMode);
@@ -102,10 +119,12 @@ WSimConfigBar::WSimConfigBar(QWidget *parent)
           this, &WSimConfigBar::valuesChanged);
   connect(_durationSpin, QOverload<int>::of(&QSpinBox::valueChanged),
           this, &WSimConfigBar::valuesChanged);
+  connect(_logDepthSpin, QOverload<int>::of(&WLogDepthSpin::valueChanged),
+          this, &WSimConfigBar::valuesChanged);
 
   // Default State ///////////////////////////////////////////////////////////
 
-  setMode(_modeButton->currentSelection()); // NOTE: Calls writeConfig()!
+  setMode(_modeButton->currentSelection()); // NOTE: Emits configChanged()!
 }
 
 WSimConfigBar::~WSimConfigBar()
@@ -115,8 +134,9 @@ WSimConfigBar::~WSimConfigBar()
 SimConfig WSimConfigBar::get() const
 {
   return SimConfig((SimOperationMode)_modeButton->currentSelection(),
-                   double(_stepSpin->value())/1000.0,
-                   double(_durationSpin->value()));
+                   simStep(),
+                   double(_durationSpin->value()),
+                   _logDepthSpin->value());
 }
 
 ////// public slots //////////////////////////////////////////////////////////
@@ -128,6 +148,8 @@ void WSimConfigBar::set(const SimConfig& config)
   setMode(config.mode);
   _stepSpin->setValue(config.step*1000.0);
   _durationSpin->setValue(config.duration);
+  _logDepthSpin->setValue(config.logDepth);
+  _logDepthSpin->setSimStep(config.step);
   blockSignals(false);
 }
 
@@ -145,5 +167,15 @@ void WSimConfigBar::setMode(int id)
 
 void WSimConfigBar::valuesChanged(int)
 {
+  _logDepthSpin->blockSignals(true);
+  _logDepthSpin->setSimStep(simStep());;
+  _logDepthSpin->blockSignals(false);
   emit configChanged(get());
+}
+
+////// private ///////////////////////////////////////////////////////////////
+
+double WSimConfigBar::simStep() const
+{
+  return double(_stepSpin->value())/1000.0;
 }

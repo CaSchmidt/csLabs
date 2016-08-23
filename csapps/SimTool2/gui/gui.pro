@@ -41,7 +41,8 @@ SOURCES += \
     src/wsimconfigbar.cpp \
     src/wvalueswindow.cpp \
     src/wvariableeditor.cpp \
-    src/wvariables.cpp
+    src/wvariables.cpp \
+    src/wlogdepthspin.cpp
 
 HEADERS  += \
     include/global.h \
@@ -53,7 +54,8 @@ HEADERS  += \
     include/wsimconfigbar.h \
     include/wvalueswindow.h \
     include/wvariableeditor.h \
-    include/wvariables.h
+    include/wvariables.h \
+    include/wlogdepthspin.h
 
 FORMS    += \
     forms/wmainwindow.ui \
