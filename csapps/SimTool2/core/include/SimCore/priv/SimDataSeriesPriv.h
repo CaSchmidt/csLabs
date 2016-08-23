@@ -60,7 +60,7 @@ public:
     , mask()
     , pos()
   {
-    data += _data;
+    data.append(_data); // work around implicit sharing
     if( !data.isEmpty() ) {
       mask = _mask;
       pos  = _pos;
