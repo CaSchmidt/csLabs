@@ -47,7 +47,7 @@ public:
   WValuesWindow(QWidget *parent, Qt::WindowFlags f = 0);
   ~WValuesWindow();
 
-  static void closeAllWindows();
+  static void closeAll();
 
 protected:
   void dragEnterEvent(QDragEnterEvent *event);

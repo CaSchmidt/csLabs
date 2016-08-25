@@ -29,42 +29,36 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __WMAINWINDOW_H__
-#define __WMAINWINDOW_H__
+#ifndef __WPLOTWINDOW_H__
+#define __WPLOTWINDOW_H__
 
-#include <QtWidgets/QMainWindow>
-
-class QThread;
+#include <QtCore/QList>
+#include <QtWidgets/QWidget>
 
 namespace Ui {
-  class WMainWindow;
-};
+  class WPlotWindow;
+}
 
-class WSimConfigBar;
+class DataLogsModel;
 
-class WMainWindow : public QMainWindow {
+class WPlotWindow : public QWidget {
   Q_OBJECT
 public:
-  WMainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-  ~WMainWindow();
+  WPlotWindow(QWidget *parent, Qt::WindowFlags f = 0);
+  ~WPlotWindow();
 
-private slots:
-  void enterSimState(int state);
-  void exitState(int state);
-  void open();
-  void save();
-  void saveAs();
-  void newPlotWindow();
-  void newValuesWindow();
+  static void closeAll();
+
+protected:
+  void dragEnterEvent(QDragEnterEvent *event);
+  void dropEvent(QDropEvent *event);
 
 private:
-  void openEnvironment(const QString& filename);
-  void saveEnvironment(const QString& filename);
-
-  Ui::WMainWindow *ui;
-  WSimConfigBar *_configBar;
-  QString _currentFilename;
-  QThread *_simThread;
+  Ui::WPlotWindow *ui;
+  static int _count;
+  int _id;
+  DataLogsModel *_model;
+  static QList<class WPlotWindow*> _windows;
 };
 
-#endif // __WMAINWINDOW_H__
+#endif // __WPLOTWINDOW_H__

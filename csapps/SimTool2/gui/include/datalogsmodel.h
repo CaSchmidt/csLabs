@@ -29,42 +29,67 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __WMAINWINDOW_H__
-#define __WMAINWINDOW_H__
+#ifndef __DATALOGSMODEL_H__
+#define __DATALOGSMODEL_H__
 
-#include <QtWidgets/QMainWindow>
+#include <QtCore/QAbstractTableModel>
+#include <QtCore/QBasicTimer>
+#include <QtCore/QList>
 
-class QThread;
+namespace QtCharts {
+  class QChart;
+  class QLineSeries;
+  class QValueAxis;
+}
 
-namespace Ui {
-  class WMainWindow;
+class SimContext;
+
+struct DataLogEntry {
+  DataLogEntry()
+    : name()
+    , series(0)
+    , unit()
+  {
+  }
+
+  QString name;
+  QtCharts::QLineSeries *series;
+  QString unit;
 };
 
-class WSimConfigBar;
-
-class WMainWindow : public QMainWindow {
+class DataLogsModel : public QAbstractTableModel {
   Q_OBJECT
 public:
-  WMainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-  ~WMainWindow();
+  DataLogsModel(QtCharts::QChart *chart, SimContext *simctx, QObject *parent);
+  ~DataLogsModel();
 
-private slots:
-  void enterSimState(int state);
+  bool addVariable(const QString& name);
+
+  int columnCount(const QModelIndex& parent) const;
+  QVariant data(const QModelIndex& index, int role) const;
+  QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+  int rowCount(const QModelIndex& parent) const;
+
+public slots:
+  void enterState(int state);
   void exitState(int state);
-  void open();
-  void save();
-  void saveAs();
-  void newPlotWindow();
-  void newValuesWindow();
+  void clearVariables();
+  void removeVariable(const QString& name);
+
+protected:
+  void timerEvent(QTimerEvent *event);
 
 private:
-  void openEnvironment(const QString& filename);
-  void saveEnvironment(const QString& filename);
+  bool contains(const QString& name) const;
+  int indexOf(const QString& name) const;
+  Qt::GlobalColor nextColor();
 
-  Ui::WMainWindow *ui;
-  WSimConfigBar *_configBar;
-  QString _currentFilename;
-  QThread *_simThread;
+  QtCharts::QChart *_chart;
+  int _colorIndex;
+  QList<DataLogEntry> _entries;
+  QBasicTimer _refreshTimer;
+  SimContext *_simctx;
+  QtCharts::QValueAxis *_timeAxis;
 };
 
-#endif // __WMAINWINDOW_H__
+#endif // __DATALOGSMODEL_H__

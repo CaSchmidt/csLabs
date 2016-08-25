@@ -83,6 +83,7 @@
     <property name="title">
      <string>&amp;Window</string>
     </property>
+    <addaction name="newPlotWindowAction"/>
     <addaction name="newValuesWindowAction"/>
    </widget>
    <addaction name="menu_File"/>
@@ -280,6 +281,11 @@
   <action name="newValuesWindowAction">
    <property name="text">
     <string>New &amp;values</string>
+   </property>
+  </action>
+  <action name="newPlotWindowAction">
+   <property name="text">
+    <string>New &amp;plot</string>
    </property>
   </action>
  </widget>

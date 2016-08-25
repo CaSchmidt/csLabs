@@ -89,7 +89,7 @@ bool SimDataLogger::addLog(const QString& name)
     return true;
   }
 
-  const SimVariable var = ctx->env.variable(name);
+  const SimVariable& var = ctx->env.variable(name);
   if( var.isEmpty() ) {
     return false;
   }
@@ -165,10 +165,6 @@ void SimDataLogger::exitState(int state)
       return;
     }
 
-    if( _logTime.depth() == ctx->cfg.logDepth ) {
-      return;
-    }
-
     _logTime = priv::createLogTime(ctx->cfg.logDepth, ctx->cfg.step);
     if( _logTime.isNull() ) {
       _logs.clear();
@@ -176,8 +172,9 @@ void SimDataLogger::exitState(int state)
     }
 
     foreach(const QString& name, _logs.keys()) {
-      const SimVariable var = ctx->env.variable(name);
+      const SimVariable& var = ctx->env.variable(name);
       if( var.isEmpty() ) {
+        _logs.remove(name);
         continue;
       }
 

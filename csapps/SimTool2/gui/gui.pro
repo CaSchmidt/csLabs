@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets
+QT       += charts core gui widgets
 
 TEMPLATE = app
 
@@ -42,7 +42,9 @@ SOURCES += \
     src/wvalueswindow.cpp \
     src/wvariableeditor.cpp \
     src/wvariables.cpp \
-    src/wlogdepthspin.cpp
+    src/wlogdepthspin.cpp \
+    src/datalogsmodel.cpp \
+    src/wplotwindow.cpp
 
 HEADERS  += \
     include/global.h \
@@ -55,7 +57,9 @@ HEADERS  += \
     include/wvalueswindow.h \
     include/wvariableeditor.h \
     include/wvariables.h \
-    include/wlogdepthspin.h
+    include/wlogdepthspin.h \
+    include/datalogsmodel.h \
+    include/wplotwindow.h
 
 FORMS    += \
     forms/wmainwindow.ui \
@@ -63,7 +67,8 @@ FORMS    += \
     forms/wmoduleeditor.ui \
     forms/wvalueswindow.ui \
     forms/wmodules.ui \
-    forms/wvariables.ui
+    forms/wvariables.ui \
+    forms/wplotwindow.ui
 
 RESOURCES += \
     resources/resources.qrc

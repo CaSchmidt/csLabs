@@ -29,28 +29,28 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <QtCharts/QChart>
+#include <QtCharts/QChartView>
 #include <QtCore/QMimeData>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDropEvent>
 
-#include <SimCore/SimValuesModel.h>
+#include "wplotwindow.h"
+#include "ui_wplotwindow.h"
 
-#include "wvalueswindow.h"
-#include "ui_wvalueswindow.h"
-
+#include "datalogsmodel.h"
 #include "global.h"
-#include "valuedelegate.h"
 
 ////// static private ////////////////////////////////////////////////////////
 
-int WValuesWindow::_count(0);
-QList<class WValuesWindow*> WValuesWindow::_windows;
+int WPlotWindow::_count(0);
+QList<class WPlotWindow*> WPlotWindow::_windows;
 
 ////// public ////////////////////////////////////////////////////////////////
 
-WValuesWindow::WValuesWindow(QWidget *parent, Qt::WindowFlags f)
+WPlotWindow::WPlotWindow(QWidget *parent, Qt::WindowFlags f)
   : QWidget(parent, f)
-  , ui(new Ui::WValuesWindow)
+  , ui(new Ui::WPlotWindow)
   , _id(++_count)
   , _model(0)
 {
@@ -58,23 +58,29 @@ WValuesWindow::WValuesWindow(QWidget *parent, Qt::WindowFlags f)
 
   setAcceptDrops(true);
   setAttribute(Qt::WA_DeleteOnClose, true);
-  setWindowTitle(tr("Values [%1]").arg(_id));
+  setWindowTitle(tr("Plot [%1]").arg(_id));
 
   _windows.push_back(this);
 
-  _model = new SimValuesModel(global::simctx, ui->valuesView);
-  ui->valuesView->setModel(_model);
+  ui->chartView->setFrameStyle(QFrame::StyledPanel);
+  ui->chartView->setFrameShadow(QFrame::Sunken);
 
-  ui->valuesView->setItemDelegateForColumn(1, new ValueDelegate(this));
+  QtCharts::QChart *chart = ui->chartView->chart();
+  chart->setBackgroundRoundness(0);
+  chart->setMargins(QMargins(0, 0, 0, 0));
+  chart->legend()->setVisible(false);
+
+  _model = new DataLogsModel(chart, global::simctx, this);
+  ui->dataLogsView->setModel(_model);
 }
 
-WValuesWindow::~WValuesWindow()
+WPlotWindow::~WPlotWindow()
 {
   _windows.removeAll(this);
   delete ui;
 }
 
-void WValuesWindow::closeAll()
+void WPlotWindow::closeAll()
 {
   while( !_windows.isEmpty() ) {
     delete _windows.takeFirst();
@@ -84,7 +90,7 @@ void WValuesWindow::closeAll()
 
 ////// protected /////////////////////////////////////////////////////////////
 
-void WValuesWindow::dragEnterEvent(QDragEnterEvent *event)
+void WPlotWindow::dragEnterEvent(QDragEnterEvent *event)
 {
   if( event->proposedAction() == Qt::CopyAction  &&
       event->mimeData()->hasFormat(QStringLiteral(SIM_MIME_VARIABLES)) ) {
@@ -92,7 +98,7 @@ void WValuesWindow::dragEnterEvent(QDragEnterEvent *event)
   }
 }
 
-void WValuesWindow::dropEvent(QDropEvent *event)
+void WPlotWindow::dropEvent(QDropEvent *event)
 {
   if( event->proposedAction() != Qt::CopyAction  ||
       !event->mimeData()->hasFormat(QStringLiteral(SIM_MIME_VARIABLES)) ) {
@@ -102,7 +108,7 @@ void WValuesWindow::dropEvent(QDropEvent *event)
   const QStringList names = QString::fromUtf8(event->mimeData()->data(QStringLiteral(SIM_MIME_VARIABLES)))
       .split(QChar::fromLatin1('\n'), QString::SkipEmptyParts);
   foreach(const QString& name, names) {
-    _model->addValue(name);
+    _model->addVariable(name);
   }
-  ui->valuesView->resizeColumnsToContents();
+  ui->dataLogsView->resizeColumnsToContents();
 }

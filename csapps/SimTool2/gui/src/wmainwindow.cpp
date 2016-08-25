@@ -37,6 +37,7 @@
 #include "ui_wmainwindow.h"
 
 #include "global.h"
+#include "wplotwindow.h"
 #include "wsimconfigbar.h"
 #include "wvalueswindow.h"
 
@@ -115,6 +116,8 @@ WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
   connect(ui->saveAsEnvAction, &QAction::triggered, this, &WMainWindow::saveAs);
   connect(ui->quitAction, &QAction::triggered, this, &WMainWindow::close);
 
+  connect(ui->newPlotWindowAction, &QAction::triggered,
+          this, &WMainWindow::newPlotWindow);
   connect(ui->newValuesWindowAction, &QAction::triggered,
           this, &WMainWindow::newValuesWindow);
 
@@ -125,7 +128,8 @@ WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
 
 WMainWindow::~WMainWindow()
 {
-  WValuesWindow::closeAllWindows();
+  WPlotWindow::closeAll();
+  WValuesWindow::closeAll();
 
   global::simctx->deleteLater();
 
@@ -209,6 +213,12 @@ void WMainWindow::saveAs()
   saveEnvironment(filename);
 }
 
+void WMainWindow::newPlotWindow()
+{
+  WPlotWindow *window = new WPlotWindow(0);
+  window->show();
+}
+
 void WMainWindow::newValuesWindow()
 {
   WValuesWindow *window = new WValuesWindow(0);
@@ -219,7 +229,10 @@ void WMainWindow::newValuesWindow()
 
 void WMainWindow::openEnvironment(const QString& filename)
 {
-  WValuesWindow::closeAllWindows();
+  ui->simStopAction->trigger();
+
+  WPlotWindow::closeAll();
+  WValuesWindow::closeAll();
 
   if( !global::simctx->open(filename) ) {
     _currentFilename.clear();
