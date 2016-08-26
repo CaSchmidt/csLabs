@@ -1,0 +1,113 @@
+{
+    "configuration": {
+        "duration": 10,
+        "logDepth": 10,
+        "mode": "RealTime",
+        "step": 0.01
+    },
+    "modules": [
+        {
+            "active": true,
+            "arguments": "",
+            "filename": "../../../../../bin/signals-x64.dll"
+        }
+    ],
+    "variables": [
+        {
+            "init": 0,
+            "name": "SIG3",
+            "type": "Double",
+            "unit": "V"
+        },
+        {
+            "init": 0.5,
+            "name": "FRQ2",
+            "type": "Double",
+            "unit": "Hz"
+        },
+        {
+            "init": 1,
+            "name": "FRQ1",
+            "type": "Double",
+            "unit": "Hz"
+        },
+        {
+            "init": 0,
+            "name": "SIG1",
+            "type": "Double",
+            "unit": "V"
+        },
+        {
+            "init": 0,
+            "name": "SIG4",
+            "type": "Double",
+            "unit": "A"
+        },
+        {
+            "init": 1,
+            "name": "AMP1",
+            "type": "Double",
+            "unit": "-"
+        },
+        {
+            "init": 0,
+            "name": "PHS4",
+            "type": "Double",
+            "unit": "°"
+        },
+        {
+            "init": 0,
+            "name": "SIG2",
+            "type": "Double",
+            "unit": "A"
+        },
+        {
+            "init": 2,
+            "name": "FRQ4",
+            "type": "Double",
+            "unit": "Hz"
+        },
+        {
+            "init": 1,
+            "name": "AMP2",
+            "type": "Double",
+            "unit": "-"
+        },
+        {
+            "init": 2,
+            "name": "AMP3",
+            "type": "Double",
+            "unit": "-"
+        },
+        {
+            "init": 90,
+            "name": "PHS3",
+            "type": "Double",
+            "unit": "°"
+        },
+        {
+            "init": 1,
+            "name": "AMP4",
+            "type": "Double",
+            "unit": "-"
+        },
+        {
+            "init": 1,
+            "name": "FRQ3",
+            "type": "Double",
+            "unit": "Hz"
+        },
+        {
+            "init": 0,
+            "name": "PHS1",
+            "type": "Double",
+            "unit": "°"
+        },
+        {
+            "init": 0,
+            "name": "PHS2",
+            "type": "Double",
+            "unit": "°"
+        }
+    ]
+}
