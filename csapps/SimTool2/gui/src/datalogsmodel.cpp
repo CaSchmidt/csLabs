@@ -117,7 +117,7 @@ DataLogsModel::~DataLogsModel()
 {
 }
 
-bool DataLogsModel::addVariable(const QString& name)
+bool DataLogsModel::addVariable(const QString& name, QColor color)
 {
   if( contains(name) ) {
     return true;
@@ -128,27 +128,34 @@ bool DataLogsModel::addVariable(const QString& name)
   }
   const SimVariable& var = _simctx->env.variable(name);
 
-  const Qt::GlobalColor color = nextColor();
+  // Color ///////////////////////////////////////////////////////////////////
+
+  if( !color.isValid() ) {
+    color = nextColor();
+  }
+
+  // Entry ///////////////////////////////////////////////////////////////////
+
+  DataLogEntry entry;
+  entry.name = name;
+  entry.unit = var.unit();
 
   // Axis ////////////////////////////////////////////////////////////////////
 
-  QtCharts::QValueAxis *yAxis = new QtCharts::QValueAxis(this);
-  yAxis->setLabelsColor(color);
-  yAxis->setTitleBrush(color);
-  priv::setupTitle(yAxis, name, var.unit());
-  priv::setupFont(yAxis);
-  _chart->addAxis(yAxis, priv::ALIGN_Y);
+  entry.yAxis = new QtCharts::QValueAxis(this);
+  entry.yAxis->setLabelsColor(color);
+  entry.yAxis->setTitleBrush(color);
+  priv::setupTitle(entry.yAxis, name, var.unit());
+  priv::setupFont(entry.yAxis);
+  _chart->addAxis(entry.yAxis, priv::ALIGN_Y);
 
   // Series //////////////////////////////////////////////////////////////////
 
-  DataLogEntry entry;
-  entry.name   = name;
-  entry.unit   = var.unit();
   entry.series = new QtCharts::QLineSeries(this);
   entry.series->setColor(color);
   _chart->addSeries(entry.series);
   entry.series->attachAxis(_timeAxis);
-  entry.series->attachAxis(yAxis);
+  entry.series->attachAxis(entry.yAxis);
 
   // Insertion ///////////////////////////////////////////////////////////////
 
@@ -160,6 +167,15 @@ bool DataLogsModel::addVariable(const QString& name)
   beginInsertRows(QModelIndex(), insertAt, insertAt);
   _entries.insert(insertAt, entry);
   endInsertRows();
+
+  // Highlight ///////////////////////////////////////////////////////////////
+
+  highlightEntry(name);
+
+  // Signals & Slots /////////////////////////////////////////////////////////
+
+  connect(entry.series, &QtCharts::QLineSeries::clicked,
+          this, QOverload<const QPointF&>::of(&DataLogsModel::highlightEntry));
 
   return true;
 }
@@ -228,8 +244,9 @@ void DataLogsModel::exitState(int state)
 void DataLogsModel::clearVariables()
 {
   beginResetModel();
-  _chart->removeAllSeries();
-  _entries.clear();
+  while( !_entries.isEmpty() ) {
+    removeEntry(_entries.front().name);
+  }
   endResetModel();
 }
 
@@ -241,10 +258,15 @@ void DataLogsModel::removeVariable(const QString& name)
   }
 
   beginRemoveRows(QModelIndex(), index, index);
-  _chart->removeSeries(_entries[index].series);
-  delete _entries[index].series;
-  _entries.removeAt(index);
+  removeEntry(name);
   endRemoveRows();
+}
+
+void DataLogsModel::highlightEntry(const QModelIndex& index)
+{
+  if( index.isValid() ) {
+    highlightEntry(_entries[index.row()].name);
+  }
 }
 
 ////// protected /////////////////////////////////////////////////////////////
@@ -286,17 +308,28 @@ void DataLogsModel::timerEvent(QTimerEvent *event)
       }
 
       _entries[i].series->replace(points);
-      _chart->axisY(_entries[i].series)->setRange(min, max);
+      _entries[i].yAxis->setRange(min, max);
     } // For Each Entry
 
     _simctx->logger.unlock();
   }
 }
 
+////// private slots /////////////////////////////////////////////////////////
+
+void DataLogsModel::highlightEntry(const QPointF& /*point*/)
+{
+  QtCharts::QLineSeries *series = qobject_cast<QtCharts::QLineSeries*>(sender());
+  highlightEntry(nameOf(series));
+}
+
 ////// private ///////////////////////////////////////////////////////////////
 
 bool DataLogsModel::contains(const QString& name) const
 {
+  if( name.isEmpty() ) {
+    return false;
+  }
   for(int i = 0; i < _entries.size(); i++) {
     if( _entries[i].name == name ) {
       return true;
@@ -305,8 +338,32 @@ bool DataLogsModel::contains(const QString& name) const
   return false;
 }
 
+void DataLogsModel::highlightEntry(const QString& name)
+{
+  if( name.isEmpty() ) {
+    return;
+  }
+  foreach(const DataLogEntry& e, _entries) {
+    e.yAxis->setVisible(e.name == name);
+
+    const qreal width = e.name == name  ?  2.0 : 1.0;
+    QPen pen = e.series->pen();
+    pen.setWidthF(width);
+    e.series->setPen(pen);
+  }
+
+  const int row = indexOf(name);
+  if( row < 0 ) {
+    return;
+  }
+  emit entryHighlighted(index(row, 0));
+}
+
 int DataLogsModel::indexOf(const QString& name) const
 {
+  if( name.isEmpty() ) {
+    return -1;
+  }
   for(int i = 0; i < _entries.size(); i++) {
     if( _entries[i].name == name ) {
       return i;
@@ -315,9 +372,36 @@ int DataLogsModel::indexOf(const QString& name) const
   return -1;
 }
 
+QString DataLogsModel::nameOf(const QtCharts::QLineSeries *series) const
+{
+  if( series == 0 ) {
+    return QString();
+  }
+  foreach(const DataLogEntry& e, _entries) {
+    if( e.series == series ) {
+      return e.name;
+    }
+  }
+  return QString();
+}
+
 Qt::GlobalColor DataLogsModel::nextColor()
 {
   const Qt::GlobalColor c = priv::palette[_colorIndex++];
   _colorIndex %= priv::NUM_COLORS;
   return c;
+}
+
+void DataLogsModel::removeEntry(const QString& name)
+{
+  const int index = indexOf(name);
+  if( index < 0 ) {
+    return;
+  }
+
+  _chart->removeAxis(_entries[index].yAxis);
+  delete _entries[index].yAxis;
+  _chart->removeSeries(_entries[index].series);
+  delete _entries[index].series;
+  _entries.removeAt(index);
 }

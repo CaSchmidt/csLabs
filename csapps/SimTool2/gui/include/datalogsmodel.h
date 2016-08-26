@@ -35,6 +35,7 @@
 #include <QtCore/QAbstractTableModel>
 #include <QtCore/QBasicTimer>
 #include <QtCore/QList>
+#include <QtGui/QColor>
 
 namespace QtCharts {
   class QChart;
@@ -49,12 +50,14 @@ struct DataLogEntry {
     : name()
     , series(0)
     , unit()
+    , yAxis(0)
   {
   }
 
   QString name;
   QtCharts::QLineSeries *series;
   QString unit;
+  QtCharts::QValueAxis *yAxis;
 };
 
 class DataLogsModel : public QAbstractTableModel {
@@ -63,7 +66,7 @@ public:
   DataLogsModel(QtCharts::QChart *chart, SimContext *simctx, QObject *parent);
   ~DataLogsModel();
 
-  bool addVariable(const QString& name);
+  bool addVariable(const QString& name, QColor color = QColor());
 
   int columnCount(const QModelIndex& parent) const;
   QVariant data(const QModelIndex& index, int role) const;
@@ -75,14 +78,21 @@ public slots:
   void exitState(int state);
   void clearVariables();
   void removeVariable(const QString& name);
+  void highlightEntry(const QModelIndex& index);
 
 protected:
   void timerEvent(QTimerEvent *event);
 
+private slots:
+  void highlightEntry(const QPointF& point);
+
 private:
   bool contains(const QString& name) const;
+  void highlightEntry(const QString& name);
   int indexOf(const QString& name) const;
+  QString nameOf(const QtCharts::QLineSeries *series) const;
   Qt::GlobalColor nextColor();
+  void removeEntry(const QString& name);
 
   QtCharts::QChart *_chart;
   int _colorIndex;
@@ -90,6 +100,9 @@ private:
   QBasicTimer _refreshTimer;
   SimContext *_simctx;
   QtCharts::QValueAxis *_timeAxis;
+
+signals:
+  void entryHighlighted(const QModelIndex& index);
 };
 
 #endif // __DATALOGSMODEL_H__

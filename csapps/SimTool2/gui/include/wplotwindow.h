@@ -53,6 +53,9 @@ protected:
   void dragEnterEvent(QDragEnterEvent *event);
   void dropEvent(QDropEvent *event);
 
+private slots:
+  void highlightEntry(const QModelIndex& index);
+
 private:
   Ui::WPlotWindow *ui;
   static int _count;

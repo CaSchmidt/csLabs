@@ -72,6 +72,16 @@ WPlotWindow::WPlotWindow(QWidget *parent, Qt::WindowFlags f)
 
   _model = new DataLogsModel(chart, global::simctx, this);
   ui->dataLogsView->setModel(_model);
+
+  // Signals & Slots /////////////////////////////////////////////////////////
+
+  connect(_model, &DataLogsModel::entryHighlighted,
+          this, &WPlotWindow::highlightEntry);
+
+  connect(ui->dataLogsView, &QTableView::activated,
+          _model, QOverload<const QModelIndex&>::of(&DataLogsModel::highlightEntry));
+  connect(ui->dataLogsView, &QTableView::clicked,
+          _model, QOverload<const QModelIndex&>::of(&DataLogsModel::highlightEntry));
 }
 
 WPlotWindow::~WPlotWindow()
@@ -111,4 +121,12 @@ void WPlotWindow::dropEvent(QDropEvent *event)
     _model->addVariable(name);
   }
   ui->dataLogsView->resizeColumnsToContents();
+}
+
+////// private slots /////////////////////////////////////////////////////////
+
+void WPlotWindow::highlightEntry(const QModelIndex& index)
+{
+  ui->dataLogsView->selectionModel()->select(index,
+                                             QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
 }
