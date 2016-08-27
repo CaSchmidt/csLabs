@@ -39,6 +39,7 @@ namespace Ui {
   class WValuesWindow;
 };
 
+class QJsonObject;
 class SimValuesModel;
 
 class WValuesWindow : public QWidget {
@@ -48,6 +49,8 @@ public:
   ~WValuesWindow();
 
   static void closeAll();
+  static void loadConfig(const QJsonObject& cfgObj);
+  static void storeConfig(QJsonObject& cfgObj);
 
 protected:
   void dragEnterEvent(QDragEnterEvent *event);

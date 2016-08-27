@@ -29,6 +29,9 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <QtCore/QJsonArray>
+#include <QtCore/QJsonObject>
+#include <QtCore/QJsonValue>
 #include <QtCore/QMimeData>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDropEvent>
@@ -38,6 +41,7 @@
 #include "wvalueswindow.h"
 #include "ui_wvalueswindow.h"
 
+#include "config.h"
 #include "global.h"
 #include "valuedelegate.h"
 
@@ -80,6 +84,48 @@ void WValuesWindow::closeAll()
     delete _windows.takeFirst();
   }
   _count = 0;
+}
+
+void WValuesWindow::loadConfig(const QJsonObject& cfgObj)
+{
+  const QJsonArray valsArr = cfgObj[QStringLiteral("valuesWindows")].toArray();
+  foreach(const QJsonValue& value, valsArr) {
+    const QJsonObject winObj = value.toObject();
+    if( winObj.isEmpty() ) {
+      continue;
+    }
+
+    WValuesWindow *w = new WValuesWindow(0);
+    loadGeometry(w, winObj[QStringLiteral("geometry")].toObject());
+
+    const QJsonArray nameArr = winObj[QStringLiteral("variables")].toArray();
+    foreach(const QJsonValue& value, nameArr) {
+      w->_model->addValue(value.toString());
+    }
+
+    w->ui->valuesView->resizeColumnsToContents();
+    w->show();
+  } // For Each Window
+}
+
+void WValuesWindow::storeConfig(QJsonObject& cfgObj)
+{
+  QJsonArray valsArr;
+  foreach(WValuesWindow *w, _windows) {
+    QJsonObject winObj;
+    winObj[QStringLiteral("geometry")] = storeGeometry(w);
+
+    QJsonArray nameArr;
+    for(int i = 0; i < w->_model->rowCount(); i++) {
+      const QModelIndex index = w->_model->index(i, 0);
+      const QString name = w->_model->data(index, Qt::DisplayRole).toString();
+      nameArr.append(name);
+    }
+    winObj[QStringLiteral("variables")] = nameArr;
+
+    valsArr.append(winObj);
+  }
+  cfgObj[QStringLiteral("valuesWindows")] = valsArr;
 }
 
 ////// protected /////////////////////////////////////////////////////////////

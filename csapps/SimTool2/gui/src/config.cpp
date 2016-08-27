@@ -41,6 +41,8 @@
 
 #include "config.h"
 
+#include "wvalueswindow.h"
+
 QColor loadColor(const QJsonObject& obj)
 {
   QColor color;
@@ -107,12 +109,16 @@ bool loadConfig(const QString& filename, QMainWindow *mainWindow)
     return false;
   }
 
-  // MainWindow //////////////////////////////////////////////////////////////
+  // WMainWindow /////////////////////////////////////////////////////////////
 
   const QJsonObject mainObj = cfgObj[QStringLiteral("mainWindow")].toObject();
   if( !mainObj.isEmpty() ) {
     loadGeometry(mainWindow, mainObj[QStringLiteral("geometry")].toObject());
   }
+
+  // WValuesWindow ///////////////////////////////////////////////////////////
+
+  WValuesWindow::loadConfig(cfgObj);
 
   return true;
 }
@@ -138,11 +144,15 @@ bool storeConfig(const QString& filename, QMainWindow *mainWindow)
     return false;
   }
 
-  // MainWindow //////////////////////////////////////////////////////////////
+  // WMainWindow /////////////////////////////////////////////////////////////
 
   QJsonObject mainObj;
   mainObj[QStringLiteral("geometry")] = storeGeometry(mainWindow);
   cfgObj[QStringLiteral("mainWindow")] = mainObj;
+
+  // WValuesWindow ///////////////////////////////////////////////////////////
+
+  WValuesWindow::storeConfig(cfgObj);
 
   // Store New Configuration /////////////////////////////////////////////////
 
