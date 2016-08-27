@@ -29,6 +29,9 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <QtCore/QJsonArray>
+#include <QtCore/QJsonObject>
+#include <QtCore/QJsonValue>
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>
 #include <QtCore/QMimeData>
@@ -38,6 +41,7 @@
 #include "wplotwindow.h"
 #include "ui_wplotwindow.h"
 
+#include "config.h"
 #include "datalogsmodel.h"
 #include "global.h"
 
@@ -96,6 +100,61 @@ void WPlotWindow::closeAll()
     delete _windows.takeFirst();
   }
   _count = 0;
+}
+
+void WPlotWindow::loadConfig(const QJsonObject& cfgObj)
+{
+  const QJsonArray plotArr = cfgObj[QStringLiteral("plotWindows")].toArray();
+  foreach(const QJsonValue& value, plotArr) {
+    const QJsonObject winObj = value.toObject();
+    if( winObj.isEmpty() ) {
+      continue;
+    }
+
+    WPlotWindow *w = new WPlotWindow(0);
+    loadGeometry(w, winObj[QStringLiteral("geometry")].toObject());
+
+    const QJsonArray nameArr = winObj[QStringLiteral("variables")].toArray();
+    foreach(const QJsonValue& value, nameArr) {
+      const QJsonObject varObj = value.toObject();
+      if( varObj.isEmpty() ) {
+        continue;
+      }
+
+      const QString name = varObj[QStringLiteral("name")].toString();
+      const QColor color = loadColor(varObj);
+      w->_model->addVariable(name, color);
+    }
+
+    w->ui->dataLogsView->resizeColumnsToContents();
+    w->show();
+  } // For Each Window
+}
+
+void WPlotWindow::storeConfig(QJsonObject& cfgObj)
+{
+  QJsonArray plotArr;
+  foreach(WPlotWindow *w, _windows) {
+    QJsonObject winObj;
+    winObj[QStringLiteral("geometry")] = storeGeometry(w);
+
+    QJsonArray varsArr;
+    for(int i = 0; i < w->_model->rowCount(); i++) {
+      const QModelIndex index = w->_model->index(i, 0);
+      const QString name = w->_model->data(index, Qt::DisplayRole).toString();
+      const QColor color = w->_model->data(index, Qt::DecorationRole).value<QColor>();
+
+      QJsonObject varObj;
+      varObj[QStringLiteral("name")] = name;
+      storeColor(varObj, color);
+
+      varsArr.append(varObj);
+    }
+    winObj[QStringLiteral("variables")] = varsArr;
+
+    plotArr.append(winObj);
+  } // For Each Window
+  cfgObj[QStringLiteral("plotWindows")] = plotArr;
 }
 
 ////// protected /////////////////////////////////////////////////////////////

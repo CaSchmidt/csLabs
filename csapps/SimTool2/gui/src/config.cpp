@@ -41,6 +41,7 @@
 
 #include "config.h"
 
+#include "wplotwindow.h"
 #include "wvalueswindow.h"
 
 QColor loadColor(const QJsonObject& obj)
@@ -116,6 +117,10 @@ bool loadConfig(const QString& filename, QMainWindow *mainWindow)
     loadGeometry(mainWindow, mainObj[QStringLiteral("geometry")].toObject());
   }
 
+  // WPlotWindow /////////////////////////////////////////////////////////////
+
+  WPlotWindow::loadConfig(cfgObj);
+
   // WValuesWindow ///////////////////////////////////////////////////////////
 
   WValuesWindow::loadConfig(cfgObj);
@@ -149,6 +154,10 @@ bool storeConfig(const QString& filename, QMainWindow *mainWindow)
   QJsonObject mainObj;
   mainObj[QStringLiteral("geometry")] = storeGeometry(mainWindow);
   cfgObj[QStringLiteral("mainWindow")] = mainObj;
+
+  // WPlotWindow /////////////////////////////////////////////////////////////
+
+  WPlotWindow::storeConfig(cfgObj);
 
   // WValuesWindow ///////////////////////////////////////////////////////////
 

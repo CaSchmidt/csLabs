@@ -40,6 +40,7 @@ namespace Ui {
 }
 
 class DataLogsModel;
+class QJsonObject;
 
 class WPlotWindow : public QWidget {
   Q_OBJECT
@@ -48,6 +49,8 @@ public:
   ~WPlotWindow();
 
   static void closeAll();
+  static void loadConfig(const QJsonObject& cfgObj);
+  static void storeConfig(QJsonObject& cfgObj);
 
 protected:
   void dragEnterEvent(QDragEnterEvent *event);

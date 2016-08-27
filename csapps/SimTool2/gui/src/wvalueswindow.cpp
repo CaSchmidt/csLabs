@@ -124,7 +124,7 @@ void WValuesWindow::storeConfig(QJsonObject& cfgObj)
     winObj[QStringLiteral("variables")] = nameArr;
 
     valsArr.append(winObj);
-  }
+  } // For Each Window
   cfgObj[QStringLiteral("valuesWindows")] = valsArr;
 }
 
