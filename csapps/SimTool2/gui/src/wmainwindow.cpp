@@ -178,6 +178,10 @@ void WMainWindow::exitState(int state)
 
 void WMainWindow::open()
 {
+  if( global::simctx->sim.activeState() != IdleState ) {
+    return;
+  }
+
   const QString filename =
       QFileDialog::getOpenFileName(this,
                                    tr("Open"),
@@ -192,6 +196,10 @@ void WMainWindow::open()
 
 void WMainWindow::save()
 {
+  if( global::simctx->sim.activeState() != IdleState ) {
+    return;
+  }
+
   if( _currentFilename.isEmpty() ) {
     saveAs();
   } else {
@@ -201,6 +209,10 @@ void WMainWindow::save()
 
 void WMainWindow::saveAs()
 {
+  if( global::simctx->sim.activeState() != IdleState ) {
+    return;
+  }
+
   const QString filename =
       QFileDialog::getSaveFileName(this,
                                    tr("Save as"),
@@ -229,8 +241,6 @@ void WMainWindow::newValuesWindow()
 
 void WMainWindow::openEnvironment(const QString& filename)
 {
-  ui->simStopAction->trigger();
-
   WPlotWindow::closeAll();
   WValuesWindow::closeAll();
 
