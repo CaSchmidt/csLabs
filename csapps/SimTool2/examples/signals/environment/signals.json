@@ -5,6 +5,14 @@
         "mode": "RealTime",
         "step": 0.01
     },
+    "mainWindow": {
+        "geometry": {
+            "height": 600,
+            "width": 800,
+            "x": 14,
+            "y": 77
+        }
+    },
     "modules": [
         {
             "active": true,
@@ -12,19 +20,85 @@
             "filename": "../../../../../bin/signals-x64.dll"
         }
     ],
+    "plotWindows": [
+        {
+            "geometry": {
+                "height": 591,
+                "width": 813,
+                "x": 837,
+                "y": 76
+            },
+            "variables": [
+                {
+                    "color": "#0000ff",
+                    "name": "SIG1"
+                },
+                {
+                    "color": "#00ff00",
+                    "name": "SIG2"
+                }
+            ]
+        }
+    ],
+    "valuesWindows": [
+        {
+            "geometry": {
+                "height": 287,
+                "width": 419,
+                "x": 19,
+                "y": 715
+            },
+            "variables": [
+                "AMP1",
+                "AMP2",
+                "AMP3",
+                "AMP4"
+            ]
+        },
+        {
+            "geometry": {
+                "height": 284,
+                "width": 419,
+                "x": 454,
+                "y": 716
+            },
+            "variables": [
+                "FRQ1",
+                "FRQ2",
+                "FRQ3",
+                "FRQ4"
+            ]
+        },
+        {
+            "geometry": {
+                "height": 290,
+                "width": 366,
+                "x": 888,
+                "y": 714
+            },
+            "variables": [
+                "PHS1",
+                "PHS2",
+                "PHS3",
+                "PHS4"
+            ]
+        },
+        {
+            "geometry": {
+                "height": 289,
+                "width": 380,
+                "x": 1276,
+                "y": 714
+            },
+            "variables": [
+                "SIG1",
+                "SIG2",
+                "SIG3",
+                "SIG4"
+            ]
+        }
+    ],
     "variables": [
-        {
-            "init": 0,
-            "name": "SIG3",
-            "type": "Double",
-            "unit": "V"
-        },
-        {
-            "init": 0.5,
-            "name": "FRQ2",
-            "type": "Double",
-            "unit": "Hz"
-        },
         {
             "init": 1,
             "name": "FRQ1",
@@ -32,64 +106,10 @@
             "unit": "Hz"
         },
         {
-            "init": 0,
-            "name": "SIG1",
-            "type": "Double",
-            "unit": "V"
-        },
-        {
-            "init": 0,
-            "name": "SIG4",
-            "type": "Double",
-            "unit": "A"
-        },
-        {
-            "init": 1,
-            "name": "AMP1",
-            "type": "Double",
-            "unit": "-"
-        },
-        {
-            "init": 0,
-            "name": "PHS4",
-            "type": "Double",
-            "unit": "°"
-        },
-        {
-            "init": 0,
-            "name": "SIG2",
-            "type": "Double",
-            "unit": "A"
-        },
-        {
-            "init": 2,
-            "name": "FRQ4",
-            "type": "Double",
-            "unit": "Hz"
-        },
-        {
-            "init": 1,
-            "name": "AMP2",
-            "type": "Double",
-            "unit": "-"
-        },
-        {
-            "init": 2,
-            "name": "AMP3",
-            "type": "Double",
-            "unit": "-"
-        },
-        {
             "init": 90,
             "name": "PHS3",
             "type": "Double",
             "unit": "°"
-        },
-        {
-            "init": 1,
-            "name": "AMP4",
-            "type": "Double",
-            "unit": "-"
         },
         {
             "init": 1,
@@ -105,9 +125,75 @@
         },
         {
             "init": 0,
+            "name": "SIG2",
+            "type": "Double",
+            "unit": "-"
+        },
+        {
+            "init": 0,
+            "name": "SIG3",
+            "type": "Double",
+            "unit": "-"
+        },
+        {
+            "init": 0,
             "name": "PHS2",
             "type": "Double",
             "unit": "°"
+        },
+        {
+            "init": 0.5,
+            "name": "FRQ2",
+            "type": "Double",
+            "unit": "Hz"
+        },
+        {
+            "init": 0,
+            "name": "SIG1",
+            "type": "Double",
+            "unit": "-"
+        },
+        {
+            "init": 0,
+            "name": "SIG4",
+            "type": "Double",
+            "unit": "-"
+        },
+        {
+            "init": 0,
+            "name": "PHS4",
+            "type": "Double",
+            "unit": "°"
+        },
+        {
+            "init": 1,
+            "name": "AMP4",
+            "type": "Double",
+            "unit": "-"
+        },
+        {
+            "init": 2,
+            "name": "FRQ4",
+            "type": "Double",
+            "unit": "Hz"
+        },
+        {
+            "init": 1,
+            "name": "AMP2",
+            "type": "Double",
+            "unit": "-"
+        },
+        {
+            "init": 1,
+            "name": "AMP1",
+            "type": "Double",
+            "unit": "-"
+        },
+        {
+            "init": 2,
+            "name": "AMP3",
+            "type": "Double",
+            "unit": "-"
         }
     ]
 }
