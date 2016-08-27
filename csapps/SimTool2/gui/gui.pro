@@ -44,7 +44,8 @@ SOURCES += \
     src/wvariables.cpp \
     src/wlogdepthspin.cpp \
     src/datalogsmodel.cpp \
-    src/wplotwindow.cpp
+    src/wplotwindow.cpp \
+    src/config.cpp
 
 HEADERS  += \
     include/global.h \
@@ -59,7 +60,8 @@ HEADERS  += \
     include/wvariables.h \
     include/wlogdepthspin.h \
     include/datalogsmodel.h \
-    include/wplotwindow.h
+    include/wplotwindow.h \
+    include/config.h
 
 FORMS    += \
     forms/wmainwindow.ui \

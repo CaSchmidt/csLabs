@@ -36,6 +36,7 @@
 #include "wmainwindow.h"
 #include "ui_wmainwindow.h"
 
+#include "config.h"
 #include "global.h"
 #include "wplotwindow.h"
 #include "wsimconfigbar.h"
@@ -244,7 +245,7 @@ void WMainWindow::openEnvironment(const QString& filename)
   WPlotWindow::closeAll();
   WValuesWindow::closeAll();
 
-  if( !global::simctx->open(filename) ) {
+  if( !global::simctx->open(filename)  ||  !loadConfig(filename, this) ) {
     _currentFilename.clear();
     QMessageBox::critical(this,
                           tr("Error"),
@@ -256,7 +257,7 @@ void WMainWindow::openEnvironment(const QString& filename)
 
 void WMainWindow::saveEnvironment(const QString& filename)
 {
-  if( !global::simctx->save(filename) ) {
+  if( !global::simctx->save(filename)  ||  !storeConfig(filename, this) ) {
     _currentFilename.clear();
     QMessageBox::critical(this,
                           tr("Error"),
