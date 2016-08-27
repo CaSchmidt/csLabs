@@ -112,7 +112,7 @@ void WPlotWindow::loadConfig(const QJsonObject& cfgObj)
     }
 
     WPlotWindow *w = new WPlotWindow(0);
-    loadGeometry(w, winObj[QStringLiteral("geometry")].toObject());
+    loadGeometry(w, winObj);
 
     const QJsonArray nameArr = winObj[QStringLiteral("variables")].toArray();
     foreach(const QJsonValue& value, nameArr) {
@@ -136,7 +136,7 @@ void WPlotWindow::storeConfig(QJsonObject& cfgObj)
   QJsonArray plotArr;
   foreach(WPlotWindow *w, _windows) {
     QJsonObject winObj;
-    winObj[QStringLiteral("geometry")] = storeGeometry(w);
+    storeGeometry(winObj, w);
 
     QJsonArray varsArr;
     for(int i = 0; i < w->_model->rowCount(); i++) {

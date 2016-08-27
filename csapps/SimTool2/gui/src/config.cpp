@@ -44,49 +44,55 @@
 #include "wplotwindow.h"
 #include "wvalueswindow.h"
 
-QColor loadColor(const QJsonObject& obj)
+QColor loadColor(const QJsonObject& parent)
 {
   QColor color;
-  if( !obj.isEmpty() ) {
-    color.setNamedColor(obj[QStringLiteral("color")].toString());
+  if( !parent.isEmpty() ) {
+    color.setNamedColor(parent[QStringLiteral("color")].toString());
   }
   return color;
 }
 
-void storeColor(QJsonObject& obj, const QColor& color)
+void storeColor(QJsonObject& parent, const QColor& color)
 {
-  obj[QStringLiteral("color")] = color.name(QColor::HexRgb);
+  parent[QStringLiteral("color")] = color.name(QColor::HexRgb);
 }
 
-void loadGeometry(QWidget *widget, const QJsonObject& obj)
+void loadGeometry(QWidget *widget, const QJsonObject& parent)
 {
-  if( obj.isEmpty() ) {
+  if( parent.isEmpty() ) {
+    return;
+  }
+
+  const QJsonObject geomObj = parent[QStringLiteral("geometry")].toObject();
+  if( geomObj.isEmpty() ) {
     return;
   }
 
   const int error = std::numeric_limits<int>::lowest();
 
-  const int x = obj[QStringLiteral("x")].toInt(error);
-  const int y = obj[QStringLiteral("y")].toInt(error);
+  const int x = geomObj[QStringLiteral("x")].toInt(error);
+  const int y = geomObj[QStringLiteral("y")].toInt(error);
   if( x != error  &&  y != error ) {
     widget->move(x, y);
   }
 
-  const int w = obj[QStringLiteral("width")].toInt(error);
-  const int h = obj[QStringLiteral("height")].toInt(error);
+  const int w = geomObj[QStringLiteral("width")].toInt(error);
+  const int h = geomObj[QStringLiteral("height")].toInt(error);
   if( w != error  &&  h != error ) {
     widget->resize(w, h);
   }
 }
 
-QJsonObject storeGeometry(QWidget *widget)
+void storeGeometry(QJsonObject& parent, QWidget *widget)
 {
-  QJsonObject obj;
-  obj[QStringLiteral("x")]      = widget->x();
-  obj[QStringLiteral("y")]      = widget->y();
-  obj[QStringLiteral("width")]  = widget->width();
-  obj[QStringLiteral("height")] = widget->height();
-  return obj;
+  QJsonObject geomObj;
+  geomObj[QStringLiteral("x")]      = widget->x();
+  geomObj[QStringLiteral("y")]      = widget->y();
+  geomObj[QStringLiteral("width")]  = widget->width();
+  geomObj[QStringLiteral("height")] = widget->height();
+
+  parent[QStringLiteral("geometry")] = geomObj;
 }
 
 bool loadConfig(const QString& filename, QMainWindow *mainWindow)
@@ -114,7 +120,7 @@ bool loadConfig(const QString& filename, QMainWindow *mainWindow)
 
   const QJsonObject mainObj = cfgObj[QStringLiteral("mainWindow")].toObject();
   if( !mainObj.isEmpty() ) {
-    loadGeometry(mainWindow, mainObj[QStringLiteral("geometry")].toObject());
+    loadGeometry(mainWindow, mainObj);
   }
 
   // WPlotWindow /////////////////////////////////////////////////////////////
@@ -152,7 +158,7 @@ bool storeConfig(const QString& filename, QMainWindow *mainWindow)
   // WMainWindow /////////////////////////////////////////////////////////////
 
   QJsonObject mainObj;
-  mainObj[QStringLiteral("geometry")] = storeGeometry(mainWindow);
+  storeGeometry(mainObj, mainWindow);
   cfgObj[QStringLiteral("mainWindow")] = mainObj;
 
   // WPlotWindow /////////////////////////////////////////////////////////////

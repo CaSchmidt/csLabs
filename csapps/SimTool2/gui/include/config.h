@@ -39,11 +39,11 @@ class QMainWindow;
 class QString;
 class QWidget;
 
-QColor loadColor(const QJsonObject& obj);
-void storeColor(QJsonObject& obj, const QColor& color);
+QColor loadColor(const QJsonObject& parent);
+void storeColor(QJsonObject& parent, const QColor& color);
 
-void loadGeometry(QWidget *widget, const QJsonObject& obj);
-QJsonObject storeGeometry(QWidget *widget);
+void loadGeometry(QWidget *widget, const QJsonObject& parent);
+void storeGeometry(QJsonObject& parent, QWidget *widget);
 
 bool loadConfig(const QString& filename, QMainWindow *mainWindow);
 bool storeConfig(const QString& filename, QMainWindow *mainWindow);
