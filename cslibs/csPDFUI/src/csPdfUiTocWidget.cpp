@@ -82,7 +82,7 @@ void csPdfUiTocWidget::activateTocItem(const QModelIndex& index)
     return;
   }
   const csPDFiumDest dest = _doc.resolveBookmark(node->pointer());
-  if( !dest.isEmtpy() ) {
+  if( dest.isValid() ) {
     emit destinationRequested(dest);
   }
 }

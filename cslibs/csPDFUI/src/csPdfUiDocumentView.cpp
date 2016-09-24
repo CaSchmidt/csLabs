@@ -245,15 +245,21 @@ qreal csPdfUiDocumentView::zoomStep()
 
 void csPdfUiDocumentView::gotoDestination(const csPDFiumDest& dest)
 {
-  if( dest.isEmtpy() ) {
+  if( !dest.isValid() ) {
     return;
   }
 
-  showPage(dest.pageIndex+1, true);
-  if( dest.focusPosPage.isNull() ) {
-    centerOn(_page.rect().center().x(), _page.rect().top());
-  } else {
-    centerOn(_page.mapToScene(dest.focusPosPage));
+  if(        dest.type() == csPDFiumDest::Goto ) {
+    showPage(dest.pageIndex+1, true);
+    if( dest.focusPosPage.isNull() ) {
+      centerOn(_page.rect().center().x(), _page.rect().top());
+    } else {
+      centerOn(_page.mapToScene(dest.focusPosPage));
+    }
+  } else if( dest.type() == csPDFiumDest::RemoteGoto ) {
+    if( !dest.srcFilename.isEmpty()  &&  !dest.destFilename.isEmpty() ) {
+      emit remoteDocumentRequested(dest.srcFilename, dest.destFilename);
+    }
   }
 }
 
@@ -641,7 +647,7 @@ bool csPdfUiDocumentView::followLink(const QPointF& scenePos)
 
     const void     *pointer = item->data(DATA_LINKPOINTER).value<void*>();
     const csPDFiumDest dest = _doc.resolveLink(pointer);
-    if( dest.isEmtpy() ) {
+    if( !dest.isValid() ) {
       return false;
     }
 

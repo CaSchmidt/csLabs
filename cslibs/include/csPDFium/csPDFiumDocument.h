@@ -70,6 +70,8 @@ public:
                                const bool memory = false);
 
 private:
+  csPDFiumDest createDest(const void *_dest, const void *_action) const;
+
   QSharedPointer<csPDFiumDocumentImpl> impl;
 };
 

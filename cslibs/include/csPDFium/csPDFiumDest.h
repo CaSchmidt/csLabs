@@ -35,20 +35,60 @@
 #include <QtCore/QPointF>
 
 struct csPDFiumDest {
-  explicit csPDFiumDest(const int _pageIndex = -1,
-                        const QPointF& _focusPosPage = QPointF())
-    : pageIndex(_pageIndex)
+  enum Type {
+    InvalidDest = 0,
+    Goto,
+    RemoteGoto
+  };
+
+  csPDFiumDest()
+    : _type(InvalidDest)
+    , pageIndex()
+    , focusPosPage()
+    , srcFilename()
+    , destFilename()
+  {
+  }
+
+  explicit csPDFiumDest(const int _pageIndex,
+                        const QPointF& _focusPosPage)
+    : _type(Goto)
+    , pageIndex(_pageIndex)
     , focusPosPage(_focusPosPage)
+    , srcFilename()
+    , destFilename()
   {
   }
 
-  inline bool isEmtpy() const
+  explicit csPDFiumDest(const QString& _srcFilename,
+                        const QByteArray& _destFilename)
+    : _type(RemoteGoto)
+    , pageIndex()
+    , focusPosPage()
+    , srcFilename(_srcFilename)
+    , destFilename(_destFilename)
   {
-    return pageIndex < 0;
   }
 
+  inline bool isValid() const
+  {
+    return _type != InvalidDest;
+  }
+
+  inline Type type() const
+  {
+    return _type;
+  }
+
+  // Goto
   int     pageIndex;
   QPointF focusPosPage;
+  // RemoteGoto
+  QString srcFilename;
+  QByteArray destFilename;
+
+private:
+  Type _type;
 };
 
 #endif // __CSPDFIUMDEST_H__

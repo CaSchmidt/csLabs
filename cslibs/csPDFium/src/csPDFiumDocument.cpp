@@ -226,26 +226,11 @@ csPDFiumDest csPDFiumDocument::resolveBookmark(const void *pointer) const
   }
 
   const FPDF_BOOKMARK bookmark = (const FPDF_BOOKMARK)pointer;
+  const FPDF_DEST         dest = FPDFBookmark_GetDest(impl->document, bookmark);
 
-  FPDF_DEST dest = FPDFBookmark_GetDest(impl->document, bookmark);
-  if( dest == NULL ) {
-    const FPDF_ACTION action = FPDFBookmark_GetAction(bookmark);
-    if( action != NULL  &&  FPDFAction_GetType(action) == PDFACTION_GOTO ) {
-      dest = FPDFAction_GetDest(impl->document, action);
-    }
-  }
-
-  if( dest == NULL ) {
-    return csPDFiumDest();
-  }
-
-  csPDFiumDest result(FPDFDest_GetPageIndex(impl->document, dest));
-  if( FPDFDest_GetZoomMode(dest) == FPDF_ZOOM_XYZ ) {
-    result.focusPosPage = QPointF(FPDFDest_GetZoomParam(dest, 0),
-                                  FPDFDest_GetZoomParam(dest, 1));
-  }
-
-  return result;
+  return createDest(dest, dest == NULL
+                    ? FPDFBookmark_GetAction(bookmark)
+                    : NULL);
 }
 
 csPDFiumDest csPDFiumDocument::resolveLink(const void *pointer) const
@@ -261,26 +246,11 @@ csPDFiumDest csPDFiumDocument::resolveLink(const void *pointer) const
   }
 
   const FPDF_LINK link = (const FPDF_LINK)pointer;
+  const FPDF_DEST dest = FPDFLink_GetDest(impl->document, link);
 
-  FPDF_DEST dest = FPDFLink_GetDest(impl->document, link);
-  if( dest == NULL ) {
-    const FPDF_ACTION action = FPDFLink_GetAction(link);
-    if( action != NULL  &&  FPDFAction_GetType(action) == PDFACTION_GOTO ) {
-      dest = FPDFAction_GetDest(impl->document, action);
-    }
-  }
-
-  if( dest == NULL ) {
-    return csPDFiumDest();
-  }
-
-  csPDFiumDest result(FPDFDest_GetPageIndex(impl->document, dest));
-  if( FPDFDest_GetZoomMode(dest) == FPDF_ZOOM_XYZ ) {
-    result.focusPosPage = QPointF(FPDFDest_GetZoomParam(dest, 0),
-                                  FPDFDest_GetZoomParam(dest, 1));
-  }
-
-  return result;
+  return createDest(dest, dest == NULL
+                    ? FPDFLink_GetAction(link)
+                    : NULL);
 }
 
 csPDFiumWordsPages csPDFiumDocument::wordsPages(const int firstIndex,
@@ -364,4 +334,36 @@ csPDFiumDocument csPDFiumDocument::load(const QString& filename,
   doc.impl = QSharedPointer<csPDFiumDocumentImpl>(impl);
 
   return doc;
+}
+
+////// private ///////////////////////////////////////////////////////////////
+
+csPDFiumDest csPDFiumDocument::createDest(const void *_dest, const void *_action) const
+{
+  FPDF_DEST           dest = (FPDF_DEST)_dest;
+  const FPDF_ACTION action = (const FPDF_ACTION)_action;
+
+  if( dest == NULL  &&  action != NULL ) {
+    if(        FPDFAction_GetType(action) == PDFACTION_GOTO ) {
+      dest = FPDFAction_GetDest(impl->document, action);
+    } else if( FPDFAction_GetType(action) == PDFACTION_REMOTEGOTO ) {
+      const int size = FPDFAction_GetFilePath(action, NULL, 0);
+      if( size < 1 ) {
+        return csPDFiumDest();
+      }
+      QByteArray destFilename(size, '\0');
+      FPDFAction_GetFilePath(action, destFilename.data(), destFilename.size());
+      return csPDFiumDest(impl->fileName, destFilename);
+    }
+  }
+
+  if( dest == NULL ) {
+    return csPDFiumDest();
+  }
+
+  return csPDFiumDest(FPDFDest_GetPageIndex(impl->document, dest),
+                      FPDFDest_GetZoomMode(dest) == FPDF_ZOOM_XYZ
+                      ? QPointF(FPDFDest_GetZoomParam(dest, 0),
+                                FPDFDest_GetZoomParam(dest, 1))
+                      : QPointF());
 }
