@@ -228,9 +228,7 @@ csPDFiumDest csPDFiumDocument::resolveBookmark(const void *pointer) const
   const FPDF_BOOKMARK bookmark = (const FPDF_BOOKMARK)pointer;
   const FPDF_DEST         dest = FPDFBookmark_GetDest(impl->document, bookmark);
 
-  return createDest(dest, dest == NULL
-                    ? FPDFBookmark_GetAction(bookmark)
-                    : NULL);
+  return createDest(dest, FPDFBookmark_GetAction(bookmark));
 }
 
 csPDFiumDest csPDFiumDocument::resolveLink(const void *pointer) const
@@ -248,9 +246,7 @@ csPDFiumDest csPDFiumDocument::resolveLink(const void *pointer) const
   const FPDF_LINK link = (const FPDF_LINK)pointer;
   const FPDF_DEST dest = FPDFLink_GetDest(impl->document, link);
 
-  return createDest(dest, dest == NULL
-                    ? FPDFLink_GetAction(link)
-                    : NULL);
+  return createDest(dest, FPDFLink_GetAction(link));
 }
 
 csPDFiumWordsPages csPDFiumDocument::wordsPages(const int firstIndex,
@@ -343,8 +339,8 @@ csPDFiumDest csPDFiumDocument::createDest(const void *_dest, const void *_action
   FPDF_DEST           dest = (FPDF_DEST)_dest;
   const FPDF_ACTION action = (const FPDF_ACTION)_action;
 
-  if( dest == NULL  &&  action != NULL ) {
-    if(        FPDFAction_GetType(action) == PDFACTION_GOTO ) {
+  if( action != NULL ) {
+    if(        FPDFAction_GetType(action) == PDFACTION_GOTO  &&  dest == NULL ) {
       dest = FPDFAction_GetDest(impl->document, action);
     } else if( FPDFAction_GetType(action) == PDFACTION_REMOTEGOTO ) {
       const int size = FPDFAction_GetFilePath(action, NULL, 0);
