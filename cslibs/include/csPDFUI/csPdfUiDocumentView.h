@@ -157,7 +157,7 @@ private:
 signals:
   void pageChanged(int no); // [1, _doc.pageCount()]
   void remoteDocumentRequested(const QString& srcFilename,
-                               const QByteArray& destFilename);
+                               const QString& destFilename);
   void zoomChanged(qreal zoom); // [%]
 };
 

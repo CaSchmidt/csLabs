@@ -61,7 +61,7 @@ struct csPDFiumDest {
   }
 
   explicit csPDFiumDest(const QString& _srcFilename,
-                        const QByteArray& _destFilename)
+                        const QString& _destFilename)
     : _type(RemoteGoto)
     , pageIndex()
     , focusPosPage()
@@ -85,7 +85,7 @@ struct csPDFiumDest {
   QPointF focusPosPage;
   // RemoteGoto
   QString srcFilename;
-  QByteArray destFilename;
+  QString destFilename;
 
 private:
   Type _type;

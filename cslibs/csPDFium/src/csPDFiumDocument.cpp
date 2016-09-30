@@ -353,7 +353,7 @@ csPDFiumDest csPDFiumDocument::createDest(const void *_dest, const void *_action
       }
       QByteArray destFilename(size, '\0');
       FPDFAction_GetFilePath(action, destFilename.data(), destFilename.size());
-      return csPDFiumDest(impl->fileName, destFilename);
+      return csPDFiumDest(impl->fileName, QString::fromUtf8(destFilename));
     }
   }
 
