@@ -41,34 +41,68 @@ CS_QT_EXPORT csITreeItem *csTreeItem(const QModelIndex& index)
 ////// public ////////////////////////////////////////////////////////////////
 
 csITreeItem::csITreeItem(csITreeItem *parent)
-  : _parent(parent)
-  , _children()
+  : _children()
+  , _parent(parent)
 {
 }
 
 csITreeItem::~csITreeItem()
 {
+  qDeleteAll(_children);
 }
 
-csITreeItem *csITreeItem::child(int row)
+void csITreeItem::appendChild(csITreeItem *child)
+{
+  if( child != 0 ) {
+    child->_parent = this;
+    _children.append(child);
+  }
+}
+
+void csITreeItem::insertChild(int i, csITreeItem *child)
+{
+  if( child != 0 ) {
+    child->_parent = this;
+    _children.insert(i, child);
+  }
+}
+
+csITreeItem *csITreeItem::takeChild(int i)
+{
+  if( i < 0  ||  i >= _children.size() ) {
+    return 0;
+  }
+  csITreeItem *child = _children.takeAt(i);
+  child->_parent = 0;
+  return child;
+}
+
+void csITreeItem::removeChild(int i)
+{
+  if( i >= 0  &&  i < _children.size() ) {
+    delete _children.takeAt(i);
+  }
+}
+
+csITreeItem *csITreeItem::childItem(int row) const
 {
   return _children.value(row, 0);
 }
 
-int csITreeItem::childCount() const
-{
-  return _children.size();
-}
-
-csITreeItem *csITreeItem::parent()
+csITreeItem *csITreeItem::parentItem() const
 {
   return _parent;
 }
 
 int csITreeItem::row() const
 {
-  if( _parent == 0 ) { // Root Node
-    return 0;
+  if( _parent != 0 ) {
+    return _parent->_children.indexOf(const_cast<csITreeItem*>(this));
   }
-  return _parent->_children.indexOf(const_cast<csITreeItem*>(this));
+  return 0;
+}
+
+int csITreeItem::rowCount() const
+{
+  return _children.size();
 }

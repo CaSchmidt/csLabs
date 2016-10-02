@@ -40,24 +40,28 @@
 
 class CS_QT_EXPORT csITreeItem {
 public:
-  csITreeItem(csITreeItem *parent);
+  csITreeItem(csITreeItem *parent = 0);
   virtual ~csITreeItem();
 
-  virtual csITreeItem *child(int row);
-  virtual int childCount() const;
-  virtual csITreeItem *parent();
-  virtual int row() const;
+  void appendChild(csITreeItem *child);
+  void insertChild(int i, csITreeItem *child);
+  csITreeItem *takeChild(int i);
+  void removeChild(int i);
+
+  csITreeItem *childItem(int row) const;
+  csITreeItem *parentItem() const;
+  int row() const;
+
+  int rowCount() const;
 
   virtual int columnCount() const = 0;
-  virtual QVariant data(int column) const = 0;
+  virtual QVariant data(int column, int role = Qt::DisplayRole) const = 0;
 
-protected:
-  csITreeItem();
-  csITreeItem(const csITreeItem&);
-  csITreeItem& operator=(const csITreeItem&);
+private:
+  Q_DISABLE_COPY(csITreeItem)
 
-  csITreeItem *_parent;
   QList<csITreeItem*> _children;
+  csITreeItem *_parent;
 };
 
 CS_QT_EXPORT csITreeItem *csTreeItem(const QModelIndex& index);
