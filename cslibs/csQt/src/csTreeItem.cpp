@@ -33,25 +33,25 @@
 
 ////// Public ////////////////////////////////////////////////////////////////
 
-CS_QT_EXPORT csITreeItem *csTreeItem(const QModelIndex& index)
+CS_QT_EXPORT csAbstractTreeItem *csTreeItem(const QModelIndex& index)
 {
-  return static_cast<csITreeItem*>(index.internalPointer());
+  return static_cast<csAbstractTreeItem*>(index.internalPointer());
 }
 
 ////// public ////////////////////////////////////////////////////////////////
 
-csITreeItem::csITreeItem(csITreeItem *parent)
+csAbstractTreeItem::csAbstractTreeItem(csAbstractTreeItem *parent)
   : _children()
   , _parent(parent)
 {
 }
 
-csITreeItem::~csITreeItem()
+csAbstractTreeItem::~csAbstractTreeItem()
 {
   qDeleteAll(_children);
 }
 
-void csITreeItem::appendChild(csITreeItem *child)
+void csAbstractTreeItem::appendChild(csAbstractTreeItem *child)
 {
   if( child != 0 ) {
     child->_parent = this;
@@ -59,50 +59,50 @@ void csITreeItem::appendChild(csITreeItem *child)
   }
 }
 
-void csITreeItem::insertChild(int i, csITreeItem *child)
+void csAbstractTreeItem::insertChild(int row, csAbstractTreeItem *child)
 {
   if( child != 0 ) {
     child->_parent = this;
-    _children.insert(i, child);
+    _children.insert(row, child);
   }
 }
 
-csITreeItem *csITreeItem::takeChild(int i)
+csAbstractTreeItem *csAbstractTreeItem::takeChild(int row)
 {
-  if( i < 0  ||  i >= _children.size() ) {
+  if( row < 0  ||  row >= _children.size() ) {
     return 0;
   }
-  csITreeItem *child = _children.takeAt(i);
+  csAbstractTreeItem *child = _children.takeAt(row);
   child->_parent = 0;
   return child;
 }
 
-void csITreeItem::removeChild(int i)
+void csAbstractTreeItem::removeChild(int row)
 {
-  if( i >= 0  &&  i < _children.size() ) {
-    delete _children.takeAt(i);
+  if( row >= 0  &&  row < _children.size() ) {
+    delete _children.takeAt(row);
   }
 }
 
-csITreeItem *csITreeItem::childItem(int row) const
+csAbstractTreeItem *csAbstractTreeItem::childItem(int row) const
 {
   return _children.value(row, 0);
 }
 
-csITreeItem *csITreeItem::parentItem() const
+csAbstractTreeItem *csAbstractTreeItem::parentItem() const
 {
   return _parent;
 }
 
-int csITreeItem::row() const
+int csAbstractTreeItem::row() const
 {
   if( _parent != 0 ) {
-    return _parent->_children.indexOf(const_cast<csITreeItem*>(this));
+    return _parent->_children.indexOf(const_cast<csAbstractTreeItem*>(this));
   }
   return 0;
 }
 
-int csITreeItem::rowCount() const
+int csAbstractTreeItem::rowCount() const
 {
   return _children.size();
 }

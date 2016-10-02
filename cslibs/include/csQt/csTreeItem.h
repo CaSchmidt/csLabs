@@ -38,18 +38,18 @@
 
 #include <csQt/csqt_config.h>
 
-class CS_QT_EXPORT csITreeItem {
+class CS_QT_EXPORT csAbstractTreeItem {
 public:
-  csITreeItem(csITreeItem *parent = 0);
-  virtual ~csITreeItem();
+  csAbstractTreeItem(csAbstractTreeItem *parent = 0);
+  virtual ~csAbstractTreeItem();
 
-  void appendChild(csITreeItem *child);
-  void insertChild(int i, csITreeItem *child);
-  csITreeItem *takeChild(int i);
-  void removeChild(int i);
+  void appendChild(csAbstractTreeItem *child);
+  void insertChild(int row, csAbstractTreeItem *child);
+  csAbstractTreeItem *takeChild(int row);
+  void removeChild(int row);
 
-  csITreeItem *childItem(int row) const;
-  csITreeItem *parentItem() const;
+  csAbstractTreeItem *childItem(int row) const;
+  csAbstractTreeItem *parentItem() const;
   int row() const;
 
   int rowCount() const;
@@ -58,12 +58,12 @@ public:
   virtual QVariant data(int column, int role = Qt::DisplayRole) const = 0;
 
 private:
-  Q_DISABLE_COPY(csITreeItem)
+  Q_DISABLE_COPY(csAbstractTreeItem)
 
-  QList<csITreeItem*> _children;
-  csITreeItem *_parent;
+  QList<csAbstractTreeItem*> _children;
+  csAbstractTreeItem *_parent;
 };
 
-CS_QT_EXPORT csITreeItem *csTreeItem(const QModelIndex& index);
+CS_QT_EXPORT csAbstractTreeItem *csTreeItem(const QModelIndex& index);
 
 #endif // __CSTREEITEM_H__
