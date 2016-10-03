@@ -36,7 +36,7 @@
 
 #include "job.h"
 
-class csITreeItem;
+class csAbstractTreeItem;
 
 class ChapterModel : public QAbstractItemModel {
   Q_OBJECT
@@ -45,7 +45,7 @@ public:
   ~ChapterModel();
 
   QModelIndex createNewChapter(const QModelIndex& index);
-  void setData(csITreeItem *data);
+  void setData(csAbstractTreeItem *data);
 
   bool showChapterNo() const;
   int firstChaopterNo() const;
@@ -75,7 +75,7 @@ private:
   QString chapterTitle(const class ChapterNode *node) const;
   void updateChapters();
 
-  csITreeItem *_root;
+  csAbstractTreeItem *_root;
   bool _showChapterNo;
   int _firstChapterNo;
   int _widthChapterNo;

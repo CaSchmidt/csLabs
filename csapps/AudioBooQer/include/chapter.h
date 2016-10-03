@@ -36,17 +36,17 @@
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 
-#include <csQt/csTreeItem.h>
+#include <csQt/csAbstractTreeItem.h>
 
 class ChapterRoot;
 class ChapterNode;
 class ChapterFile;
 
-bool isRoot(csITreeItem *item);
-bool isNode(csITreeItem *item);
-bool isFile(csITreeItem *item);
+bool isRoot(csAbstractTreeItem *item);
+bool isNode(csAbstractTreeItem *item);
+bool isFile(csAbstractTreeItem *item);
 
-class ChapterRoot : public csITreeItem { // The Root of All Evil /////////////
+class ChapterRoot : public csAbstractTreeItem { // The Root of All Evil /////////////
 public:
   ChapterRoot();
   ~ChapterRoot();
@@ -55,12 +55,12 @@ public:
   bool removeAt(const int index);
 
   int columnCount() const;
-  QVariant data(int column) const;
+  QVariant data(int column, int role) const;
 };
 
-class ChapterNode : public csITreeItem { // One Chapter //////////////////////
+class ChapterNode : public csAbstractTreeItem { // One Chapter //////////////////////
 public:
-  ChapterNode(csITreeItem *parent, const bool isSource = false);
+  ChapterNode(csAbstractTreeItem *parent, const bool isSource = false);
   ~ChapterNode();
 
   bool isSource() const;
@@ -74,23 +74,23 @@ public:
   void setTitle(const QString& title);
 
   int columnCount() const;
-  QVariant data(int column) const;
+  QVariant data(int column, int role) const;
 
 private:
   bool _isSource;
   QString _title;
 };
 
-class ChapterFile : public csITreeItem { // One File in a Chapter ////////////
+class ChapterFile : public csAbstractTreeItem { // One File in a Chapter ////////////
 public:
-  ChapterFile(csITreeItem *parent);
+  ChapterFile(csAbstractTreeItem *parent);
   ~ChapterFile();
 
   const QString& fileName() const;
   void setFileName(const QString& fileName);
 
   int columnCount() const;
-  QVariant data(int column) const;
+  QVariant data(int column, int role) const;
 
 private:
   QString _fileName;

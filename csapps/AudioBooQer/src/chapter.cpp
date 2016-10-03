@@ -35,17 +35,17 @@
 
 ////// Global ////////////////////////////////////////////////////////////////
 
-bool isRoot(csITreeItem *item)
+bool isRoot(csAbstractTreeItem *item)
 {
   return dynamic_cast<ChapterRoot*>(item) != 0;
 }
 
-bool isNode(csITreeItem *item)
+bool isNode(csAbstractTreeItem *item)
 {
   return dynamic_cast<ChapterNode*>(item) != 0;
 }
 
-bool isFile(csITreeItem *item)
+bool isFile(csAbstractTreeItem *item)
 {
   return dynamic_cast<ChapterFile*>(item) != 0;
 }
@@ -53,27 +53,26 @@ bool isFile(csITreeItem *item)
 ////// ChapterRoot ///////////////////////////////////////////////////////////
 
 ChapterRoot::ChapterRoot()
-  : csITreeItem(0)
+  : csAbstractTreeItem(0)
 {
 }
 
 ChapterRoot::~ChapterRoot()
 {
-  qDeleteAll(_children);
 }
 
 bool ChapterRoot::insert(ChapterNode *node)
 {
-  if(         _children.isEmpty()  &&  !node->isSource() ) {
+  if(        rowCount() == 0  &&  !node->isSource() ) {
     return false;
-  } else if( !_children.isEmpty()  &&   node->isSource() ) {
+  } else if( rowCount() != 0  &&   node->isSource() ) {
     return false;
   }
 
   if( node->isSource() ) {
-    _children.push_back(node);
+    appendChild(node);
   } else {
-    _children.insert(_children.size()-1, node);
+    insertChild(rowCount()-1, node);
   }
 
   return true;
@@ -81,10 +80,10 @@ bool ChapterRoot::insert(ChapterNode *node)
 
 bool ChapterRoot::removeAt(const int index)
 {
-  if( index < 0  ||  index >= _children.size() ) {
+  if( index < 0  ||  index >= rowCount() ) {
     return false;
   }
-  delete _children.takeAt(index);
+  removeChild(index);
   return true;
 }
 
@@ -93,15 +92,15 @@ int ChapterRoot::columnCount() const
   return 1;
 }
 
-QVariant ChapterRoot::data(int /*column*/) const
+QVariant ChapterRoot::data(int /*column*/, int /*role*/) const
 {
   return QVariant();
 }
 
 ////// ChapterNode ///////////////////////////////////////////////////////////
 
-ChapterNode::ChapterNode(csITreeItem *parent, const bool isSource)
-  : csITreeItem(parent)
+ChapterNode::ChapterNode(csAbstractTreeItem *parent, const bool isSource)
+  : csAbstractTreeItem(parent)
   , _isSource(isSource)
   , _title()
 {
@@ -109,7 +108,6 @@ ChapterNode::ChapterNode(csITreeItem *parent, const bool isSource)
 
 ChapterNode::~ChapterNode()
 {
-  qDeleteAll(_children);
 }
 
 bool ChapterNode::isSource() const
@@ -120,8 +118,8 @@ bool ChapterNode::isSource() const
 QStringList ChapterNode::files(const int count) const
 {
   QStringList list;
-  for(int i = 0; i < qMin(count, _children.size()); i++) {
-    ChapterFile *file = dynamic_cast<ChapterFile*>(_children[i]);
+  for(int i = 0; i < qMin(count, rowCount()); i++) {
+    ChapterFile *file = dynamic_cast<ChapterFile*>(childItem(i));
     list.push_back(file->fileName());
   }
   return list;
@@ -139,7 +137,7 @@ int ChapterNode::insertFiles(const QStringList& fileNames)
   int cntInserted(0);
   for(int i = 0; i < names.size(); i++) {
     ChapterFile *file = new ChapterFile(this);
-    _children.insert(i, file);
+    insertChild(i, file);
     file->setFileName(names[i]);
     cntInserted++;
   }
@@ -153,9 +151,9 @@ int ChapterNode::remove(const int count)
   }
 
   int cntRemoved(0);
-  const int number = qMin(count, _children.size());
+  const int number = qMin(count, rowCount());
   for(int i = 0; i < number; i++) {
-    delete _children.takeFirst();
+    removeChild(0);
     cntRemoved++;
   }
   return cntRemoved;
@@ -169,7 +167,7 @@ int ChapterNode::setFiles(const QStringList& fileNames)
   int cntAdded(0);
   foreach (const QString& name, names) {
     ChapterFile *file = new ChapterFile(this);
-    _children.push_back(file);
+    appendChild(file);
     file->setFileName(name);
   }
   return cntAdded;
@@ -190,22 +188,21 @@ int ChapterNode::columnCount() const
   return 1;
 }
 
-QVariant ChapterNode::data(int /*column*/) const
+QVariant ChapterNode::data(int /*column*/, int /*role*/) const
 {
   return _title;
 }
 
 ////// ChapterItem ///////////////////////////////////////////////////////////
 
-ChapterFile::ChapterFile(csITreeItem *parent)
-  : csITreeItem(parent)
+ChapterFile::ChapterFile(csAbstractTreeItem *parent)
+  : csAbstractTreeItem(parent)
   , _fileName()
 {
 }
 
 ChapterFile::~ChapterFile()
 {
-  qDeleteAll(_children);
 }
 
 const QString& ChapterFile::fileName() const
@@ -223,7 +220,7 @@ int ChapterFile::columnCount() const
   return 1;
 }
 
-QVariant ChapterFile::data(int /*column*/) const
+QVariant ChapterFile::data(int /*column*/, int /*role*/) const
 {
   return QFileInfo(_fileName).fileName();
 }

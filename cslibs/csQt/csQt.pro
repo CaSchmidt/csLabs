@@ -34,11 +34,11 @@ SOURCES += \
     src/csSubstringHighlighter.cpp \
     src/csHighlightingDelegate.cpp \
     src/csTrie.cpp \
-    src/csTreeItem.cpp \
     src/csFlatTrie.cpp \
     src/csCollapser.cpp \
     src/csProgressLineEdit.cpp \
-    src/csMultiToolButton.cpp
+    src/csMultiToolButton.cpp \
+    src/csAbstractTreeItem.cpp
 
 HEADERS += \
     ../include/csQt/csTableCopier.h \
@@ -52,9 +52,9 @@ HEADERS += \
     ../include/csQt/csHighlightingDelegate.h \
     ../include/csQt/csTrie.h \
     ../include/csQt/csNamespace.h \
-    ../include/csQt/csTreeItem.h \
     include/private/csFlatTriePrivate.h \
     ../include/csQt/csFlatTrie.h \
     ../include/csQt/csCollapser.h \
     ../include/csQt/csProgressLineEdit.h \
-    ../include/csQt/csMultiToolButton.h
+    ../include/csQt/csMultiToolButton.h \
+    ../include/csQt/csAbstractTreeItem.h

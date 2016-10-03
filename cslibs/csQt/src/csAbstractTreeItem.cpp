@@ -29,41 +29,73 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSTREEITEM_H__
-#define __CSTREEITEM_H__
+#include "csQt/csAbstractTreeItem.h"
 
-#include <QtCore/QList>
-#include <QtCore/QModelIndex>
-#include <QtCore/QVariant>
+////// public ////////////////////////////////////////////////////////////////
 
-#include <csQt/csqt_config.h>
+csAbstractTreeItem::csAbstractTreeItem(csAbstractTreeItem *parent)
+  : _children()
+  , _parent(parent)
+{
+}
 
-class CS_QT_EXPORT csAbstractTreeItem {
-public:
-  csAbstractTreeItem(csAbstractTreeItem *parent = 0);
-  virtual ~csAbstractTreeItem();
+csAbstractTreeItem::~csAbstractTreeItem()
+{
+  qDeleteAll(_children);
+}
 
-  void appendChild(csAbstractTreeItem *child);
-  void insertChild(int row, csAbstractTreeItem *child);
-  csAbstractTreeItem *takeChild(int row);
-  void removeChild(int row);
+void csAbstractTreeItem::appendChild(csAbstractTreeItem *child)
+{
+  if( child != 0 ) {
+    child->_parent = this;
+    _children.append(child);
+  }
+}
 
-  csAbstractTreeItem *childItem(int row) const;
-  csAbstractTreeItem *parentItem() const;
-  int row() const;
+void csAbstractTreeItem::insertChild(int row, csAbstractTreeItem *child)
+{
+  if( child != 0 ) {
+    child->_parent = this;
+    _children.insert(row, child);
+  }
+}
 
-  int rowCount() const;
+csAbstractTreeItem *csAbstractTreeItem::takeChild(int row)
+{
+  if( row < 0  ||  row >= _children.size() ) {
+    return 0;
+  }
+  csAbstractTreeItem *child = _children.takeAt(row);
+  child->_parent = 0;
+  return child;
+}
 
-  virtual int columnCount() const = 0;
-  virtual QVariant data(int column, int role = Qt::DisplayRole) const = 0;
+void csAbstractTreeItem::removeChild(int row)
+{
+  if( row >= 0  &&  row < _children.size() ) {
+    delete _children.takeAt(row);
+  }
+}
 
-private:
-  Q_DISABLE_COPY(csAbstractTreeItem)
+csAbstractTreeItem *csAbstractTreeItem::childItem(int row) const
+{
+  return _children.value(row, 0);
+}
 
-  QList<csAbstractTreeItem*> _children;
-  csAbstractTreeItem *_parent;
-};
+csAbstractTreeItem *csAbstractTreeItem::parentItem() const
+{
+  return _parent;
+}
 
-CS_QT_EXPORT csAbstractTreeItem *csTreeItem(const QModelIndex& index);
+int csAbstractTreeItem::row() const
+{
+  if( _parent != 0 ) {
+    return _parent->_children.indexOf(const_cast<csAbstractTreeItem*>(this));
+  }
+  return 0;
+}
 
-#endif // __CSTREEITEM_H__
+int csAbstractTreeItem::rowCount() const
+{
+  return _children.size();
+}
