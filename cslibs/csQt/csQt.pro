@@ -38,7 +38,8 @@ SOURCES += \
     src/csCollapser.cpp \
     src/csProgressLineEdit.cpp \
     src/csMultiToolButton.cpp \
-    src/csAbstractTreeItem.cpp
+    src/csAbstractTreeItem.cpp \
+    src/csTreeModel.cpp
 
 HEADERS += \
     ../include/csQt/csTableCopier.h \
@@ -57,4 +58,5 @@ HEADERS += \
     ../include/csQt/csCollapser.h \
     ../include/csQt/csProgressLineEdit.h \
     ../include/csQt/csMultiToolButton.h \
-    ../include/csQt/csAbstractTreeItem.h
+    ../include/csQt/csAbstractTreeItem.h \
+    ../include/csQt/csTreeModel.h
