@@ -35,9 +35,14 @@ namespace util {
 
   QMatrix getPageCTM(const FPDF_PAGE page)
   {
-    QMatrix ctm;
     const qreal h = FPDF_GetPageHeight(page);
-    ctm.setMatrix(1, 0, 0, -1, 0, h);
+
+    double a, b, c, d, e, f;
+    FPDF_GetPageMatrix(page, &a, &b, &c, &d, &e, &f);
+
+    QMatrix ctm(a, b, c, d, e, f);
+    ctm *= QMatrix(1, 0, 0, -1, 0, h);
+
     return  ctm;
   }
 
