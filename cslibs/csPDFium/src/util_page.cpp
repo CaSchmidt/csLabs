@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2015, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2016, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,42 +29,16 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __FPDF_UTIL_H__
-#define __FPDF_UTIL_H__
-
-#include <fpdfview.h>
-#include <fpdfdoc.h>
-#include <fpdfedit.h>
-#include <fpdfmissing.h>
-#include <fpdftext.h>
-
-#include <QtGui/QMatrix>
-
-#include <csPDFium/csPDFium.h>
-#include <csPDFium/csPDFiumContentsNode.h>
-#include <csPDFium/csPDFiumText.h>
-
-// cf. "fx_ge.h" for FXPT_* aka. FPDF_PATH_* Definitions
-// cf. "fx_ge.h" for FXFILL_* aka. FPDF_FILL_* Definitions
-// cf. "fx_agg_driver.cpp" for CAgg_PathData::BuildPath() aka. Path Construction
-// cf. "PDF Reference v1.7", "4.2.3 Transformation Matrices" for CTM Concatenation
-// cf. "fx_agg_path_storage.[cpp|h]" for Path Construction
-// cf. "fpdf_page[obj].h" for Page Objects
+#include "internal/fpdf_util.h"
 
 namespace util {
 
-  csPDFiumTexts extractTexts(const FPDF_PAGE page, const QMatrix& ctm);
+  QMatrix getPageCTM(const FPDF_PAGE page)
+  {
+    QMatrix ctm;
+    const qreal h = FPDF_GetPageHeight(page);
+    ctm.setMatrix(1, 0, 0, -1, 0, h);
+    return  ctm;
+  }
 
-  QStringList extractWords(const FPDF_PAGE page);
-
-  void parseContents(const FPDF_BOOKMARK bookmark, const FPDF_DOCUMENT doc,
-                     csPDFiumContentsNode *parent);
-
-  QList<QPainterPath> extractPaths(const FPDF_PAGE page, const QMatrix& ctm,
-                                   const csPDFium::PathExtractionFlags flags);
-
-  QMatrix getPageCTM(const FPDF_PAGE page);
-
-}; // namespace util
-
-#endif // __FPDF_UTIL_H__
+} // namespace util
