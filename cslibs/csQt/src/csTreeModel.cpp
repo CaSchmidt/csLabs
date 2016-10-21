@@ -133,7 +133,7 @@ QModelIndex csTreeModel::parent(const QModelIndex& child) const
 
 int csTreeModel::rowCount(const QModelIndex& parent) const
 {
-  if( parent.column() != 0 ) {
+  if( parent.column() > 0 ) {
     return 0;
   }
 
