@@ -37,6 +37,7 @@
 #include <QtCore/QMimeData>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDropEvent>
+#include <QtWidgets/QGraphicsLayout>
 
 #include "wplotwindow.h"
 #include "ui_wplotwindow.h"
@@ -72,6 +73,7 @@ WPlotWindow::WPlotWindow(QWidget *parent, Qt::WindowFlags f)
   QtCharts::QChart *chart = ui->chartView->chart();
   chart->setBackgroundRoundness(0);
   chart->setMargins(QMargins(0, 0, 0, 0));
+  chart->layout()->setContentsMargins(0, 0, 0, 0);
   chart->legend()->setVisible(false);
 
   _model = new DataLogsModel(chart, global::simctx, this);
