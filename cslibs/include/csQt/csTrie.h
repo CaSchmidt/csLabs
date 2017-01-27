@@ -54,6 +54,10 @@ public:
 
   void insert(const QString& str);
 
+  void insertReverse(const QString& str);
+
+  bool isNull() const;
+
   QStringList list() const;
 
   int nodeCount() const;

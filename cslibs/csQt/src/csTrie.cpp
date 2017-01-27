@@ -131,42 +131,21 @@ public:
       return;
     }
 
-    const ushort curLetter = str[idxStr].unicode();
-    csTrieNode *idxMatch = findLetter(curLetter);
-
-    if( idxMatch == 0 ) {
-      int idxInsert = 0;
-      // Increment Child Count BEFORE Insertion
-      _status++; // Increases childCount()!!!
-      if( _children == 0 ) { // No Children Yet! -> Add First
-        _children = new csTrieNode*[1];
-      } else { // Grow Child Population to Insert New Child
-        // Compute (Sorted) Insertion Index Into OLD Children
-        for(idxInsert = 0; idxInsert < childCount()-1; idxInsert++) {
-          if( _children[idxInsert]->letter() > curLetter ) {
-            break;
-          }
-        }
-        // Save Old Pointers
-        csTrieNode **childrenOld = _children;
-        // New Pointers
-        _children = new csTrieNode*[childCount()];
-        // Copy Old
-        for(int i = 0; i < idxInsert; i++) {
-          _children[i] = childrenOld[i];
-        }
-        for(int i = idxInsert; i < childCount()-1; i++) {
-          _children[i+1] = childrenOld[i];
-        }
-        // Free Old Pointers
-        delete[] childrenOld;
-      }
-      // Insert New
-      _children[idxInsert] = new csTrieNode(curLetter);
-      idxMatch = _children[idxInsert];
-    }
+    csTrieNode *idxMatch = insertLetter(str[idxStr].unicode());
 
     idxMatch->insert(idxStr+1, str);
+  }
+
+  void insertReverse(const int idxStr, const QString& str)
+  {
+    if( idxStr == 0 ) {
+      _status |= STATUS_MASK_MATCH;
+      return;
+    }
+
+    csTrieNode *idxMatch = insertLetter(str[idxStr-1].unicode());
+
+    idxMatch->insertReverse(idxStr-1, str);
   }
 
   void list(QStringList& words, QString& str) const
@@ -207,6 +186,45 @@ private:
     }
 
     return 0;
+  }
+
+  csTrieNode *insertLetter(const ushort letter)
+  {
+    csTrieNode *idxMatch = findLetter(letter);
+
+    if( idxMatch == 0 ) {
+      int idxInsert = 0;
+      // Increment Child Count BEFORE Insertion
+      _status++; // Increases childCount()!!!
+      if( _children == 0 ) { // No Children Yet! -> Add First
+        _children = new csTrieNode*[1];
+      } else { // Grow Child Population to Insert New Child
+        // Compute (Sorted) Insertion Index Into OLD Children
+        for(idxInsert = 0; idxInsert < childCount()-1; idxInsert++) {
+          if( _children[idxInsert]->letter() > letter ) {
+            break;
+          }
+        }
+        // Save Old Pointers
+        csTrieNode **childrenOld = _children;
+        // New Pointers
+        _children = new csTrieNode*[childCount()];
+        // Copy Old
+        for(int i = 0; i < idxInsert; i++) {
+          _children[i] = childrenOld[i];
+        }
+        for(int i = idxInsert; i < childCount()-1; i++) {
+          _children[i+1] = childrenOld[i];
+        }
+        // Free Old Pointers
+        delete[] childrenOld;
+      }
+      // Insert New
+      _children[idxInsert] = new csTrieNode(letter);
+      idxMatch = _children[idxInsert];
+    }
+
+    return idxMatch;
   }
 
   inline ushort letter() const
@@ -295,6 +313,20 @@ void csTrie::insert(const QString& str)
   }
 
   _root->insert(0, str);
+}
+
+void csTrie::insertReverse(const QString& str)
+{
+  if( str.isEmpty() ) {
+    return;
+  }
+
+  _root->insertReverse(str.size(), str);
+}
+
+bool csTrie::isNull() const
+{
+  return _root == 0;
 }
 
 QStringList csTrie::list() const
