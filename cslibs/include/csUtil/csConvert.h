@@ -34,6 +34,8 @@
 
 #include <cstdint>
 
+#include <type_traits>
+
 #include <emmintrin.h> // SSE2
 #include <smmintrin.h> // SSE4.1
 #include <xmmintrin.h> // SSE
@@ -262,7 +264,8 @@ namespace cs {
  *****************************************************************************/
 
 template<typename DataT>
-void csConvert(double *dest, const DataT *src, const int N)
+void csConvert(double *dest, const DataT *src, const int N,
+               typename std::enable_if<std::is_arithmetic<DataT>::value>::type * = 0)
 {
   using namespace cs::convert;
 
@@ -294,7 +297,8 @@ void csConvert(double *dest, const DataT *src, const int N)
 
 template<typename DataT>
 void csConvert(double *dest, const DataT *src, const int N,
-               const double c1, const double c0)
+               const double c1, const double c0,
+               typename std::enable_if<std::is_arithmetic<DataT>::value>::type * = 0)
 {
   using namespace cs::convert;
 

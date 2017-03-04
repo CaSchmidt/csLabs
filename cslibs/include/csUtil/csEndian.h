@@ -32,6 +32,8 @@
 #ifndef __CSENDIAN_H__
 #define __CSENDIAN_H__
 
+#include <type_traits>
+
 namespace cs {
 
   namespace endian {
@@ -81,7 +83,8 @@ namespace cs {
 ////// User Interface ////////////////////////////////////////////////////////
 
 template<bool SWAP, typename T>
-inline void csCopy(T *dest, const void *src)
+inline void csCopy(T *dest, const void *src,
+                   typename std::enable_if<std::is_arithmetic<T>::value>::type * = 0)
 {
   using namespace cs::endian;
   dispatch<SWAP,T>::run(dest, src);
