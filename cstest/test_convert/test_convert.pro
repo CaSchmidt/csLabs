@@ -21,3 +21,6 @@ DEPENDPATH  += ../../cslibs/include
 
 SOURCES += \
     src/main.cpp
+
+HEADERS += \
+    ../../cslibs/include/csUtil/csConvert.h

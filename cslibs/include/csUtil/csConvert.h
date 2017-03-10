@@ -56,13 +56,15 @@ namespace cs {
     struct Stride {
       enum Values {
         // Elements: Number of Data Elements in SIMD Register
-        Elements      = sizeof(__m128) / sizeof(DataT),
+        Elements         = sizeof(__m128) / sizeof(DataT),
         // Blocks: Number of EPI32 Conversions per Data Elements in SIMD Register
-        Blocks        = Elements / 4,
+        Blocks           = Elements / 4,
         // Prefetch Strategy
-        CacheLine     = 64,
-        PrefetchSkip  = CacheLine / sizeof(__m128),
-        PrefetchWidth = CacheLine / sizeof(DataT)
+        CacheLine        = 64,
+        PrefetchUnroll   = CacheLine / sizeof(__m128),
+        PrefetchWidth    = CacheLine / sizeof(DataT),
+        // Unrolled Elements
+        UnrolledElements = PrefetchUnroll*Elements
       };
     };
 
@@ -255,6 +257,52 @@ namespace cs {
       }
     };
 
+    /*************************************************************************
+     * Loop Unrolling ********************************************************
+     *************************************************************************/
+
+    template<typename DataT, int i>
+    struct Unroll {
+      inline static void run(double *dest, const DataT *src,
+                             const __m128d& helper)
+      {
+        Unroll<DataT,0>::run(dest, src, helper);
+        Unroll<DataT,i-1>::run(dest+Stride<DataT>::Elements,
+                               src+Stride<DataT>::Elements,
+                               helper);
+      }
+
+      inline static void run(double *dest, const DataT *src,
+                             const __m128d& c1, const __m128d& c0,
+                             const __m128d& helper)
+      {
+        Unroll<DataT,0>::run(dest, src, c1, c0, helper);
+        Unroll<DataT,i-1>::run(dest+Stride<DataT>::Elements,
+                               src+Stride<DataT>::Elements,
+                               c1, c0, helper);
+      }
+    };
+
+    template<typename DataT>
+    struct Unroll<DataT,0> {
+      inline static void run(double *dest, const DataT *src,
+                             const __m128d& helper)
+      {
+        const __m128i raw = _mm_load_si128(reinterpret_cast<const __m128i*>(src));
+
+        Block<DataT,Stride<DataT>::Blocks-1>::run(dest, raw, helper);
+      }
+
+      inline static void run(double *dest, const DataT *src,
+                             const __m128d& c1, const __m128d& c0,
+                             const __m128d& helper)
+      {
+        const __m128i raw = _mm_load_si128(reinterpret_cast<const __m128i*>(src));
+
+        Block<DataT,Stride<DataT>::Blocks-1>::run(dest, raw, c1, c0, helper);
+      }
+    };
+
   } // namespace convert
 
 } // namespace cs
@@ -273,14 +321,20 @@ void csConvert(double *dest, const DataT *src, const int N,
   if( count > 0 ) {
     const __m128d helper = BlockHelper<DataT>::create();
 
-    for(int i = 0; i < count; i++) {
-      if( i % Stride<DataT>::PrefetchSkip == 0 ) {
-        _mm_prefetch(reinterpret_cast<const char*>(&dest[Stride<DataT>::PrefetchWidth]), _MM_HINT_NTA);
-      }
+    const int unroll = count / Stride<DataT>::PrefetchUnroll;
+    for(int i = 0; i < unroll; i++) {
+      _mm_prefetch(reinterpret_cast<const char*>(&src[Stride<DataT>::PrefetchWidth]),
+          _MM_HINT_NTA);
 
-      const __m128i raw = _mm_load_si128(reinterpret_cast<const __m128i*>(src));
+      Unroll<DataT,Stride<DataT>::PrefetchUnroll-1>::run(dest, src, helper);
 
-      Block<DataT,Stride<DataT>::Blocks-1>::run(dest, raw, helper);
+      dest += Stride<DataT>::UnrolledElements;
+      src  += Stride<DataT>::UnrolledElements;
+    }
+
+    const int remain = count % Stride<DataT>::PrefetchUnroll;
+    for(int i = 0; i < remain; i++) {
+      Unroll<DataT,0>::run(dest, src, helper);
 
       dest += Stride<DataT>::Elements;
       src  += Stride<DataT>::Elements;
@@ -291,7 +345,7 @@ void csConvert(double *dest, const DataT *src, const int N,
 
   const int remain = N % Stride<DataT>::Elements;
   for(int i = 0; i < remain; i++) {
-    *dest++ = *src++;
+    *dest++ = static_cast<double>(*src++);
   }
 }
 
@@ -308,14 +362,20 @@ void csConvert(double *dest, const DataT *src, const int N,
     const __m128d   c0mm = _mm_set1_pd(c0);
     const __m128d helper = BlockHelper<DataT>::create();
 
-    for(int i = 0; i < count; i++) {
-      if( i % Stride<DataT>::PrefetchSkip == 0 ) {
-        _mm_prefetch(reinterpret_cast<const char*>(&dest[Stride<DataT>::PrefetchWidth]), _MM_HINT_NTA);
-      }
+    const int unroll = count / Stride<DataT>::PrefetchUnroll;
+    for(int i = 0; i < unroll; i++) {
+      _mm_prefetch(reinterpret_cast<const char*>(&src[Stride<DataT>::PrefetchWidth]),
+          _MM_HINT_NTA);
 
-      const __m128i raw = _mm_load_si128(reinterpret_cast<const __m128i*>(src));
+      Unroll<DataT,Stride<DataT>::PrefetchUnroll-1>::run(dest, src, c1mm, c0mm, helper);
 
-      Block<DataT,Stride<DataT>::Blocks-1>::run(dest, raw, c1mm, c0mm, helper);
+      dest += Stride<DataT>::UnrolledElements;
+      src  += Stride<DataT>::UnrolledElements;
+    }
+
+    const int remain = count % Stride<DataT>::PrefetchUnroll;
+    for(int i = 0; i < remain; i++) {
+      Unroll<DataT,0>::run(dest, src, c1mm, c0mm, helper);
 
       dest += Stride<DataT>::Elements;
       src  += Stride<DataT>::Elements;
@@ -326,7 +386,7 @@ void csConvert(double *dest, const DataT *src, const int N,
 
   const int remain = N % Stride<DataT>::Elements;
   for(int i = 0; i < remain; i++) {
-    *dest++ = c1 * *src++ + c0;
+    *dest++ = c1 * static_cast<double>(*src++) + c0;
   }
 }
 

@@ -24,4 +24,5 @@ SOURCES += \
     src/main.cpp
 
 HEADERS += \
-    include/data.h
+    include/data.h \
+    ../../cslibs/include/csUtil/csEndian.h
