@@ -37,7 +37,7 @@
 #include <QtCore/QMutexLocker>
 #include <QtCore/QString>
 
-#include <fpdfview.h>
+#include <fpdfsdk/fpdfview.h>
 
 #define CSPDFIUM_DOCIMPL() \
   QMutexLocker locker(&(impl->mutex))

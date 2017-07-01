@@ -32,11 +32,11 @@
 #ifndef __FPDF_UTIL_H__
 #define __FPDF_UTIL_H__
 
-#include <fpdfview.h>
-#include <fpdfdoc.h>
-#include <fpdfedit.h>
-#include <fpdfmissing.h>
-#include <fpdftext.h>
+#include <fpdfsdk/fpdfview.h>
+#include <fpdfsdk/fpdf_doc.h>
+#include <fpdfsdk/fpdf_edit.h>
+#include <fpdfsdk/fpdf_missing.h>
+#include <fpdfsdk/fpdf_text.h>
 
 #include <QtGui/QMatrix>
 
