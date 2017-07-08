@@ -35,6 +35,10 @@
 
 #define _VAL(key)  (*this)[key]
 
+////// private static ////////////////////////////////////////////////////////
+
+Series SeriesStore::_nullSeries;
+
 ////// public ////////////////////////////////////////////////////////////////
 
 SeriesStore::SeriesStore()
@@ -125,6 +129,24 @@ SimRange SeriesStore::totalRangeX() const
   }
 
   return result;
+}
+
+Series& SeriesStore::series(const QString& seriesName)
+{
+  QHash<QString,Series>::iterator it = find(seriesName);
+  if( it == end() ) {
+    return _nullSeries;
+  }
+  return it.value();
+}
+
+const Series& SeriesStore::series(const QString& seriesName) const
+{
+  QHash<QString,Series>::const_iterator it = constFind(seriesName);
+  if( it == constEnd() ) {
+    return _nullSeries;
+  }
+  return it.value();
 }
 
 ////// public ////////////////////////////////////////////////////////////////

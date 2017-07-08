@@ -32,6 +32,8 @@
 #ifndef __IPLOTIMPLEMENTATION_H__
 #define __IPLOTIMPLEMENTATION_H__
 
+#include <QtGui/QColor>
+
 #include <SimPlot/ISimPlotSeriesData.h>
 #include <SimPlot/SimTheme.h>
 
@@ -70,6 +72,13 @@ public:
   virtual void verticalZoom(const QRectF& zoomRect) = 0;
 
   virtual void pan(const QPointF& delta) = 0;
+
+  virtual QColor seriesColor(const QString& seriesName) const = 0;
+
+  virtual void setSeriesColor(const QString& seriesName, const QColor& color) = 0;
+
+  virtual const ISimPlotSeriesData *seriesData(const QString& seriesName) const = 0;
+  virtual ISimPlotSeriesData *seriesData(const QString& seriesName) = 0;
 
 private:
   SimTheme _theme;

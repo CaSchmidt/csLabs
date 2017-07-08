@@ -77,14 +77,72 @@ bool SimPlotWidget::remove(const QString& seriesName)
   return _impl->remove(seriesName);
 }
 
+void SimPlotWidget::setXTitle(const QString& title)
+{
+  _impl->setXTitle(title);
+}
+
+QColor SimPlotWidget::seriesColor(const QString& seriesName) const
+{
+  return _impl->seriesColor(seriesName);
+}
+
+void SimPlotWidget::setSeriesColor(const QString& seriesName, const QColor& color)
+{
+  _impl->setSeriesColor(seriesName, color);
+}
+
+const ISimPlotSeriesData *SimPlotWidget::seriesData(const QString& seriesName) const
+{
+  return _impl->seriesData(seriesName);
+}
+
+ISimPlotSeriesData *SimPlotWidget::seriesData(const QString& seriesName)
+{
+  return _impl->seriesData(seriesName);
+}
+
+////// public slots //////////////////////////////////////////////////////////
+
 void SimPlotWidget::setActiveSeries(const QString& seriesName)
 {
   _impl->setActiveSeries(seriesName);
 }
 
-void SimPlotWidget::setXTitle(const QString& title)
+void SimPlotWidget::exportToClipboard()
 {
-  _impl->setXTitle(title);
+  QImage image(size(), QImage::Format_ARGB32_Premultiplied);
+  render(&image);
+  QGuiApplication::clipboard()->setImage(image);
+}
+
+void SimPlotWidget::panning()
+{
+  _panZoom = Panning;
+  initializeCursor();
+}
+
+void SimPlotWidget::horizontalZoom()
+{
+  _panZoom = HorizontalZoom;
+  initializeCursor();
+}
+
+void SimPlotWidget::verticalZoom()
+{
+  _panZoom = VerticalZoom;
+  initializeCursor();
+}
+
+void SimPlotWidget::rectangularZoom()
+{
+  _panZoom = RectangularZoom;
+  initializeCursor();
+}
+
+void SimPlotWidget::reset()
+{
+  _impl->reset();
 }
 
 ////// protected /////////////////////////////////////////////////////////////
@@ -205,44 +263,6 @@ void SimPlotWidget::resizeEvent(QResizeEvent *event)
   _impl->resize(QPointF(0, 0), event->size());
 
   event->accept();
-}
-
-////// public slots //////////////////////////////////////////////////////////
-
-void SimPlotWidget::exportToClipboard()
-{
-  QImage image(size(), QImage::Format_ARGB32_Premultiplied);
-  render(&image);
-  QGuiApplication::clipboard()->setImage(image);
-}
-
-void SimPlotWidget::panning()
-{
-  _panZoom = Panning;
-  initializeCursor();
-}
-
-void SimPlotWidget::horizontalZoom()
-{
-  _panZoom = HorizontalZoom;
-  initializeCursor();
-}
-
-void SimPlotWidget::verticalZoom()
-{
-  _panZoom = VerticalZoom;
-  initializeCursor();
-}
-
-void SimPlotWidget::rectangularZoom()
-{
-  _panZoom = RectangularZoom;
-  initializeCursor();
-}
-
-void SimPlotWidget::reset()
-{
-  _impl->reset();
 }
 
 ////// private ///////////////////////////////////////////////////////////////

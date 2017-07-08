@@ -68,7 +68,7 @@ void Scope::paint(QPainter *painter) const
 
   painter->resetTransform();
   painter->setClipRect(_rect);
-  for(const Series& series : _row->series()) {
+  for(const Series& series : _row->store()) {
     if( series == activeSeries ) {
       continue;
     }
@@ -77,7 +77,7 @@ void Scope::paint(QPainter *painter) const
     pen.setCosmetic(true);
     painter->setPen(pen);
 
-    const SimRange rangeY = _row->series().rangeY(series.name());
+    const SimRange rangeY = _row->store().rangeY(series.name());
     const QTransform xform =
         mapToScreen(_rect.size(),
                     _row->rangeX(),
@@ -97,7 +97,7 @@ void Scope::paint(QPainter *painter) const
     pen.setCosmetic(true);
     painter->setPen(pen);
 
-    const SimRange rangeY = _row->series().rangeY(activeSeries.name());
+    const SimRange rangeY = _row->store().rangeY(activeSeries.name());
     const QTransform xform =
         mapToScreen(_rect.size(),
                     _row->rangeX(),

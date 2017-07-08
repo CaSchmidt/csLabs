@@ -50,11 +50,16 @@ public:
   bool insert(ISimPlotSeriesData *data, const QColor& color = QColor());
   bool remove(const QString& seriesName);
 
-  void setActiveSeries(const QString& seriesName);
-
   void setXTitle(const QString& title);
 
+  QColor seriesColor(const QString& seriesName) const;
+  void setSeriesColor(const QString& seriesName, const QColor& color);
+
+  const ISimPlotSeriesData *seriesData(const QString& seriesName) const;
+  ISimPlotSeriesData *seriesData(const QString &seriesName);
+
 public slots:
+  void setActiveSeries(const QString& seriesName);
   void exportToClipboard();
   void panning();
   void horizontalZoom();

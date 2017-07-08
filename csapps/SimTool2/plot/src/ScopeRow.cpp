@@ -47,7 +47,7 @@ ScopeRow::ScopeRow(IPlotImplementation *plot)
   , _yAxis()
   , _scope()
   , _plot(plot)
-  , _series()
+  , _store()
   , _activeSeriesName()
   , _viewX()
   , _viewY()
@@ -121,12 +121,12 @@ const YTitle *ScopeRow::yTitle() const
 
 bool ScopeRow::insert(const Series& series)
 {
-  return _series.insert(series);
+  return _store.insert(series);
 }
 
 bool ScopeRow::remove(const QString& seriesName)
 {
-  return _series.remove(seriesName);
+  return _store.remove(seriesName);
 }
 
 const IPlotImplementation *ScopeRow::plot() const
@@ -134,9 +134,14 @@ const IPlotImplementation *ScopeRow::plot() const
   return _plot;
 }
 
-const SeriesStore& ScopeRow::series() const
+const SeriesStore& ScopeRow::store() const
 {
-  return _series;
+  return _store;
+}
+
+SeriesStore& ScopeRow::store()
+{
+  return _store;
 }
 
 QString ScopeRow::activeSeriesName() const
@@ -146,18 +151,18 @@ QString ScopeRow::activeSeriesName() const
 
 Series ScopeRow::activeSeries() const
 {
-  return _series.value(_activeSeriesName);
+  return _store.value(_activeSeriesName);
 }
 
 void ScopeRow::setActiveSeries(const QString& seriesName)
 {
-  if( !seriesName.isEmpty()  &&  !_series.contains(seriesName) ) {
+  if( !seriesName.isEmpty()  &&  !_store.contains(seriesName) ) {
     return;
   }
   _activeSeriesName = seriesName;
   _yTitle->setTitle(_activeSeriesName);
   if( !_activeSeriesName.isEmpty()  &&  !_viewX.isValid() ) {
-    _viewX = _series.rangeX(_activeSeriesName);
+    _viewX = _store.rangeX(_activeSeriesName);
   }
 }
 
@@ -168,7 +173,7 @@ SimRange ScopeRow::rangeX() const
 
 SimRange ScopeRow::rangeY() const
 {
-  return _series.rangeY(_activeSeriesName).clamped(_viewY, 100);
+  return _store.rangeY(_activeSeriesName).clamped(_viewY, 100);
 }
 
 SimRange ScopeRow::viewX() const
@@ -188,7 +193,7 @@ QTransform ScopeRow::mapToScreen() const
 
 void ScopeRow::resetView()
 {
-  _viewX = _series.totalRangeX();
+  _viewX = _store.totalRangeX();
 
   _viewY.initialize();
   _viewY.update(0);
@@ -258,7 +263,7 @@ void ScopeRow::pan(const QPointF& delta)
 
   // Horizontal
 
-  const SimRange boundsX = _series.totalRangeX();
+  const SimRange boundsX = _store.totalRangeX();
 
   qreal leftX = _viewX.min() - deltaView.x();
   if(        leftX < boundsX.min() ) {

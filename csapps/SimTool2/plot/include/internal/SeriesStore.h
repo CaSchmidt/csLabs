@@ -50,11 +50,16 @@ public:
 
   SimRange totalRangeX() const;
 
+  Series& series(const QString& seriesName);
+  const Series& series(const QString& seriesName) const;
+
 private:
   bool addToScales(const QString& seriesName);
   bool removeFromScales(const QString& seriesName);
 
   QHash<QString,Scale> _scales;
+
+  static Series _nullSeries;
 };
 
 #endif // __SERIESSTORE_H__

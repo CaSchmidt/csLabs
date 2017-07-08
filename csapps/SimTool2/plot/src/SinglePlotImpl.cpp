@@ -163,7 +163,7 @@ bool SinglePlotImpl::remove(const QString& seriesName)
   if( seriesName == _row->activeSeriesName() ) {
     QString newActiveSeriesName;
 
-    QStringList names = _row->series().keys();
+    QStringList names = _row->store().keys();
     if( !names.isEmpty() ) {
       qSort(names);
       newActiveSeriesName = names.front();
@@ -240,4 +240,41 @@ void SinglePlotImpl::pan(const QPointF& delta)
 {
   _row->pan(delta);
   update();
+}
+
+QColor SinglePlotImpl::seriesColor(const QString& seriesName) const
+{
+  const Series& s = _row->store().series(seriesName);
+  if( s.isEmpty() ) {
+    return QColor();
+  }
+  return s.color();
+}
+
+void SinglePlotImpl::setSeriesColor(const QString& seriesName, const QColor& color)
+{
+  Series& s = _row->store().series(seriesName);
+  if( s.isEmpty() ) {
+    return;
+  }
+  s.setColor(color);
+  update();
+}
+
+const ISimPlotSeriesData *SinglePlotImpl::seriesData(const QString& seriesName) const
+{
+  const Series& s = _row->store().series(seriesName);
+  if( s.isEmpty() ) {
+    return 0;
+  }
+  return s.data().data();
+}
+
+ISimPlotSeriesData *SinglePlotImpl::seriesData(const QString& seriesName)
+{
+  Series& s = _row->store().series(seriesName);
+  if( s.isEmpty() ) {
+    return 0;
+  }
+  return s.data().data();
 }

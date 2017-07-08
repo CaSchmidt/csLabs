@@ -65,7 +65,8 @@ public:
 
   const IPlotImplementation *plot() const;
 
-  const SeriesStore& series() const;
+  const SeriesStore& store() const;
+  SeriesStore& store();
 
   QString activeSeriesName() const;
   Series activeSeries() const;
@@ -94,7 +95,7 @@ private:
   YAxis *_yAxis;
   Scope *_scope;
   IPlotImplementation *_plot;
-  SeriesStore _series;
+  SeriesStore _store;
   QString _activeSeriesName;
   SimRange _viewX;
   SimRange _viewY;
