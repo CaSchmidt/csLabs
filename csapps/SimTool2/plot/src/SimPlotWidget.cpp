@@ -247,43 +247,43 @@ void SimPlotWidget::reset()
 
 ////// private ///////////////////////////////////////////////////////////////
 
+QAction *SimPlotWidget::createAction(const QString& text,
+                                     const QKeySequence& shortcut)
+{
+  QAction *action = new QAction(text, this);
+  addAction(action);
+  _contextMenu->addAction(action);
+  action->setShortcut(shortcut);
+  action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  return action;
+}
+
 void SimPlotWidget::initializeContextMenu()
 {
   _contextMenu = new QMenu(this);
 
-  // QAction *exportAction =
   _contextMenu->addAction(tr("Clipboard"), this, &SimPlotWidget::exportToClipboard);
 
-  _contextMenu->addSeparator();
+  _contextMenu->addSeparator(); //////////////////////////////////////////////
 
-  QAction *panningAction =
-      _contextMenu->addAction(tr("Pan"), this, &SimPlotWidget::panning,
-                              Qt::Key_M);
-  addAction(panningAction);
+  QAction *panAction = createAction(tr("Pan"), Qt::Key_M);
+  connect(panAction, &QAction::triggered, this, &SimPlotWidget::panning);
 
-  _contextMenu->addSeparator();
+  _contextMenu->addSeparator(); //////////////////////////////////////////////
 
-  QAction *horizontalAction =
-      _contextMenu->addAction(tr("Horizontal"), this, &SimPlotWidget::horizontalZoom,
-                              Qt::Key_H);
-  addAction(horizontalAction);
+  QAction *hzoomAction = createAction(tr("Horizontal"), Qt::Key_H);
+  connect(hzoomAction, &QAction::triggered, this, &SimPlotWidget::horizontalZoom);
 
-  QAction *verticalAction =
-      _contextMenu->addAction(tr("Vertical"), this, &SimPlotWidget::verticalZoom,
-                              Qt::Key_V);
-  addAction(verticalAction);
+  QAction *vzoomAction = createAction(tr("Vertical"), Qt::Key_V);
+  connect(vzoomAction, &QAction::triggered, this, &SimPlotWidget::verticalZoom);
 
-  QAction *rectangularAction =
-      _contextMenu->addAction(tr("Rectangular"), this, &SimPlotWidget::rectangularZoom,
-                              Qt::Key_R);
-  addAction(rectangularAction);
+  QAction *rzoomAction = createAction(tr("Rectangular"), Qt::Key_R);
+  connect(rzoomAction, &QAction::triggered, this, &SimPlotWidget::rectangularZoom);
 
-  _contextMenu->addSeparator();
+  _contextMenu->addSeparator(); //////////////////////////////////////////////
 
-  QAction *resetAction =
-      _contextMenu->addAction(tr("Reset"), this, &SimPlotWidget::reset,
-                              Qt::Key_Escape);
-  addAction(resetAction);
+  QAction *resetAction = createAction(tr("Reset"), Qt::Key_Escape);
+  connect(resetAction, &QAction::triggered, this, &SimPlotWidget::reset);
 
   setContextMenuPolicy(Qt::DefaultContextMenu);
 }

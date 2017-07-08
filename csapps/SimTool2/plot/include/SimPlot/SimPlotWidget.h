@@ -81,6 +81,7 @@ private:
     Panning
   };
 
+  QAction *createAction(const QString& text, const QKeySequence& shortcut);
   void initializeContextMenu();
   void initializeCursor();
 
