@@ -4,6 +4,7 @@
 
 #include <QtWidgets/QApplication>
 
+#include <SimPlot/SimPlotTheme.h>
 #include <SimPlot/SimPlotWidget.h>
 
 #include "MySignal.h"
@@ -63,7 +64,8 @@ int main(int argc, char **argv)
   QApplication app(argc, argv);
 
   SimPlotWidget *plot = new SimPlotWidget();
-  plot->setXTitle(QStringLiteral("Time [s]"));
+  plot->setXTitle(SimPlotTheme::titleString(QStringLiteral("Time"),
+                                            QStringLiteral("s")));
   plot->show();
   plot->resize(640, 480);
 

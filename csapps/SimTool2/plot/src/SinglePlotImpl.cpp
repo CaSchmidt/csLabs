@@ -244,7 +244,7 @@ void SinglePlotImpl::pan(const QPointF& delta)
 
 QColor SinglePlotImpl::seriesColor(const QString& seriesName) const
 {
-  const Series& s = _row->store().series(seriesName);
+  const Series& s = _row->store().constSeries(seriesName);
   if( s.isEmpty() ) {
     return QColor();
   }
@@ -263,7 +263,7 @@ void SinglePlotImpl::setSeriesColor(const QString& seriesName, const QColor& col
 
 const ISimPlotSeriesData *SinglePlotImpl::seriesData(const QString& seriesName) const
 {
-  const Series& s = _row->store().series(seriesName);
+  const Series& s = _row->store().constSeries(seriesName);
   if( s.isEmpty() ) {
     return 0;
   }

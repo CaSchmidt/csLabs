@@ -60,6 +60,8 @@ struct SIM_PLOT_EXPORT SimPlotTheme {
   static QPen seriesPen(const QColor& color, const qreal width = 1.0);
   static QPen yAxisPen(const QColor& color);
 
+  static QString titleString(const QString& name, const QString& unit);
+
   static SimPlotTheme themeTextbook();
   static SimPlotTheme themeOscilloscope();
 

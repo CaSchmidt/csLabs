@@ -91,6 +91,17 @@ QPen SimPlotTheme::yAxisPen(const QColor& color)
   return QPen(QBrush(color, Qt::SolidPattern), 0.0);
 }
 
+QString SimPlotTheme::titleString(const QString& name, const QString& unit)
+{
+  QString result;
+  if( unit.isEmpty() ) {
+    result = name;
+  } else {
+    result = QStringLiteral("%1 [%2]").arg(name).arg(unit);
+  }
+  return result;
+}
+
 SimPlotTheme SimPlotTheme::themeTextbook()
 {
   SimPlotTheme result;
