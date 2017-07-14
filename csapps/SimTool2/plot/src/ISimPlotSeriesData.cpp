@@ -33,6 +33,12 @@
 
 ////// public ////////////////////////////////////////////////////////////////
 
+ISimPlotSeriesData::ISimPlotSeriesData()
+  : _rangeX()
+  , _rangeY()
+{
+}
+
 ISimPlotSeriesData::~ISimPlotSeriesData()
 {
 }
@@ -78,4 +84,38 @@ int ISimPlotSeriesData::findRight(const qreal x) const
   }
 
   return -1;
+}
+
+qreal ISimPlotSeriesData::valueX(const int i) const
+{
+  return value(i).x();
+}
+
+qreal ISimPlotSeriesData::valueY(const int i) const
+{
+  return value(i).y();
+}
+
+SimPlotRange ISimPlotSeriesData::rangeX() const
+{
+  return _rangeX;
+}
+
+SimPlotRange ISimPlotSeriesData::rangeY() const
+{
+  return _rangeY;
+}
+
+////// protected /////////////////////////////////////////////////////////////
+
+void ISimPlotSeriesData::updateRange()
+{
+  _rangeX.initialize();
+  _rangeY.initialize();
+  for(int i = 0; i < size(); i++) {
+    _rangeX.update(valueX(i));
+    _rangeY.update(valueY(i));
+  }
+  _rangeX.adjust();
+  _rangeY.adjust();
 }

@@ -13,12 +13,11 @@
 
 MySignal::MySignal(const QString& name, const QString& unit,
                    const SignalData& x, const SignalData& y)
-  : _name()
+  : ISimPlotSeriesData()
+  , _name()
   , _unit()
   , _x()
   , _y()
-  , _rx()
-  , _ry()
 {
   if( !name.isEmpty()  &&  x.size() == y.size()  &&  x.size() > 1 ) {
     _name = name;
@@ -26,14 +25,7 @@ MySignal::MySignal(const QString& name, const QString& unit,
     _x = x;
     _y = y;
   }
-  _rx.initialize();
-  _ry.initialize();
-  for(int i = 0; i < _x.size(); i++) {
-    _rx.update(_x[i]);
-    _ry.update(_y[i]);
-  }
-  _rx.adjust();
-  _ry.adjust();
+  updateRange();
 }
 
 MySignal::~MySignal()
@@ -70,16 +62,6 @@ QPointF MySignal::value(const int i) const
 int MySignal::size() const
 {
   return _x.size();
-}
-
-SimPlotRange MySignal::rangeX() const
-{
-  return _rx;
-}
-
-SimPlotRange MySignal::rangeY() const
-{
-  return _ry;
 }
 
 int MySignal::_count = 0;

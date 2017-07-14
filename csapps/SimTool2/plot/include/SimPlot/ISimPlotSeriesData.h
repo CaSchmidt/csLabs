@@ -40,6 +40,7 @@
 
 class SIM_PLOT_EXPORT ISimPlotSeriesData {
 public:
+  ISimPlotSeriesData();
   virtual ~ISimPlotSeriesData();
 
   bool isEmpty() const;
@@ -52,14 +53,21 @@ public:
   virtual QString name() const = 0;
   virtual QString unit() const = 0;
 
-  virtual qreal valueX(const int i) const = 0;
-  virtual qreal valueY(const int i) const = 0;
+  virtual qreal valueX(const int i) const;
+  virtual qreal valueY(const int i) const;
 
   virtual QPointF value(const int i) const = 0;
   virtual int size() const = 0;
 
-  virtual SimPlotRange rangeX() const = 0;
-  virtual SimPlotRange rangeY() const = 0;
+  virtual SimPlotRange rangeX() const;
+  virtual SimPlotRange rangeY() const;
+
+protected:
+  virtual void updateRange();
+
+private:
+  SimPlotRange _rangeX;
+  SimPlotRange _rangeY;
 };
 
 #endif // __ISIMPLOTSERIESDATA_H__
