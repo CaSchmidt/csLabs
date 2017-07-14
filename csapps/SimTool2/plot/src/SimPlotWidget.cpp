@@ -56,6 +56,7 @@ SimPlotWidget::SimPlotWidget(QWidget *parent, Qt::WindowFlags f)
 {
   _impl = new SinglePlotImpl(SimPlotTheme::themeTextbook(), this);
 
+  setFocusPolicy(Qt::StrongFocus);
   setMouseTracking(true);
 
   initializeContextMenu();
@@ -274,7 +275,7 @@ QAction *SimPlotWidget::createAction(const QString& text,
   addAction(action);
   _contextMenu->addAction(action);
   action->setShortcut(shortcut);
-  action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  action->setShortcutContext(Qt::WidgetShortcut);
   return action;
 }
 
