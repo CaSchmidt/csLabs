@@ -40,7 +40,7 @@ class XTitle;
 
 class SinglePlotImpl : public IPlotImplementation {
 public:
-  SinglePlotImpl(const SimTheme& theme, Widget *widget);
+  SinglePlotImpl(const SimPlotTheme& theme, Widget *widget);
   ~SinglePlotImpl();
 
   QRectF boundingRect() const;
@@ -63,7 +63,7 @@ public:
 
   void setXTitle(const QString& title);
 
-  SimRange rangeX() const;
+  SimPlotRange rangeX() const;
 
   QTransform mapToScreen() const;
 

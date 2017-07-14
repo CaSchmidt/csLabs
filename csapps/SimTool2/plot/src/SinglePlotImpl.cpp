@@ -43,7 +43,7 @@
 
 ////// public ////////////////////////////////////////////////////////////////
 
-SinglePlotImpl::SinglePlotImpl(const SimTheme& theme, Widget *widget)
+SinglePlotImpl::SinglePlotImpl(const SimPlotTheme& theme, Widget *widget)
   : IPlotImplementation(theme)
   , _widget(widget)
   , _rect()
@@ -208,7 +208,7 @@ void SinglePlotImpl::setXTitle(const QString& title)
   _xTitle->setTitle(title);
 }
 
-SimRange SinglePlotImpl::rangeX() const
+SimPlotRange SinglePlotImpl::rangeX() const
 {
   return _row->rangeX();
 }

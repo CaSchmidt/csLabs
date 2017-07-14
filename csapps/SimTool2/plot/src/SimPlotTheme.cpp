@@ -29,11 +29,11 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <SimPlot/SimTheme.h>
+#include <SimPlot/SimPlotTheme.h>
 
 ////// public ////////////////////////////////////////////////////////////////
 
-SimTheme::SimTheme()
+SimPlotTheme::SimPlotTheme()
   : backgroundColor()
   , frameColor()
   , gridColor()
@@ -44,7 +44,7 @@ SimTheme::SimTheme()
 {
 }
 
-QColor SimTheme::nextColor()
+QColor SimPlotTheme::nextColor()
 {
   QColor result = seriesColors[_colorIndex];
   _colorIndex += 1;
@@ -52,48 +52,48 @@ QColor SimTheme::nextColor()
   return result;
 }
 
-QBrush SimTheme::backgroundBrush() const
+QBrush SimPlotTheme::backgroundBrush() const
 {
   return QBrush(backgroundColor, Qt::SolidPattern);
 }
 
-QPen SimTheme::framePen() const
+QPen SimPlotTheme::framePen() const
 {
   return QPen(QBrush(frameColor, Qt::SolidPattern), 1.0,
               Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin);
 }
 
-QPen SimTheme::gridPen() const
+QPen SimPlotTheme::gridPen() const
 {
   return QPen(QBrush(gridColor, Qt::SolidPattern), 1.0,
               Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
 }
 
-QPen SimTheme::rubberPen()
+QPen SimPlotTheme::rubberPen()
 {
   return QPen(QBrush(rubberColor, Qt::SolidPattern), 1.0,
               Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
 }
 
-QPen SimTheme::textPen() const
+QPen SimPlotTheme::textPen() const
 {
   return QPen(QBrush(textColor, Qt::SolidPattern), 0.0);
 }
 
-QPen SimTheme::seriesPen(const QColor& color, const qreal width)
+QPen SimPlotTheme::seriesPen(const QColor& color, const qreal width)
 {
   return QPen(QBrush(color, Qt::SolidPattern), width,
               Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 }
 
-QPen SimTheme::yAxisPen(const QColor& color)
+QPen SimPlotTheme::yAxisPen(const QColor& color)
 {
   return QPen(QBrush(color, Qt::SolidPattern), 0.0);
 }
 
-SimTheme SimTheme::themeTextbook()
+SimPlotTheme SimPlotTheme::themeTextbook()
 {
-  SimTheme result;
+  SimPlotTheme result;
 
   result.backgroundColor = Qt::white;
   result.frameColor      = Qt::black;
@@ -107,9 +107,9 @@ SimTheme SimTheme::themeTextbook()
   return result;
 }
 
-SimTheme SimTheme::themeOscilloscope()
+SimPlotTheme SimPlotTheme::themeOscilloscope()
 {
-  SimTheme result;
+  SimPlotTheme result;
 
   result.backgroundColor = Qt::black;
   result.frameColor      = Qt::white;

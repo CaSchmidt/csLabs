@@ -29,7 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <SimPlot/SimTheme.h>
+#include <SimPlot/SimPlotTheme.h>
 
 #include "internal/Scope.h"
 
@@ -73,11 +73,11 @@ void Scope::paint(QPainter *painter) const
       continue;
     }
 
-    QPen pen = SimTheme::seriesPen(series.color(), 1.0);
+    QPen pen = SimPlotTheme::seriesPen(series.color(), 1.0);
     pen.setCosmetic(true);
     painter->setPen(pen);
 
-    const SimRange rangeY = _row->store().rangeY(series.name());
+    const SimPlotRange rangeY = _row->store().rangeY(series.name());
     const QTransform xform =
         mapToScreen(_rect.size(),
                     _row->rangeX(),
@@ -93,11 +93,11 @@ void Scope::paint(QPainter *painter) const
     painter->resetTransform();
     painter->setClipRect(_rect.adjusted(-1, -1, 1, 1));
 
-    QPen pen = SimTheme::seriesPen(activeSeries.color(), 2.0);
+    QPen pen = SimPlotTheme::seriesPen(activeSeries.color(), 2.0);
     pen.setCosmetic(true);
     painter->setPen(pen);
 
-    const SimRange rangeY = _row->store().rangeY(activeSeries.name());
+    const SimPlotRange rangeY = _row->store().rangeY(activeSeries.name());
     const QTransform xform =
         mapToScreen(_rect.size(),
                     _row->rangeX(),

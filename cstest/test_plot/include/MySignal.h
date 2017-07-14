@@ -22,8 +22,8 @@ public:
   QPointF value(const int i) const;
   int size() const;
 
-  SimRange rangeX() const;
-  SimRange rangeY() const;
+  SimPlotRange rangeX() const;
+  SimPlotRange rangeY() const;
 
   static MySignal *generate(const QString& unit);
   static MySignal *sine(const QString& unit);
@@ -34,8 +34,8 @@ private:
   QString _unit;
   SignalData _x;
   SignalData _y;
-  SimRange _rx;
-  SimRange _ry;
+  SimPlotRange _rx;
+  SimPlotRange _ry;
 };
 
 #endif // __MYSIGNAL_H__

@@ -34,7 +34,7 @@
 ////// Public ////////////////////////////////////////////////////////////////
 
 QTransform mapToScreen(const QSizeF& screen,
-                       const SimRange& viewX, const SimRange& viewY)
+                       const SimPlotRange& viewX, const SimPlotRange& viewY)
 {
   QTransform result;
 
@@ -58,7 +58,7 @@ QTransform mapToScreen(const QSizeF& screen,
 }
 
 QTransform mapToView(const QSizeF& screen,
-                     const SimRange& viewX, const SimRange& viewY,
+                     const SimPlotRange& viewX, const SimPlotRange& viewY,
                      const bool isRelative)
 {
   QTransform result;

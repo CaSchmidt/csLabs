@@ -36,7 +36,7 @@
 #include <QtCore/QString>
 
 #include <SimPlot/simplot_config.h>
-#include <SimPlot/SimRange.h>
+#include <SimPlot/SimPlotRange.h>
 
 class SIM_PLOT_EXPORT ISimPlotSeriesData {
 public:
@@ -58,8 +58,8 @@ public:
   virtual QPointF value(const int i) const = 0;
   virtual int size() const = 0;
 
-  virtual SimRange rangeX() const = 0;
-  virtual SimRange rangeY() const = 0;
+  virtual SimPlotRange rangeX() const = 0;
+  virtual SimPlotRange rangeY() const = 0;
 };
 
 #endif // __ISIMPLOTSERIESDATA_H__

@@ -54,7 +54,7 @@ SimPlotWidget::SimPlotWidget(QWidget *parent, Qt::WindowFlags f)
   , _dragStart()
   , _zoomRect()
 {
-  _impl = new SinglePlotImpl(SimTheme::themeTextbook(), this);
+  _impl = new SinglePlotImpl(SimPlotTheme::themeTextbook(), this);
 
   setMouseTracking(true);
 

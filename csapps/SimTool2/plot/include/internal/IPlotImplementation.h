@@ -35,17 +35,17 @@
 #include <QtGui/QColor>
 
 #include <SimPlot/ISimPlotSeriesData.h>
-#include <SimPlot/SimTheme.h>
+#include <SimPlot/SimPlotTheme.h>
 
 #include "internal/IPlotElement.h"
 
 class IPlotImplementation : public IPlotElement {
 public:
-  IPlotImplementation(const SimTheme& theme);
+  IPlotImplementation(const SimPlotTheme& theme);
   ~IPlotImplementation();
 
-  SimTheme& theme();
-  const SimTheme& theme() const;
+  SimPlotTheme& theme();
+  const SimPlotTheme& theme() const;
 
   virtual bool insert(ISimPlotSeriesData *data, const QColor& color) = 0;
 
@@ -61,7 +61,7 @@ public:
 
   virtual void setXTitle(const QString& title) = 0;
 
-  virtual SimRange rangeX() const = 0;
+  virtual SimPlotRange rangeX() const = 0;
 
   virtual QTransform mapToScreen() const = 0;
 
@@ -81,7 +81,7 @@ public:
   virtual ISimPlotSeriesData *seriesData(const QString& seriesName) = 0;
 
 private:
-  SimTheme _theme;
+  SimPlotTheme _theme;
 };
 
 #endif // __IPLOTIMPLEMENTATION_H__

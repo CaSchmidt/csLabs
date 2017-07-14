@@ -76,9 +76,9 @@ bool SeriesStore::remove(const QString& seriesName)
   return true;
 }
 
-SimRange SeriesStore::rangeX(const QString& seriesName) const
+SimPlotRange SeriesStore::rangeX(const QString& seriesName) const
 {
-  SimRange result;
+  SimPlotRange result;
 
   if( !contains(seriesName) ) {
     return result;
@@ -89,9 +89,9 @@ SimRange SeriesStore::rangeX(const QString& seriesName) const
   return result;
 }
 
-SimRange SeriesStore::rangeY(const QString& seriesName) const
+SimPlotRange SeriesStore::rangeY(const QString& seriesName) const
 {
-  SimRange result;
+  SimPlotRange result;
 
   if( !contains(seriesName) ) {
     return result;
@@ -120,9 +120,9 @@ QString SeriesStore::titleString(const QString& seriesName) const
   return result;
 }
 
-SimRange SeriesStore::totalRangeX() const
+SimPlotRange SeriesStore::totalRangeX() const
 {
-  SimRange result;
+  SimPlotRange result;
 
   for(const Scale& scale : _scales) {
     result.update(scale.rangeX());

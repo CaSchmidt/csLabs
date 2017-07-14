@@ -48,14 +48,14 @@ public:
   bool insert(const QString& seriesName);
   bool remove(const QString& seriesName);
 
-  SimRange rangeX() const;
-  SimRange rangeY() const;
+  SimPlotRange rangeX() const;
+  SimPlotRange rangeY() const;
 
 private:
   void updateRange();
 
-  SimRange _rangeX;
-  SimRange _rangeY;
+  SimPlotRange _rangeX;
+  SimPlotRange _rangeY;
   QSet<QString> _ranges;
   QHash<QString,Series> *_seriesStore;
 };

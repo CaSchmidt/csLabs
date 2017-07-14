@@ -72,11 +72,11 @@ public:
   Series activeSeries() const;
   void setActiveSeries(const QString& seriesName);
 
-  SimRange rangeX() const;
-  SimRange rangeY() const;
+  SimPlotRange rangeX() const;
+  SimPlotRange rangeY() const;
 
-  SimRange viewX() const;
-  SimRange viewY() const;
+  SimPlotRange viewX() const;
+  SimPlotRange viewY() const;
 
   QTransform mapToScreen() const;
 
@@ -97,8 +97,8 @@ private:
   IPlotImplementation *_plot;
   SeriesStore _store;
   QString _activeSeriesName;
-  SimRange _viewX;
-  SimRange _viewY;
+  SimPlotRange _viewX;
+  SimPlotRange _viewY;
 };
 
 #endif // __SCOPEROW_H__

@@ -60,7 +60,7 @@ void YAxis::resize(const QPointF& topLeft, const QSizeF& hint)
   const QFontMetricsF metrics(_row->plot()->widget()->font());
   _rect = QRectF(topLeft, QSizeF(metrics.height(), hint.height()));
 
-  const SimRange rangeY = _row->rangeY();
+  const SimPlotRange rangeY = _row->rangeY();
   if( !rangeY.isValid() ) {
     return;
   }
@@ -76,7 +76,7 @@ void YAxis::paint(QPainter *painter) const
   painter->save();
 
   painter->setFont(_row->plot()->widget()->font());
-  painter->setPen(SimTheme::yAxisPen(_row->activeSeries().color()));
+  painter->setPen(SimPlotTheme::yAxisPen(_row->activeSeries().color()));
 
   const QFontMetricsF metrics(_row->plot()->widget()->font());
   const QTransform xform = _row->mapToScreen();
@@ -111,7 +111,7 @@ void YAxis::updateLabels(const QSizeF& newSize)
   }
 
   const QFontMetricsF metrics(_row->plot()->widget()->font());
-  const SimRange rangeY = _row->rangeY();
+  const SimPlotRange rangeY = _row->rangeY();
 
   _labels.clear();
   _labelsSize.setWidth(0);

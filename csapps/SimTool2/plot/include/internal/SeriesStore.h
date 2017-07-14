@@ -43,12 +43,12 @@ public:
   bool insert(const Series& series);
   bool remove(const QString& seriesName);
 
-  SimRange rangeX(const QString& seriesName) const;
-  SimRange rangeY(const QString& seriesName) const;
+  SimPlotRange rangeX(const QString& seriesName) const;
+  SimPlotRange rangeY(const QString& seriesName) const;
 
   QString titleString(const QString& seriesName) const;
 
-  SimRange totalRangeX() const;
+  SimPlotRange totalRangeX() const;
 
   Series& series(const QString& seriesName);
   const Series& series(const QString& seriesName) const;

@@ -72,12 +72,12 @@ int MySignal::size() const
   return _x.size();
 }
 
-SimRange MySignal::rangeX() const
+SimPlotRange MySignal::rangeX() const
 {
   return _rx;
 }
 
-SimRange MySignal::rangeY() const
+SimPlotRange MySignal::rangeY() const
 {
   return _ry;
 }

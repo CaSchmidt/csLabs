@@ -31,33 +31,33 @@
 
 #include <limits>
 
-#include <SimPlot/SimRange.h>
+#include <SimPlot/SimPlotRange.h>
 
 ////// public ////////////////////////////////////////////////////////////////
 
-SimRange::SimRange()
+SimPlotRange::SimPlotRange()
   : _min()
   , _max()
 {
   initialize();
 }
 
-SimRange::SimRange(const qreal min, const qreal max)
+SimPlotRange::SimPlotRange(const qreal min, const qreal max)
   : _min(min)
   , _max(max)
 {
 }
 
-SimRange::~SimRange()
+SimPlotRange::~SimPlotRange()
 {
 }
 
-bool SimRange::isValid() const
+bool SimPlotRange::isValid() const
 {
   return _min < _max;
 }
 
-void SimRange::adjust()
+void SimPlotRange::adjust()
 {
   if(        _min == _max ) {
     _min -= 0.5;
@@ -68,13 +68,13 @@ void SimRange::adjust()
   }
 }
 
-void SimRange::initialize()
+void SimPlotRange::initialize()
 {
   _min = std::numeric_limits<qreal>::max();
   _max = std::numeric_limits<qreal>::lowest();
 }
 
-void SimRange::update(const qreal value)
+void SimPlotRange::update(const qreal value)
 {
   if( value < _min ) {
     _min = value;
@@ -84,7 +84,7 @@ void SimRange::update(const qreal value)
   }
 }
 
-void SimRange::update(const SimRange& other)
+void SimPlotRange::update(const SimPlotRange& other)
 {
   if( !other.isValid() ) {
     return;
@@ -97,9 +97,9 @@ void SimRange::update(const SimRange& other)
   }
 }
 
-SimRange SimRange::clamped(const SimRange& other, const qreal norm) const
+SimPlotRange SimPlotRange::clamped(const SimPlotRange& other, const qreal norm) const
 {
-  SimRange result;
+  SimPlotRange result;
 
   if( !isValid()  ||  !other.isValid() ) {
     return result;
@@ -116,17 +116,17 @@ SimRange SimRange::clamped(const SimRange& other, const qreal norm) const
   return result;
 }
 
-qreal SimRange::span() const
+qreal SimPlotRange::span() const
 {
   return _max - _min;
 }
 
-qreal SimRange::min() const
+qreal SimPlotRange::min() const
 {
   return _min;
 }
 
-qreal SimRange::max() const
+qreal SimPlotRange::max() const
 {
   return _max;
 }

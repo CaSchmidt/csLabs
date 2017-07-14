@@ -166,22 +166,22 @@ void ScopeRow::setActiveSeries(const QString& seriesName)
   }
 }
 
-SimRange ScopeRow::rangeX() const
+SimPlotRange ScopeRow::rangeX() const
 {
   return _viewX;
 }
 
-SimRange ScopeRow::rangeY() const
+SimPlotRange ScopeRow::rangeY() const
 {
   return _store.rangeY(_activeSeriesName).clamped(_viewY, 100);
 }
 
-SimRange ScopeRow::viewX() const
+SimPlotRange ScopeRow::viewX() const
 {
   return _viewX;
 }
 
-SimRange ScopeRow::viewY() const
+SimPlotRange ScopeRow::viewY() const
 {
   return _viewY;
 }
@@ -263,7 +263,7 @@ void ScopeRow::pan(const QPointF& delta)
 
   // Horizontal
 
-  const SimRange boundsX = _store.totalRangeX();
+  const SimPlotRange boundsX = _store.totalRangeX();
 
   qreal leftX = _viewX.min() - deltaView.x();
   if(        leftX < boundsX.min() ) {
@@ -271,11 +271,11 @@ void ScopeRow::pan(const QPointF& delta)
   } else if( leftX + _viewX.span() > boundsX.max() ) {
     leftX -= leftX + _viewX.span() - boundsX.max();
   }
-  _viewX = SimRange(leftX, leftX + _viewX.span());
+  _viewX = SimPlotRange(leftX, leftX + _viewX.span());
 
   // Vertical
 
-  const SimRange boundsY(0, 100);
+  const SimPlotRange boundsY(0, 100);
 
   qreal bottomY = _viewY.min() + deltaView.y();
   if(        bottomY < boundsY.min() ) {
@@ -283,7 +283,7 @@ void ScopeRow::pan(const QPointF& delta)
   } else if( bottomY + _viewY.span() > boundsY.max() ) {
     bottomY -= bottomY + _viewY.span() - boundsY.max();
   }
-  _viewY = SimRange(bottomY, bottomY + _viewY.span());
+  _viewY = SimPlotRange(bottomY, bottomY + _viewY.span());
 }
 
 ////// private ///////////////////////////////////////////////////////////////

@@ -59,7 +59,7 @@ void XAxis::resize(const QPointF& topLeft, const QSizeF& hint)
   const QFontMetricsF metrics(_plot->widget()->font());
   _rect = QRectF(topLeft, QSizeF(hint.width(), metrics.height()));
 
-  const SimRange rangeX = _plot->rangeX();
+  const SimPlotRange rangeX = _plot->rangeX();
   if( !rangeX.isValid() ) {
     return;
   }
@@ -108,7 +108,7 @@ void XAxis::updateLabels(const QSizeF& newSize)
   }
 
   const QFontMetricsF metrics(_plot->widget()->font());
-  const SimRange rangeX = _plot->rangeX();
+  const SimPlotRange rangeX = _plot->rangeX();
 
   _labels.clear();
   _labelsSize.setWidth(0);

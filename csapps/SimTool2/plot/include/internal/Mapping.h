@@ -35,13 +35,13 @@
 #include <QtCore/QSizeF>
 #include <QtGui/QTransform>
 
-#include <SimPlot/SimRange.h>
+#include <SimPlot/SimPlotRange.h>
 
 QTransform mapToScreen(const QSizeF& screen,
-                       const SimRange& viewX, const SimRange& viewY);
+                       const SimPlotRange& viewX, const SimPlotRange& viewY);
 
 QTransform mapToView(const QSizeF& screen,
-                     const SimRange& viewX, const SimRange& viewY,
+                     const SimPlotRange& viewX, const SimPlotRange& viewY,
                      const bool isRelative = false);
 
 #endif // __MAPPING_H__

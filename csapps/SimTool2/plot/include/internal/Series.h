@@ -51,7 +51,7 @@ public:
   void setColor(const QColor& color);
   SeriesDataPtr data() const;
 
-  QPainterPath path(const SimRange& viewX) const;
+  QPainterPath path(const SimPlotRange& viewX) const;
 
   QString name() const;
   QString unit() const;

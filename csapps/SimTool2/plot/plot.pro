@@ -36,20 +36,18 @@ SOURCES += \
     src/Series.cpp \
     src/SeriesStore.cpp \
     src/SimPlotWidget.cpp \
-    src/SimRange.cpp \
-    src/SimTheme.cpp \
     src/SinglePlotImpl.cpp \
     src/XAxis.cpp \
     src/XTitle.cpp \
     src/YAxis.cpp \
-    src/YTitle.cpp
+    src/YTitle.cpp \
+    src/SimPlotRange.cpp \
+    src/SimPlotTheme.cpp
 
 HEADERS += \
     include/SimPlot/ISimPlotSeriesData.h \
     include/SimPlot/simplot_config.h \
     include/SimPlot/SimPlotWidget.h \
-    include/SimPlot/SimRange.h \
-    include/SimPlot/SimTheme.h \
     include/internal/AxisLabel.h \
     include/internal/IAxisElement.h \
     include/internal/IPlotElement.h \
@@ -66,4 +64,6 @@ HEADERS += \
     include/internal/XAxis.h \
     include/internal/XTitle.h \
     include/internal/YAxis.h \
-    include/internal/YTitle.h
+    include/internal/YTitle.h \
+    include/SimPlot/SimPlotRange.h \
+    include/SimPlot/SimPlotTheme.h

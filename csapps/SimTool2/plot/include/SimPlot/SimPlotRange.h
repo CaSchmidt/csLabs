@@ -29,42 +29,35 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __SIMTHEME_H__
-#define __SIMTHEME_H__
+#ifndef __SIMPLOTRANGE_H__
+#define __SIMPLOTRANGE_H__
 
-#include <QtCore/QVector>
-#include <QtGui/QBrush>
-#include <QtGui/QColor>
-#include <QtGui/QPen>
+#include <QtCore/QtGlobal>
 
 #include <SimPlot/simplot_config.h>
 
-struct SIM_PLOT_EXPORT SimTheme {
-  SimTheme();
+class SIM_PLOT_EXPORT SimPlotRange {
+public:
+  SimPlotRange();
+  SimPlotRange(const qreal min, const qreal max);
+  ~SimPlotRange();
 
-  QColor backgroundColor;
-  QColor frameColor;
-  QColor gridColor;
-  QColor rubberColor;
-  QColor textColor;
-  QVector<QColor> seriesColors;
+  bool isValid() const;
 
-  QColor nextColor();
+  void adjust();
+  void initialize();
+  void update(const qreal value);
+  void update(const SimPlotRange& other);
 
-  QBrush backgroundBrush() const;
-  QPen framePen() const;
-  QPen gridPen() const;
-  QPen rubberPen();
-  QPen textPen() const;
+  SimPlotRange clamped(const SimPlotRange& other, const qreal norm = 1.0) const;
 
-  static QPen seriesPen(const QColor& color, const qreal width = 1.0);
-  static QPen yAxisPen(const QColor& color);
-
-  static SimTheme themeTextbook();
-  static SimTheme themeOscilloscope();
+  qreal min() const;
+  qreal max() const;
+  qreal span() const;
 
 private:
-  int _colorIndex;
+  qreal _min;
+  qreal _max;
 };
 
-#endif // __SIMTHEME_H__
+#endif // __SIMPLOTRANGE_H__

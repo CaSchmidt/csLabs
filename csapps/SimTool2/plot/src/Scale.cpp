@@ -76,12 +76,12 @@ bool Scale::remove(const QString& seriesName)
   return true;
 }
 
-SimRange Scale::rangeX() const
+SimPlotRange Scale::rangeX() const
 {
   return _rangeX;
 }
 
-SimRange Scale::rangeY() const
+SimPlotRange Scale::rangeY() const
 {
   return _rangeY;
 }

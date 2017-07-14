@@ -33,7 +33,7 @@
 
 ////// public ////////////////////////////////////////////////////////////////
 
-IPlotImplementation::IPlotImplementation(const SimTheme& theme)
+IPlotImplementation::IPlotImplementation(const SimPlotTheme& theme)
   : _theme(theme)
 {
 }
@@ -42,12 +42,12 @@ IPlotImplementation::~IPlotImplementation()
 {
 }
 
-SimTheme& IPlotImplementation::theme()
+SimPlotTheme& IPlotImplementation::theme()
 {
   return _theme;
 }
 
-const SimTheme& IPlotImplementation::theme() const
+const SimPlotTheme& IPlotImplementation::theme() const
 {
   return _theme;
 }

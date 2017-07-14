@@ -72,7 +72,7 @@ void YTitle::paint(QPainter *painter) const
   painter->save();
 
   painter->setFont(_row->plot()->widget()->font());
-  painter->setPen(SimTheme::yAxisPen(series.color()));
+  painter->setPen(SimPlotTheme::yAxisPen(series.color()));
 
   const QTransform xform =
       QTransform(0, -1,

@@ -67,7 +67,7 @@ SeriesDataPtr Series::data() const
   return _dataPtr;
 }
 
-QPainterPath Series::path(const SimRange& viewX) const
+QPainterPath Series::path(const SimPlotRange& viewX) const
 {
   QPainterPath result;
 
