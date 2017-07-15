@@ -67,7 +67,7 @@ void YTitle::paint(QPainter *painter) const
   }
 
   const QFontMetricsF metrics(_row->plot()->widget()->font());
-  const Series series = _row->activeSeries();
+  const Series& series = _row->activeSeries();
 
   painter->save();
 

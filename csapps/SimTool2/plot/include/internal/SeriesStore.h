@@ -51,7 +51,7 @@ public:
   SimPlotRange totalRangeX() const;
 
   Series& series(const QString& seriesName);
-  const Series& constSeries(const QString& seriesName) const;
+  const Series& series(const QString& seriesName) const;
 
 private:
   bool addToScales(const QString& seriesName);

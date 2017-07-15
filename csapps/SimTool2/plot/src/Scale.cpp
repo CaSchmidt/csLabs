@@ -96,7 +96,7 @@ void Scale::updateRange()
   _rangeX.initialize();
   _rangeY.initialize();
   for(const QString& seriesName : _ranges) {
-    const SeriesDataPtr data = _seriesStore->value(seriesName).data();
+    const ISimPlotSeriesData *data = _seriesStore->value(seriesName).constData();
     _rangeX.update(data->rangeX());
     _rangeY.update(data->rangeY());
   }

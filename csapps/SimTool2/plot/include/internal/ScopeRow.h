@@ -69,7 +69,7 @@ public:
   SeriesStore& store();
 
   QString activeSeriesName() const;
-  Series activeSeries() const;
+  const Series& activeSeries() const;
   void setActiveSeries(const QString& seriesName);
 
   SimPlotRange rangeX() const;

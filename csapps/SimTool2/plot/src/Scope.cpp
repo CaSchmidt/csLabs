@@ -64,7 +64,7 @@ void Scope::paint(QPainter *painter) const
 
   painter->setBrush(Qt::NoBrush);
 
-  const Series activeSeries = _row->activeSeries();
+  const Series& activeSeries = _row->activeSeries();
 
   painter->resetTransform();
   painter->setClipRect(_rect);

@@ -62,11 +62,6 @@ void Series::setColor(const QColor& color)
   _color = color;
 }
 
-SeriesDataPtr Series::data() const
-{
-  return _dataPtr;
-}
-
 QPainterPath Series::path(const SimPlotRange& viewX) const
 {
   QPainterPath result;
@@ -119,4 +114,14 @@ void Series::setScale(const QString& scaleName)
 void Series::resetScale()
 {
   _scaleName = _dataPtr->unit();
+}
+
+const ISimPlotSeriesData *Series::constData() const
+{
+  return _dataPtr.data();
+}
+
+ISimPlotSeriesData *Series::data()
+{
+  return _dataPtr.data();
 }

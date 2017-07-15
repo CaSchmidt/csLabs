@@ -77,9 +77,6 @@ public:
 
   virtual void setSeriesColor(const QString& seriesName, const QColor& color) = 0;
 
-  virtual const ISimPlotSeriesData *seriesData(const QString& seriesName) const = 0;
-  virtual ISimPlotSeriesData *seriesData(const QString& seriesName) = 0;
-
 private:
   SimPlotTheme _theme;
 };

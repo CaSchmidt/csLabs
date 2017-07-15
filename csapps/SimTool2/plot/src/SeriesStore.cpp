@@ -140,7 +140,7 @@ Series& SeriesStore::series(const QString& seriesName)
   return it.value();
 }
 
-const Series& SeriesStore::constSeries(const QString& seriesName) const
+const Series& SeriesStore::series(const QString& seriesName) const
 {
   QHash<QString,Series>::const_iterator it = constFind(seriesName);
   if( it == constEnd() ) {

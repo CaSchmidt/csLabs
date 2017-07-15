@@ -149,9 +149,9 @@ QString ScopeRow::activeSeriesName() const
   return _activeSeriesName;
 }
 
-Series ScopeRow::activeSeries() const
+const Series& ScopeRow::activeSeries() const
 {
-  return _store.value(_activeSeriesName);
+  return _store.series(_activeSeriesName);
 }
 
 void ScopeRow::setActiveSeries(const QString& seriesName)
@@ -160,7 +160,7 @@ void ScopeRow::setActiveSeries(const QString& seriesName)
     return;
   }
   _activeSeriesName = seriesName;
-  const Series& s = _store.constSeries(_activeSeriesName);
+  const Series& s = _store.series(_activeSeriesName);
   _yTitle->setTitle(SimPlotTheme::titleString(s.name(), s.unit()));
   if( !_activeSeriesName.isEmpty()  &&  !_viewX.isValid() ) {
     _viewX = _store.rangeX(_activeSeriesName);

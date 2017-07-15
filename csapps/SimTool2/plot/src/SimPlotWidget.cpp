@@ -93,16 +93,6 @@ void SimPlotWidget::setSeriesColor(const QString& seriesName, const QColor& colo
   _impl->setSeriesColor(seriesName, color);
 }
 
-const ISimPlotSeriesData *SimPlotWidget::seriesData(const QString& seriesName) const
-{
-  return _impl->seriesData(seriesName);
-}
-
-ISimPlotSeriesData *SimPlotWidget::seriesData(const QString& seriesName)
-{
-  return _impl->seriesData(seriesName);
-}
-
 ////// public slots //////////////////////////////////////////////////////////
 
 void SimPlotWidget::setActiveSeries(const QString& seriesName)

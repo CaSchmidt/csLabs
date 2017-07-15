@@ -49,7 +49,6 @@ public:
 
   QColor color() const;
   void setColor(const QColor& color);
-  SeriesDataPtr data() const;
 
   QPainterPath path(const SimPlotRange& viewX) const;
 
@@ -59,6 +58,9 @@ public:
   QString scale() const;
   void setScale(const QString& scaleName);
   void resetScale();
+
+  const ISimPlotSeriesData *constData() const;
+  ISimPlotSeriesData *data();
 
 private:
   SeriesDataPtr _dataPtr;

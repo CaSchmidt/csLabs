@@ -76,9 +76,6 @@ public:
   QColor seriesColor(const QString& seriesName) const;
   void setSeriesColor(const QString& seriesName, const QColor& color);
 
-  const ISimPlotSeriesData *seriesData(const QString& seriesName) const;
-  ISimPlotSeriesData *seriesData(const QString& seriesName);
-
 private:
   Widget *_widget;
   QRectF _rect;
