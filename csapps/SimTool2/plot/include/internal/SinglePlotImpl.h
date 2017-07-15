@@ -66,6 +66,7 @@ public:
   void setXTitle(const QString& title);
 
   // SimPlotSeriesHandle
+  SimPlotSeriesHandle handle(const QString& name) const;
   SimPlotSeriesHandle insert(ISimPlotSeriesData *data, const QColor& color);
   bool remove(const QString& name);
   const Series& series(const QString& name) const;

@@ -50,6 +50,9 @@ public:
   bool activate();
   bool remove();
 
+  QString name() const;
+  QString unit() const;
+
   QColor color() const;
   void setColor(const QColor& color);
 

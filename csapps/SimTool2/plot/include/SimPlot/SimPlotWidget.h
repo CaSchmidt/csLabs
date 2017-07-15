@@ -47,6 +47,7 @@ public:
   SimPlotWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
   ~SimPlotWidget();
 
+  SimPlotSeriesHandle handle(const QString& name) const;
   SimPlotSeriesHandle insert(ISimPlotSeriesData *data, const QColor& color = QColor());
 
   void setXTitle(const QString& title);

@@ -65,6 +65,7 @@ public:
   virtual void setXTitle(const QString& title) = 0;  
 
   // SimPlotSeriesHandle
+  virtual SimPlotSeriesHandle handle(const QString& name) const = 0;
   virtual SimPlotSeriesHandle insert(ISimPlotSeriesData *data, const QColor& color) = 0;
   virtual bool remove(const QString& name) = 0;
   virtual const Series& series(const QString& name) const = 0;

@@ -73,6 +73,22 @@ bool SimPlotSeriesHandle::remove()
   return result;
 }
 
+QString SimPlotSeriesHandle::name() const
+{
+  if( !isValid() ) {
+    return QString();
+  }
+  return _impl->series(_name).name();
+}
+
+QString SimPlotSeriesHandle::unit() const
+{
+  if( !isValid() ) {
+    return QString();
+  }
+  return _impl->series(_name).unit();
+}
+
 QColor SimPlotSeriesHandle::color() const
 {
   if( !isValid() ) {

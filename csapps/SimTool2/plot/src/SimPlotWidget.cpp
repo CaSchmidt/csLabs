@@ -68,6 +68,11 @@ SimPlotWidget::~SimPlotWidget()
   delete _impl;
 }
 
+SimPlotSeriesHandle SimPlotWidget::handle(const QString& name) const
+{
+  return _impl->handle(name);
+}
+
 SimPlotSeriesHandle SimPlotWidget::insert(ISimPlotSeriesData *data,
                                           const QColor& color)
 {

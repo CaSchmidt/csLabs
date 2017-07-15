@@ -198,6 +198,15 @@ void SinglePlotImpl::setXTitle(const QString& title)
 
 // IPlotImplementation - SimPlotSeriesHandle /////////////////////////////////
 
+SimPlotSeriesHandle SinglePlotImpl::handle(const QString& name) const
+{
+  if( !_row->store().contains(name) ) {
+    return SimPlotSeriesHandle();
+  }
+  const IPlotImplementation *impl = dynamic_cast<const IPlotImplementation*>(this);
+  return SimPlotSeriesHandle(name, const_cast<IPlotImplementation*>(impl));
+}
+
 SimPlotSeriesHandle SinglePlotImpl::insert(ISimPlotSeriesData *data,
                                            const QColor& color)
 {
