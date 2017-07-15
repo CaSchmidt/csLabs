@@ -161,9 +161,13 @@ void ScopeRow::setActiveSeries(const QString& seriesName)
   }
   _activeSeriesName = seriesName;
   const Series& s = _store.series(_activeSeriesName);
-  _yTitle->setTitle(SimPlotTheme::titleString(s.name(), s.unit()));
-  if( !_activeSeriesName.isEmpty()  &&  !_viewX.isValid() ) {
-    _viewX = _store.rangeX(_activeSeriesName);
+  if( !s.isEmpty() ) {
+    _yTitle->setTitle(SimPlotTheme::titleString(s.name(), s.unit()));
+    if( !_activeSeriesName.isEmpty()  &&  !_viewX.isValid() ) {
+      _viewX = _store.rangeX(_activeSeriesName);
+    }
+  } else {
+    _yTitle->setTitle(QString());
   }
 }
 

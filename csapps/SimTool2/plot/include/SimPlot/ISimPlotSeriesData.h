@@ -35,7 +35,6 @@
 #include <QtCore/QPointF>
 #include <QtCore/QString>
 
-#include <SimPlot/simplot_config.h>
 #include <SimPlot/SimPlotRange.h>
 
 class SIM_PLOT_EXPORT ISimPlotSeriesData {

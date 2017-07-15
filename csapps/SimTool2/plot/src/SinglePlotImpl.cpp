@@ -198,16 +198,17 @@ void SinglePlotImpl::setXTitle(const QString& title)
 
 // IPlotImplementation - SimPlotSeriesHandle /////////////////////////////////
 
-bool SinglePlotImpl::insert(ISimPlotSeriesData *data, const QColor& color)
+SimPlotSeriesHandle SinglePlotImpl::insert(ISimPlotSeriesData *data,
+                                           const QColor& color)
 {
   if( data == 0  ||  data->isEmpty() ) {
-    return false;
+    return SimPlotSeriesHandle();
   }
 
   if( !_row->insert(Series(data, color.isValid()
                            ? color
                            : theme().nextColor())) ) {
-    return false;
+    return SimPlotSeriesHandle();
   }
 
   replot();
@@ -216,18 +217,18 @@ bool SinglePlotImpl::insert(ISimPlotSeriesData *data, const QColor& color)
     setActiveSeries(data->name());
   }
 
-  return true;
+  return SimPlotSeriesHandle(data->name(), this);
 }
 
-bool SinglePlotImpl::remove(const QString& seriesName)
+bool SinglePlotImpl::remove(const QString& name)
 {
-  if( !_row->remove(seriesName) ) {
+  if( !_row->remove(name) ) {
     return false;
   }
 
   replot();
 
-  if( seriesName == _row->activeSeriesName() ) {
+  if( name == _row->activeSeriesName() ) {
     QString newActiveSeriesName;
 
     QStringList names = _row->store().keys();
@@ -242,30 +243,22 @@ bool SinglePlotImpl::remove(const QString& seriesName)
   return true;
 }
 
-void SinglePlotImpl::setActiveSeries(const QString& seriesName)
+const Series& SinglePlotImpl::series(const QString& name) const
+{
+  return _row->store().series(name);
+}
+
+Series& SinglePlotImpl::series(const QString& name)
+{
+  return _row->store().series(name);
+}
+
+bool SinglePlotImpl::setActiveSeries(const QString& name)
 {
   const QString oldActiveSeriesName = _row->activeSeriesName();
-  _row->setActiveSeries(seriesName);
+  _row->setActiveSeries(name);
   if( oldActiveSeriesName != _row->activeSeriesName() ) {
     replot();
   }
-}
-
-QColor SinglePlotImpl::seriesColor(const QString& seriesName) const
-{
-  const Series& s = _row->store().series(seriesName);
-  if( s.isEmpty() ) {
-    return QColor();
-  }
-  return s.color();
-}
-
-void SinglePlotImpl::setSeriesColor(const QString& seriesName, const QColor& color)
-{
-  Series& s = _row->store().series(seriesName);
-  if( s.isEmpty() ) {
-    return;
-  }
-  s.setColor(color);
-  replot();
+  return _row->activeSeriesName() == name;
 }

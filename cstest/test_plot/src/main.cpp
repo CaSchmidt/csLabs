@@ -69,23 +69,23 @@ int main(int argc, char **argv)
   plot->show();
   plot->resize(640, 480);
 
-  plot->insert(MySignal::generate(QStringLiteral("V")));
-  plot->insert(MySignal::generate(QStringLiteral("V")));
+  SimPlotSeriesHandle h1 = plot->insert(MySignal::generate(QStringLiteral("V")));
+  SimPlotSeriesHandle h2 = plot->insert(MySignal::generate(QStringLiteral("V")));
 
   ISimPlotSeriesData *sine = MySignal::sine(QString());
   // test_findLeft(sine);
   // test_findRight(sine);
-  plot->insert(sine);
+  SimPlotSeriesHandle h3 = plot->insert(sine);
 
   QFont font = plot->font();
   font.setPointSize(10);
   plot->setFont(font);
 
-  // plot->remove(QStringLiteral("Signal 1"));
-  // plot->remove(QStringLiteral("Signal 2"));
-  // plot->remove(QStringLiteral("Signal 3"));
+  // h1.remove();
+  // h2.remove();
+  // h3.remove();
 
-  // plot->setActiveSeries(QStringLiteral("Signal 3"));
+  // h3.activate();
 
   const int result = app.exec();
   delete plot;

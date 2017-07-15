@@ -34,7 +34,7 @@
 
 #include <QtWidgets/QWidget>
 
-#include <SimPlot/simplot_config.h>
+#include <SimPlot/SimPlotSeriesHandle.h>
 
 class QMenu;
 
@@ -47,13 +47,9 @@ public:
   SimPlotWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
   ~SimPlotWidget();
 
-  bool insert(ISimPlotSeriesData *data, const QColor& color = QColor());
-  bool remove(const QString& seriesName);
+  SimPlotSeriesHandle insert(ISimPlotSeriesData *data, const QColor& color = QColor());
 
   void setXTitle(const QString& title);
-
-  QColor seriesColor(const QString& seriesName) const;
-  void setSeriesColor(const QString& seriesName, const QColor& color);
 
 public slots:
   void setActiveSeries(const QString& seriesName);

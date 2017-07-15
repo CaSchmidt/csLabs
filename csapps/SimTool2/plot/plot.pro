@@ -42,7 +42,8 @@ SOURCES += \
     src/YAxis.cpp \
     src/YTitle.cpp \
     src/SimPlotRange.cpp \
-    src/SimPlotTheme.cpp
+    src/SimPlotTheme.cpp \
+    src/SimPlotSeriesHandle.cpp
 
 HEADERS += \
     include/SimPlot/ISimPlotSeriesData.h \
@@ -66,4 +67,5 @@ HEADERS += \
     include/internal/YAxis.h \
     include/internal/YTitle.h \
     include/SimPlot/SimPlotRange.h \
-    include/SimPlot/SimPlotTheme.h
+    include/SimPlot/SimPlotTheme.h \
+    include/SimPlot/SimPlotSeriesHandle.h

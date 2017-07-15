@@ -29,50 +29,79 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __IPLOTIMPLEMENTATION_H__
-#define __IPLOTIMPLEMENTATION_H__
-
-#include <QtGui/QColor>
-
-#include <SimPlot/ISimPlotSeriesData.h>
 #include <SimPlot/SimPlotSeriesHandle.h>
-#include <SimPlot/SimPlotTheme.h>
 
-#include "internal/IPlotElement.h"
-#include "internal/Series.h"
+#include "internal/IPlotImplementation.h"
 
-class IPlotImplementation : public IPlotElement {
-public:
-  IPlotImplementation(const SimPlotTheme& theme);
-  ~IPlotImplementation();
+////// public ////////////////////////////////////////////////////////////////
 
-  // SimPlotTheme
-  SimPlotTheme& theme();
-  const SimPlotTheme& theme() const;
+SimPlotSeriesHandle::SimPlotSeriesHandle(const QString& name,
+                                         IPlotImplementation *impl)
+  : _impl(impl)
+  , _name(name)
+{
+}
 
-  // Viewport
-  virtual void replot() = 0;
-  virtual void reset() = 0;
-  virtual void pan(const QPointF& delta) = 0;
-  virtual void rectangularZoom(const QRectF& zoomRect) = 0;
-  virtual void horizontalZoom(const QRectF& zoomRect) = 0;
-  virtual void verticalZoom(const QRectF& zoomRect) = 0;
-  virtual const Widget *widget() const = 0;
+SimPlotSeriesHandle::~SimPlotSeriesHandle()
+{
+}
 
-  // X-Axis
-  virtual QTransform mapToScreenX() const = 0;
-  virtual SimPlotRange rangeX() const = 0;
-  virtual void setXTitle(const QString& title) = 0;  
+bool SimPlotSeriesHandle::isValid() const
+{
+  return
+      !_name.isEmpty()  &&
+      _impl != 0        &&
+      !_impl->series(_name).isEmpty();
+}
 
-  // SimPlotSeriesHandle
-  virtual SimPlotSeriesHandle insert(ISimPlotSeriesData *data, const QColor& color) = 0;
-  virtual bool remove(const QString& name) = 0;
-  virtual const Series& series(const QString& name) const = 0;
-  virtual Series& series(const QString& name) = 0;
-  virtual bool setActiveSeries(const QString& name) = 0;
+bool SimPlotSeriesHandle::activate()
+{
+  if( !isValid() ) {
+    return false;
+  }
+  return _impl->setActiveSeries(_name);
+}
 
-private:
-  SimPlotTheme _theme;
-};
+bool SimPlotSeriesHandle::remove()
+{
+  if( !isValid() ) {
+    return false;
+  }
+  const bool result = _impl->remove(_name);
+  _name.clear();
+  _impl = 0;
+  return result;
+}
 
-#endif // __IPLOTIMPLEMENTATION_H__
+QColor SimPlotSeriesHandle::color() const
+{
+  if( !isValid() ) {
+    return QColor();
+  }
+  return _impl->series(_name).color();
+}
+
+void SimPlotSeriesHandle::setColor(const QColor& color)
+{
+  if( !isValid()  ||  !color.isValid() ) {
+    return;
+  }
+  _impl->series(_name).setColor(color);
+  _impl->replot();
+}
+
+const ISimPlotSeriesData *SimPlotSeriesHandle::constData() const
+{
+  if( !isValid() ) {
+    return 0;
+  }
+  return _impl->series(_name).constData();
+}
+
+ISimPlotSeriesData *SimPlotSeriesHandle::data()
+{
+  if( !isValid() ) {
+    return 0;
+  }
+  return _impl->series(_name).data();
+}

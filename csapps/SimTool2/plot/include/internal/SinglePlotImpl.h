@@ -66,11 +66,11 @@ public:
   void setXTitle(const QString& title);
 
   // SimPlotSeriesHandle
-  bool insert(ISimPlotSeriesData *data, const QColor& color);
-  bool remove(const QString& seriesName);
-  void setActiveSeries(const QString& seriesName);
-  QColor seriesColor(const QString& seriesName) const;
-  void setSeriesColor(const QString& seriesName, const QColor& color);
+  SimPlotSeriesHandle insert(ISimPlotSeriesData *data, const QColor& color);
+  bool remove(const QString& name);
+  const Series& series(const QString& name) const;
+  Series& series(const QString& name);
+  bool setActiveSeries(const QString& name);
 
 private:
   Widget *_widget;

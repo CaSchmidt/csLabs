@@ -29,50 +29,36 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __IPLOTIMPLEMENTATION_H__
-#define __IPLOTIMPLEMENTATION_H__
+#ifndef __SIMPLOTSERIESHANDLE_H__
+#define __SIMPLOTSERIESHANDLE_H__
 
+#include <QtCore/QString>
 #include <QtGui/QColor>
 
 #include <SimPlot/ISimPlotSeriesData.h>
-#include <SimPlot/SimPlotSeriesHandle.h>
-#include <SimPlot/SimPlotTheme.h>
 
-#include "internal/IPlotElement.h"
-#include "internal/Series.h"
+class IPlotImplementation;
 
-class IPlotImplementation : public IPlotElement {
+class SIM_PLOT_EXPORT SimPlotSeriesHandle {
 public:
-  IPlotImplementation(const SimPlotTheme& theme);
-  ~IPlotImplementation();
+  SimPlotSeriesHandle(const QString& name = QString(),
+                      IPlotImplementation *impl = 0);
+  ~SimPlotSeriesHandle();
 
-  // SimPlotTheme
-  SimPlotTheme& theme();
-  const SimPlotTheme& theme() const;
+  bool isValid() const;
 
-  // Viewport
-  virtual void replot() = 0;
-  virtual void reset() = 0;
-  virtual void pan(const QPointF& delta) = 0;
-  virtual void rectangularZoom(const QRectF& zoomRect) = 0;
-  virtual void horizontalZoom(const QRectF& zoomRect) = 0;
-  virtual void verticalZoom(const QRectF& zoomRect) = 0;
-  virtual const Widget *widget() const = 0;
+  bool activate();
+  bool remove();
 
-  // X-Axis
-  virtual QTransform mapToScreenX() const = 0;
-  virtual SimPlotRange rangeX() const = 0;
-  virtual void setXTitle(const QString& title) = 0;  
+  QColor color() const;
+  void setColor(const QColor& color);
 
-  // SimPlotSeriesHandle
-  virtual SimPlotSeriesHandle insert(ISimPlotSeriesData *data, const QColor& color) = 0;
-  virtual bool remove(const QString& name) = 0;
-  virtual const Series& series(const QString& name) const = 0;
-  virtual Series& series(const QString& name) = 0;
-  virtual bool setActiveSeries(const QString& name) = 0;
+  const ISimPlotSeriesData *constData() const;
+  ISimPlotSeriesData *data();
 
 private:
-  SimPlotTheme _theme;
+  IPlotImplementation *_impl;
+  QString _name;
 };
 
-#endif // __IPLOTIMPLEMENTATION_H__
+#endif // __SIMPLOTSERIESHANDLE_H__

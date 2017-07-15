@@ -68,29 +68,15 @@ SimPlotWidget::~SimPlotWidget()
   delete _impl;
 }
 
-bool SimPlotWidget::insert(ISimPlotSeriesData *data, const QColor& color)
+SimPlotSeriesHandle SimPlotWidget::insert(ISimPlotSeriesData *data,
+                                          const QColor& color)
 {
   return _impl->insert(data, color);
-}
-
-bool SimPlotWidget::remove(const QString& seriesName)
-{
-  return _impl->remove(seriesName);
 }
 
 void SimPlotWidget::setXTitle(const QString& title)
 {
   _impl->setXTitle(title);
-}
-
-QColor SimPlotWidget::seriesColor(const QString& seriesName) const
-{
-  return _impl->seriesColor(seriesName);
-}
-
-void SimPlotWidget::setSeriesColor(const QString& seriesName, const QColor& color)
-{
-  _impl->setSeriesColor(seriesName, color);
 }
 
 ////// public slots //////////////////////////////////////////////////////////
