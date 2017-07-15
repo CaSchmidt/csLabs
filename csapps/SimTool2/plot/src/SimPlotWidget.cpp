@@ -142,7 +142,7 @@ void SimPlotWidget::changeEvent(QEvent *event)
 {
   QWidget::changeEvent(event);
   if( event->type() == QEvent::FontChange ) {
-    _impl->update();
+    _impl->replot();
   }
 }
 

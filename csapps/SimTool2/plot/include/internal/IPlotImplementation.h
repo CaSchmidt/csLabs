@@ -44,37 +44,29 @@ public:
   IPlotImplementation(const SimPlotTheme& theme);
   ~IPlotImplementation();
 
+  // SimPlotTheme
   SimPlotTheme& theme();
   const SimPlotTheme& theme() const;
 
-  virtual bool insert(ISimPlotSeriesData *data, const QColor& color) = 0;
-
-  virtual bool remove(const QString& seriesName) = 0;
-
+  // Viewport
+  virtual void replot() = 0;
+  virtual void reset() = 0;
+  virtual void pan(const QPointF& delta) = 0;
+  virtual void rectangularZoom(const QRectF& zoomRect) = 0;
+  virtual void horizontalZoom(const QRectF& zoomRect) = 0;
+  virtual void verticalZoom(const QRectF& zoomRect) = 0;
   virtual const Widget *widget() const = 0;
 
-  virtual void reset() = 0;
-
-  virtual void update() = 0;
-
-  virtual void setActiveSeries(const QString& seriesName) = 0;
-
-  virtual void setXTitle(const QString& title) = 0;
-
+  // X-Axis
+  virtual QTransform mapToScreenX() const = 0;
   virtual SimPlotRange rangeX() const = 0;
+  virtual void setXTitle(const QString& title) = 0;  
 
-  virtual QTransform mapToScreen() const = 0;
-
-  virtual void rectangularZoom(const QRectF& zoomRect) = 0;
-
-  virtual void horizontalZoom(const QRectF& zoomRect) = 0;
-
-  virtual void verticalZoom(const QRectF& zoomRect) = 0;
-
-  virtual void pan(const QPointF& delta) = 0;
-
+  // SimPlotSeriesHandle
+  virtual bool insert(ISimPlotSeriesData *data, const QColor& color) = 0;
+  virtual bool remove(const QString& seriesName) = 0;
+  virtual void setActiveSeries(const QString& seriesName) = 0;
   virtual QColor seriesColor(const QString& seriesName) const = 0;
-
   virtual void setSeriesColor(const QString& seriesName, const QColor& color) = 0;
 
 private:

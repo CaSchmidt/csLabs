@@ -43,36 +43,32 @@ public:
   SinglePlotImpl(const SimPlotTheme& theme, Widget *widget);
   ~SinglePlotImpl();
 
+  // IPlotElement ////////////////////////////////////////////////////////////
+
   QRectF boundingRect() const;
-
   void resize(const QPointF& topLeft, const QSizeF& hint);
-
   void paint(QPainter *painter) const;
 
-  bool insert(ISimPlotSeriesData *data, const QColor& color);
+  // IPlotImplementation /////////////////////////////////////////////////////
 
-  bool remove(const QString& seriesName);
-
-  const Widget *widget() const;
-
+  // Viewport
+  void replot();
   void reset();
-
-  void update();
-
-  void setActiveSeries(const QString& seriesName);
-
-  void setXTitle(const QString& title);
-
-  SimPlotRange rangeX() const;
-
-  QTransform mapToScreen() const;
-
+  void pan(const QPointF& delta);
   void rectangularZoom(const QRectF& zoomRect);
   void horizontalZoom(const QRectF& zoomRect);
   void verticalZoom(const QRectF& zoomRect);
+  const Widget *widget() const;
 
-  void pan(const QPointF& delta);
+  // X-Axis
+  QTransform mapToScreenX() const;
+  SimPlotRange rangeX() const;
+  void setXTitle(const QString& title);
 
+  // SimPlotSeriesHandle
+  bool insert(ISimPlotSeriesData *data, const QColor& color);
+  bool remove(const QString& seriesName);
+  void setActiveSeries(const QString& seriesName);
   QColor seriesColor(const QString& seriesName) const;
   void setSeriesColor(const QString& seriesName, const QColor& color);
 

@@ -63,6 +63,8 @@ SinglePlotImpl::~SinglePlotImpl()
   delete _xTitle;
 }
 
+// IPlotElement //////////////////////////////////////////////////////////////
+
 QRectF SinglePlotImpl::boundingRect() const
 {
   return _row->boundingRect() |
@@ -131,6 +133,71 @@ void SinglePlotImpl::paint(QPainter *painter) const
   _xTitle->paint(painter);
 }
 
+// IPlotImplementation - Viewport ////////////////////////////////////////////
+
+void SinglePlotImpl::replot()
+{
+  _xAxis->clearLabels();
+  _row->yAxis()->clearLabels();
+  resize(_rect.topLeft(), _rect.size());
+  QMetaObject::invokeMethod(_widget, "update", Qt::QueuedConnection);
+}
+
+void SinglePlotImpl::reset()
+{
+  _row->resetView();
+  replot();
+}
+
+void SinglePlotImpl::pan(const QPointF& delta)
+{
+  _row->pan(delta);
+  replot();
+}
+
+void SinglePlotImpl::rectangularZoom(const QRectF& zoomRect)
+{
+  _row->rectangularZoom(zoomRect);
+  replot();
+}
+
+void SinglePlotImpl::horizontalZoom(const QRectF& zoomRect)
+{
+  _row->horizontalZoom(zoomRect);
+  replot();
+}
+
+void SinglePlotImpl::verticalZoom(const QRectF& zoomRect)
+{
+  _row->verticalZoom(zoomRect);
+  replot();
+}
+
+const Widget *SinglePlotImpl::widget() const
+{
+  return _widget;
+}
+
+// IPlotImplementation - X-Axis //////////////////////////////////////////////
+
+QTransform SinglePlotImpl::mapToScreenX() const
+{
+  return _row->mapToScreen();
+}
+
+SimPlotRange SinglePlotImpl::rangeX() const
+{
+  return _row->rangeX();
+}
+
+void SinglePlotImpl::setXTitle(const QString& title)
+{
+  _xTitle->setTitle(title);
+  replot();
+}
+
+// IPlotImplementation - SimPlotSeriesHandle /////////////////////////////////
+
 bool SinglePlotImpl::insert(ISimPlotSeriesData *data, const QColor& color)
 {
   if( data == 0  ||  data->isEmpty() ) {
@@ -143,7 +210,7 @@ bool SinglePlotImpl::insert(ISimPlotSeriesData *data, const QColor& color)
     return false;
   }
 
-  update();
+  replot();
 
   if( _row->activeSeriesName().isEmpty() ) {
     setActiveSeries(data->name());
@@ -158,7 +225,7 @@ bool SinglePlotImpl::remove(const QString& seriesName)
     return false;
   }
 
-  update();
+  replot();
 
   if( seriesName == _row->activeSeriesName() ) {
     QString newActiveSeriesName;
@@ -175,71 +242,13 @@ bool SinglePlotImpl::remove(const QString& seriesName)
   return true;
 }
 
-const Widget *SinglePlotImpl::widget() const
-{
-  return _widget;
-}
-
-void SinglePlotImpl::reset()
-{
-  _row->resetView();
-  update();
-}
-
-void SinglePlotImpl::update()
-{
-  _xAxis->clearLabels();
-  _row->yAxis()->clearLabels();
-  resize(_rect.topLeft(), _rect.size());
-  _widget->update();
-}
-
 void SinglePlotImpl::setActiveSeries(const QString& seriesName)
 {
   const QString oldActiveSeriesName = _row->activeSeriesName();
   _row->setActiveSeries(seriesName);
   if( oldActiveSeriesName != _row->activeSeriesName() ) {
-    update();
+    replot();
   }
-}
-
-void SinglePlotImpl::setXTitle(const QString& title)
-{
-  _xTitle->setTitle(title);
-}
-
-SimPlotRange SinglePlotImpl::rangeX() const
-{
-  return _row->rangeX();
-}
-
-QTransform SinglePlotImpl::mapToScreen() const
-{
-  return _row->mapToScreen();
-}
-
-void SinglePlotImpl::rectangularZoom(const QRectF& zoomRect)
-{
-  _row->rectangularZoom(zoomRect);
-  update();
-}
-
-void SinglePlotImpl::horizontalZoom(const QRectF& zoomRect)
-{
-  _row->horizontalZoom(zoomRect);
-  update();
-}
-
-void SinglePlotImpl::verticalZoom(const QRectF& zoomRect)
-{
-  _row->verticalZoom(zoomRect);
-  update();
-}
-
-void SinglePlotImpl::pan(const QPointF& delta)
-{
-  _row->pan(delta);
-  update();
 }
 
 QColor SinglePlotImpl::seriesColor(const QString& seriesName) const
@@ -258,5 +267,5 @@ void SinglePlotImpl::setSeriesColor(const QString& seriesName, const QColor& col
     return;
   }
   s.setColor(color);
-  update();
+  replot();
 }
