@@ -32,6 +32,7 @@
 #include <SimPlot/SimPlotSeriesHandle.h>
 
 #include "internal/IPlotImplementation.h"
+#include "internal/Series.h"
 
 ////// public ////////////////////////////////////////////////////////////////
 

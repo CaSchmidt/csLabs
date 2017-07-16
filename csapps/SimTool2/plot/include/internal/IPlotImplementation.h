@@ -39,7 +39,8 @@
 #include <SimPlot/SimPlotTheme.h>
 
 #include "internal/IPlotElement.h"
-#include "internal/Series.h"
+
+class Series;
 
 class IPlotImplementation : public IPlotElement {
 public:
