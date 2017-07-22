@@ -82,8 +82,9 @@ void ScopeRow::resize(const QPointF& topLeft, const QSizeF& hint)
   _yAxis->resize(_yTitle->topRight() + QPointF(LAYOUT_SPACING, 0),
                  hint);
   _scope->resize(_yAxis->topRight() + QPointF(LAYOUT_SPACING, 0),
-                 QSizeF(hint.width() - 2.0*LAYOUT_SPACING
-                        - _yTitle->size().width() - _yAxis->size().width(),
+                 QSizeF(qMax(LAYOUT_MIN_SCOPE_WIDTH,
+                             hint.width() - 2.0*LAYOUT_SPACING
+                             - _yTitle->size().width() - _yAxis->size().width()),
                         hint.height()));
 }
 

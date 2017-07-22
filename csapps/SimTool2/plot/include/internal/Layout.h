@@ -36,4 +36,7 @@
 
 #define LAYOUT_SPACING  4.0
 
+#define LAYOUT_MIN_SCOPE_WIDTH   200.0
+#define LAYOUT_MIN_SCOPE_HEIGHT  200.0
+
 #endif // __LAYOUT_H__

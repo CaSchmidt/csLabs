@@ -82,9 +82,11 @@ void SinglePlotImpl::resize(const QPointF& topLeft, const QSizeF& hint)
 
   const qreal rowWidth  = hint.width()
       - 2.0*LAYOUT_MARGIN;
-  const qreal rowHeight = hint.height()
-      - 2.0*LAYOUT_MARGIN - 2.0*LAYOUT_SPACING
-      - 2.0*metrics.height();
+  const qreal rowHeight =
+      qMax(LAYOUT_MIN_SCOPE_HEIGHT,
+           hint.height()
+           - 2.0*LAYOUT_MARGIN - 2.0*LAYOUT_SPACING
+           - 2.0*metrics.height());
   _row->resize(QPointF(LAYOUT_MARGIN, LAYOUT_MARGIN),
                QSizeF(rowWidth, rowHeight));
 
