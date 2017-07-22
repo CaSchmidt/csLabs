@@ -64,6 +64,7 @@ public slots:
 protected:
   void changeEvent(QEvent *event);
   void contextMenuEvent(QContextMenuEvent *event);
+  void enterEvent(QEvent *event);
   void focusOutEvent(QFocusEvent *event);
   void leaveEvent(QEvent *event);
   void mouseMoveEvent(QMouseEvent *event);

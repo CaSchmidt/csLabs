@@ -143,6 +143,12 @@ void SimPlotWidget::contextMenuEvent(QContextMenuEvent *event)
   event->accept();
 }
 
+void SimPlotWidget::enterEvent(QEvent *event)
+{
+  setFocus();
+  QWidget::enterEvent(event);
+}
+
 void SimPlotWidget::focusOutEvent(QFocusEvent *event)
 {
   initializeCursor();
