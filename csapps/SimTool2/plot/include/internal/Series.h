@@ -34,9 +34,10 @@
 
 #include <QtCore/QSharedPointer>
 #include <QtGui/QColor>
-#include <QtGui/QPainterPath>
 
 #include <SimPlot/ISimPlotSeriesData.h>
+
+class QPainter;
 
 typedef QSharedPointer<ISimPlotSeriesData> SeriesDataPtr;
 
@@ -50,7 +51,7 @@ public:
   QColor color() const;
   void setColor(const QColor& color);
 
-  QPainterPath path(const SimPlotRange& viewX) const;
+  void draw(QPainter *painter, const SimPlotRange& viewX) const;
 
   QString name() const;
   QString unit() const;

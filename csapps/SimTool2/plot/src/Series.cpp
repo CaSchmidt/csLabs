@@ -29,6 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <QtGui/QPainter>
+
 #include "internal/Series.h"
 
 ////// public ////////////////////////////////////////////////////////////////
@@ -62,14 +64,12 @@ void Series::setColor(const QColor& color)
   _color = color;
 }
 
-QPainterPath Series::path(const SimPlotRange& viewX) const
+void Series::draw(QPainter *painter, const SimPlotRange& viewX) const
 {
-  QPainterPath result;
-
   if( !viewX.isValid()  ||
       viewX.min() >= _dataPtr->rangeX().max()  ||
       viewX.max() <= _dataPtr->rangeX().min() ) {
-    return result;
+    return;
   }
 
   const int L = _dataPtr->findLeft(viewX.min()) >= 0
@@ -80,15 +80,31 @@ QPainterPath Series::path(const SimPlotRange& viewX) const
       : _dataPtr->size() - 1;
 
   if( L >= R ) {
-    return result;
+    return;
   }
 
-  result.moveTo(_dataPtr->value(L));
-  for(int i = L + 1; i <= R; i++) {
-    result.lineTo(_dataPtr->value(i));
+  const int Lines = 32;
+  QPointF points[Lines+1];
+
+  int i = L;
+  points[0] = _dataPtr->value(i);
+  while( i + Lines <= R ) {
+    _dataPtr->values(&points[1], i+1, i+Lines);
+
+    painter->drawPolyline(points, Lines+1);
+
+    points[0] = points[Lines];
+    i += Lines;
   }
 
-  return result;
+  QPointF p0 = points[0];
+  for(; i < R; i++) {
+    const QPointF p1 = _dataPtr->value(i+1);
+
+    painter->drawLine(p0, p1);
+
+    p0 = p1;
+  }
 }
 
 QString Series::name() const

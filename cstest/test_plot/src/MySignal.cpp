@@ -54,6 +54,13 @@ qreal MySignal::valueY(const int i) const
   return _y[i];
 }
 
+void MySignal::values(QPointF *points, const int L, const int R) const
+{
+  for(int i = L; i <= R; i++) {
+    *points++ = QPointF(_x[i], _y[i]);
+  }
+}
+
 QPointF MySignal::value(const int i) const
 {
   return QPointF(_x[i], _y[i]);

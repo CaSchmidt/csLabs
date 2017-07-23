@@ -96,6 +96,13 @@ qreal ISimPlotSeriesData::valueY(const int i) const
   return value(i).y();
 }
 
+void ISimPlotSeriesData::values(QPointF *points, const int L, const int R) const
+{
+  for(int i = L; i <= R; i++) {
+    *points++ = value(i);
+  }
+}
+
 SimPlotRange ISimPlotSeriesData::rangeX() const
 {
   return _rangeX;

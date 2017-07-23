@@ -19,6 +19,8 @@ public:
   qreal valueX(const int i) const;
   qreal valueY(const int i) const;
 
+  void values(QPointF *points, const int L, const int R) const;
+
   QPointF value(const int i) const;
   int size() const;
 

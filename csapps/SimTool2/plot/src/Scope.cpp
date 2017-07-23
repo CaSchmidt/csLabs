@@ -69,7 +69,7 @@ void Scope::paint(QPainter *painter) const
   painter->resetTransform();
   painter->setClipRect(_rect);
   for(const Series& series : _row->store()) {
-    if( series == activeSeries  ||  series.isEmpty() ) {
+    if( series.isEmpty()  ||  series == activeSeries ) {
       continue;
     }
 
@@ -86,7 +86,7 @@ void Scope::paint(QPainter *painter) const
                                   _rect.topLeft().y());
     painter->setTransform(xform);
 
-    painter->drawPath(series.path(_row->rangeX()));
+    series.draw(painter, _row->rangeX());
   }
 
   if( !activeSeries.isEmpty() ) {
@@ -106,7 +106,7 @@ void Scope::paint(QPainter *painter) const
                                   _rect.topLeft().y());
     painter->setTransform(xform);
 
-    painter->drawPath(activeSeries.path(_row->rangeX()));
+    activeSeries.draw(painter, _row->rangeX());
   }
 
   painter->restore();

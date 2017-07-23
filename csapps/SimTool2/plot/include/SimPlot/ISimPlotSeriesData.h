@@ -55,6 +55,9 @@ public:
   virtual qreal valueX(const int i) const;
   virtual qreal valueY(const int i) const;
 
+  // NOTE: QPointF points[R - L + 1] required!
+  virtual void values(QPointF *points, const int L, const int R) const;
+
   virtual QPointF value(const int i) const = 0;
   virtual int size() const = 0;
 
