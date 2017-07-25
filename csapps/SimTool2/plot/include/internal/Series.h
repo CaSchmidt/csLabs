@@ -51,8 +51,6 @@ public:
   QColor color() const;
   void setColor(const QColor& color);
 
-  void draw(QPainter *painter, const SimPlotRange& viewX) const;
-
   QString name() const;
   QString unit() const;
 

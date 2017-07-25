@@ -64,49 +64,6 @@ void Series::setColor(const QColor& color)
   _color = color;
 }
 
-void Series::draw(QPainter *painter, const SimPlotRange& viewX) const
-{
-  if( !viewX.isValid()  ||
-      viewX.min() >= _dataPtr->rangeX().max()  ||
-      viewX.max() <= _dataPtr->rangeX().min() ) {
-    return;
-  }
-
-  const int L = _dataPtr->findLeft(viewX.min()) >= 0
-      ? _dataPtr->findLeft(viewX.min())
-      : 0;
-  const int R = _dataPtr->findRight(viewX.max()) >= 0
-      ? _dataPtr->findRight(viewX.max())
-      : _dataPtr->size() - 1;
-
-  if( L >= R ) {
-    return;
-  }
-
-  const int Lines = 32;
-  QPointF points[Lines+1];
-
-  int i = L;
-  points[0] = _dataPtr->value(i);
-  while( i + Lines <= R ) {
-    _dataPtr->values(&points[1], i+1, i+Lines);
-
-    painter->drawPolyline(points, Lines+1);
-
-    points[0] = points[Lines];
-    i += Lines;
-  }
-
-  QPointF p0 = points[0];
-  for(; i < R; i++) {
-    const QPointF p1 = _dataPtr->value(i+1);
-
-    painter->drawLine(p0, p1);
-
-    p0 = p1;
-  }
-}
-
 QString Series::name() const
 {
   return _dataPtr->name();

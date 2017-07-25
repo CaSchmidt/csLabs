@@ -37,6 +37,8 @@
 
 #include <SimPlot/SimPlotRange.h>
 
+class QPainter;
+
 class SIM_PLOT_EXPORT ISimPlotSeriesData {
 public:
   ISimPlotSeriesData();
@@ -49,17 +51,20 @@ public:
   // Returns i := x[i-1] <  x  &&  x <= x[i]
   int findRight(const qreal x) const;
 
+  void drawLines(QPainter *painter, const int L, const int R) const;
+  void drawSteps(QPainter *painter, const int L, const int R) const;
+
   virtual QString name() const = 0;
   virtual QString unit() const = 0;
+
+  virtual QPointF value(const int i) const = 0;
+  virtual int size() const = 0;
 
   virtual qreal valueX(const int i) const;
   virtual qreal valueY(const int i) const;
 
   // NOTE: QPointF points[R - L + 1] required!
   virtual void values(QPointF *points, const int L, const int R) const;
-
-  virtual QPointF value(const int i) const = 0;
-  virtual int size() const = 0;
 
   virtual SimPlotRange rangeX() const;
   virtual SimPlotRange rangeY() const;

@@ -72,42 +72,54 @@ void Scope::paint(QPainter *painter) const
     if( series.isEmpty()  ||  series == activeSeries ) {
       continue;
     }
-
-    QPen pen = SimPlotTheme::seriesPen(series.color(), 1.0);
-    pen.setCosmetic(true);
-    painter->setPen(pen);
-
-    const SimPlotRange rangeY = _row->store().rangeY(series.name());
-    const QTransform xform =
-        mapToScreen(_rect.size(),
-                    _row->rangeX(),
-                    rangeY.clamped(_row->viewY(), 100)) *
-        QTransform::fromTranslate(_rect.topLeft().x(),
-                                  _rect.topLeft().y());
-    painter->setTransform(xform);
-
-    series.draw(painter, _row->rangeX());
+    draw(painter, series);
   }
 
   if( !activeSeries.isEmpty() ) {
     painter->resetTransform();
     painter->setClipRect(_rect.adjusted(-1, -1, 1, 1));
-
-    QPen pen = SimPlotTheme::seriesPen(activeSeries.color(), 2.0);
-    pen.setCosmetic(true);
-    painter->setPen(pen);
-
-    const SimPlotRange rangeY = _row->store().rangeY(activeSeries.name());
-    const QTransform xform =
-        mapToScreen(_rect.size(),
-                    _row->rangeX(),
-                    rangeY.clamped(_row->viewY(), 100)) *
-        QTransform::fromTranslate(_rect.topLeft().x(),
-                                  _rect.topLeft().y());
-    painter->setTransform(xform);
-
-    activeSeries.draw(painter, _row->rangeX());
+    draw(painter, activeSeries, true);
   }
 
   painter->restore();
+}
+
+////// private ///////////////////////////////////////////////////////////////
+
+void Scope::draw(QPainter *painter, const Series& series,
+                 const bool isActive) const
+{
+  QPen pen = SimPlotTheme::seriesPen(series.color(), isActive ? 2.0 : 1.0);
+  pen.setCosmetic(true);
+  painter->setPen(pen);
+
+  const SimPlotRange rangeY = _row->store().rangeY(series.name());
+  const QTransform xform =
+      mapToScreen(_rect.size(),
+                  _row->rangeX(),
+                  rangeY.clamped(_row->viewY(), 100)) *
+      QTransform::fromTranslate(_rect.topLeft().x(),
+                                _rect.topLeft().y());
+  painter->setTransform(xform);
+
+  const ISimPlotSeriesData *data = series.constData();
+
+  if( !_row->viewX().isValid()  ||
+      _row->viewX().min() >= data->rangeX().max()  ||
+      _row->viewX().max() <= data->rangeX().min() ) {
+    return;
+  }
+
+  const int L = data->findLeft(_row->viewX().min()) >= 0
+      ? data->findLeft(_row->viewX().min())
+      : 0;
+  const int R = data->findRight(_row->viewX().max()) >= 0
+      ? data->findRight(_row->viewX().max())
+      : data->size() - 1;
+
+  if( L >= R ) {
+    return;
+  }
+
+  data->drawLines(painter, L, R);
 }

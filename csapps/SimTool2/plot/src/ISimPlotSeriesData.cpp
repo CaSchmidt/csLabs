@@ -29,6 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <QtGui/QPainter>
+
 #include <SimPlot/ISimPlotSeriesData.h>
 
 ////// public ////////////////////////////////////////////////////////////////
@@ -84,6 +86,58 @@ int ISimPlotSeriesData::findRight(const qreal x) const
   }
 
   return -1;
+}
+
+void ISimPlotSeriesData::drawLines(QPainter *painter,
+                                   const int L, const int R) const
+{
+  const int Lines = 32;
+  QPointF points[Lines+1];
+
+  int i = L;
+  points[0] = value(i);
+  while( i + Lines <= R ) {
+    values(&points[1], i+1, i+Lines);
+    painter->drawPolyline(points, Lines+1);
+    points[0] = points[Lines];
+    i += Lines;
+  }
+
+  const int remain = R - i + 1; // Remaining Points!
+  if( remain > 1 ) {
+    values(&points[1], i+1, R);
+    painter->drawPolyline(points, remain);
+  }
+}
+
+void ISimPlotSeriesData::drawSteps(QPainter *painter,
+                                   const int L, const int R) const
+{
+  const int Steps = 32;
+  QPointF points[2*Steps+1];
+
+  int i = L;
+  points[0] = value(i);
+  while( i + Steps <= R ) {
+    values(&points[1], i+1, i+Steps);
+    for(int j = Steps; j > 0; j--) {
+      points[2*j  ] = points[j];
+      points[2*j-1] = QPointF(points[j].x(), points[j-1].y());
+    }
+    painter->drawPolyline(points, 2*Steps+1);
+    points[0] = points[2*Steps];
+    i += Steps;
+  }
+
+  const int remain = R - i + 1; // Remaining Points!
+  if( remain > 1 ) {
+    values(&points[1], i+1, R);
+    for(int j = remain-1; j > 0; j--) {
+      points[2*j  ] = points[j];
+      points[2*j-1] = QPointF(points[j].x(), points[j-1].y());
+    }
+    painter->drawPolyline(points, 2*remain-1);
+  }
 }
 
 qreal ISimPlotSeriesData::valueX(const int i) const
