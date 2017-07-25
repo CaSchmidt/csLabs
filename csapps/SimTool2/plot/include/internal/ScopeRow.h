@@ -78,7 +78,8 @@ public:
   SimPlotRange viewX() const;
   SimPlotRange viewY() const;
 
-  QTransform mapToScreen() const;
+  QTransform mapScaleToScreen() const;
+  QTransform mapViewToScreen() const;
 
   void resetView();
 

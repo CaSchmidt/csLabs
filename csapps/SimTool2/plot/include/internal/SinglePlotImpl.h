@@ -61,7 +61,7 @@ public:
   const Widget *widget() const;
 
   // X-Axis
-  QTransform mapToScreenX() const;
+  QTransform mapViewToScreenX() const;
   SimPlotRange rangeX() const;
   void setXTitle(const QString& title);
 

@@ -79,7 +79,7 @@ void YAxis::paint(QPainter *painter) const
   painter->setPen(SimPlotTheme::yAxisPen(_row->activeSeries().color()));
 
   const QFontMetricsF metrics(_row->plot()->widget()->font());
-  const QTransform xform = _row->mapToScreen();
+  const QTransform xform = _row->mapScaleToScreen();
   const qreal     yshift = metrics.ascent() - metrics.height()/2.0;
 
   for(const AxisLabel& label : _labels) {

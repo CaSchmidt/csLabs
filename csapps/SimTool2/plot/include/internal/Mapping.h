@@ -37,11 +37,11 @@
 
 #include <SimPlot/SimPlotRange.h>
 
-QTransform mapToScreen(const QSizeF& screen,
-                       const SimPlotRange& viewX, const SimPlotRange& viewY);
+QTransform mapViewToScreen(const QSizeF& screen,
+                           const SimPlotRange& viewX, const SimPlotRange& viewY);
 
-QTransform mapToView(const QSizeF& screen,
-                     const SimPlotRange& viewX, const SimPlotRange& viewY,
-                     const bool isRelative = false);
+QTransform mapScreenToView(const QSizeF& screen,
+                           const SimPlotRange& viewX, const SimPlotRange& viewY,
+                           const bool isRelative = false);
 
 #endif // __MAPPING_H__

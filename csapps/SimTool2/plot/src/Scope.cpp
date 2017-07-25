@@ -95,9 +95,9 @@ void Scope::draw(QPainter *painter, const Series& series,
 
   const SimPlotRange rangeY = _row->store().rangeY(series.name());
   const QTransform xform =
-      mapToScreen(_rect.size(),
-                  _row->rangeX(),
-                  rangeY.clamped(_row->viewY(), 100)) *
+      mapViewToScreen(_rect.size(),
+                      _row->rangeX(),
+                      rangeY.clamped(_row->viewY(), 100)) *
       QTransform::fromTranslate(_rect.topLeft().x(),
                                 _rect.topLeft().y());
   painter->setTransform(xform);

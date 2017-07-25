@@ -75,7 +75,7 @@ void XAxis::paint(QPainter *painter) const
   painter->setPen(_plot->theme().textPen());
 
   const QFontMetricsF metrics(_plot->widget()->font());
-  const QTransform xform = _plot->mapToScreenX();
+  const QTransform xform = _plot->mapViewToScreenX();
   const qreal     yshift = metrics.ascent();
 
   for(const AxisLabel& label : _labels) {

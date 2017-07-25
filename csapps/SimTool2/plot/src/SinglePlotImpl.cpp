@@ -105,7 +105,7 @@ void SinglePlotImpl::paint(QPainter *painter) const
   painter->fillRect(_rect, theme().backgroundBrush());
   // grid
   painter->setPen(theme().gridPen());
-  const QTransform mapping = _row->mapToScreen();
+  const QTransform mapping = _row->mapScaleToScreen();
 
   const AxisLabels xAxisLabels = _xAxis->labels();
   for(const AxisLabel& label : xAxisLabels) {
@@ -182,9 +182,9 @@ const Widget *SinglePlotImpl::widget() const
 
 // IPlotImplementation - X-Axis //////////////////////////////////////////////
 
-QTransform SinglePlotImpl::mapToScreenX() const
+QTransform SinglePlotImpl::mapViewToScreenX() const
 {
-  return _row->mapToScreen();
+  return _row->mapViewToScreen();
 }
 
 SimPlotRange SinglePlotImpl::rangeX() const

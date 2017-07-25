@@ -192,9 +192,14 @@ SimPlotRange ScopeRow::viewY() const
   return _viewY;
 }
 
-QTransform ScopeRow::mapToScreen() const
+QTransform ScopeRow::mapScaleToScreen() const
 {
-  return ::mapToScreen(_scope->size(), rangeX(), rangeY());
+  return ::mapViewToScreen(_scope->size(), _viewX, rangeY());
+}
+
+QTransform ScopeRow::mapViewToScreen() const
+{
+  return ::mapViewToScreen(_scope->size(), _viewX, _viewY);
 }
 
 void ScopeRow::resetView()
@@ -264,7 +269,7 @@ void ScopeRow::pan(const QPointF& delta)
     return;
   }
 
-  const QTransform  xform = ::mapToView(_scope->size(), _viewX, _viewY, true);
+  const QTransform  xform = ::mapScreenToView(_scope->size(), _viewX, _viewY, true);
   const QPointF deltaView = xform.map(delta);
 
   // Horizontal
@@ -303,7 +308,7 @@ QRectF ScopeRow::zoomedView(const QRectF& zoomRect) const
     return result;
   }
 
-  const QTransform xform = ::mapToView(_scope->size(), _viewX, _viewY);
+  const QTransform xform = ::mapScreenToView(_scope->size(), _viewX, _viewY);
   const QRectF  zoomView =
       xform.map(inter.translated(-_scope->topLeft())).boundingRect();
 
