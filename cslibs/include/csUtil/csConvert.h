@@ -151,6 +151,14 @@ namespace cs {
       }
 
       inline static void run(double *dest, const __m128i& raw,
+                             const __m128d& c1,
+                             const __m128d& helper)
+      {
+        Block<DataT,0>::run(dest, raw, c1, helper);
+        Block<DataT,i-1>::run(&dest[4], _mm_srli_si128(raw, 4*sizeof(DataT)), c1, helper);
+      }
+
+      inline static void run(double *dest, const __m128i& raw,
                              const __m128d& c1, const __m128d& c0,
                              const __m128d& helper)
       {
@@ -169,6 +177,19 @@ namespace cs {
 
         data = _mm_srli_si128(data, 2*sizeof(int32_t));
         _mm_stream_pd(&dest[2], _mm_cvtepi32_pd(data));
+      }
+
+      inline static void run(double *dest, const __m128i& raw,
+                             const __m128d& c1,
+                             const __m128d& /*helper*/)
+      {
+        __m128i data = Converter<DataT>::run(raw);
+        const __m128d result01 = _mm_cvtepi32_pd(data);
+        _mm_stream_pd(&dest[0], _mm_mul_pd(c1, result01));
+
+        data = _mm_srli_si128(data, 2*sizeof(int32_t));
+        const __m128d result23 = _mm_cvtepi32_pd(data);
+        _mm_stream_pd(&dest[2], _mm_mul_pd(c1, result23));
       }
 
       inline static void run(double *dest, const __m128i& raw,
@@ -210,6 +231,31 @@ namespace cs {
       }
 
       inline static void run(double *dest, const __m128i& raw,
+                             const __m128d& c1,
+                             const __m128d& helper)
+      {
+        // hi = raw >> 16
+        __m128i hi = _mm_srli_epi32(raw, 16);
+        // lo = (raw << 16) >> 16
+        __m128i lo = _mm_srli_epi32(_mm_slli_epi32(raw, 16), 16);
+
+        // result = hi*helper + lo
+        const __m128d result01 = _mm_add_pd(_mm_mul_pd(_mm_cvtepi32_pd(hi),
+                                                       helper),
+                                            _mm_cvtepi32_pd(lo));
+        _mm_stream_pd(&dest[0], _mm_mul_pd(c1, result01));
+
+        hi = _mm_srli_si128(hi, 2*sizeof(int32_t));
+        lo = _mm_srli_si128(lo, 2*sizeof(int32_t));
+
+        // result = hi*helper + lo
+        const __m128d result23 = _mm_add_pd(_mm_mul_pd(_mm_cvtepi32_pd(hi),
+                                                       helper),
+                                            _mm_cvtepi32_pd(lo));
+        _mm_stream_pd(&dest[2], _mm_mul_pd(c1, result23));
+      }
+
+      inline static void run(double *dest, const __m128i& raw,
                              const __m128d& c1, const __m128d& c0,
                              const __m128d& helper)
       {
@@ -246,6 +292,17 @@ namespace cs {
       }
 
       inline static void run(double *dest, const __m128i& raw,
+                             const __m128d& c1,
+                             const __m128d& /*helper*/)
+      {
+        const __m128d result01 = _mm_cvtps_pd(_mm_castsi128_ps(raw));
+        _mm_stream_pd(&dest[0], _mm_mul_pd(c1, result01));
+
+        const __m128d result23 = _mm_cvtps_pd(_mm_castsi128_ps(_mm_srli_si128(raw, 2*sizeof(float))));
+        _mm_stream_pd(&dest[2], _mm_mul_pd(c1, result23));
+      }
+
+      inline static void run(double *dest, const __m128i& raw,
                              const __m128d& c1, const __m128d& c0,
                              const __m128d& /*helper*/)
       {
@@ -273,6 +330,16 @@ namespace cs {
       }
 
       inline static void run(double *dest, const DataT *src,
+                             const __m128d& c1,
+                             const __m128d& helper)
+      {
+        Unroll<DataT,0>::run(dest, src, c1, helper);
+        Unroll<DataT,i-1>::run(dest+Stride<DataT>::Elements,
+                               src+Stride<DataT>::Elements,
+                               c1, helper);
+      }
+
+      inline static void run(double *dest, const DataT *src,
                              const __m128d& c1, const __m128d& c0,
                              const __m128d& helper)
       {
@@ -291,6 +358,15 @@ namespace cs {
         const __m128i raw = _mm_load_si128(reinterpret_cast<const __m128i*>(src));
 
         Block<DataT,Stride<DataT>::Blocks-1>::run(dest, raw, helper);
+      }
+
+      inline static void run(double *dest, const DataT *src,
+                             const __m128d& c1,
+                             const __m128d& helper)
+      {
+        const __m128i raw = _mm_load_si128(reinterpret_cast<const __m128i*>(src));
+
+        Block<DataT,Stride<DataT>::Blocks-1>::run(dest, raw, c1, helper);
       }
 
       inline static void run(double *dest, const DataT *src,
@@ -346,6 +422,46 @@ void csConvert(double *dest, const DataT *src, const int N,
   const int remain = N % Stride<DataT>::Elements;
   for(int i = 0; i < remain; i++) {
     *dest++ = static_cast<double>(*src++);
+  }
+}
+
+template<typename DataT>
+void csConvert(double *dest, const DataT *src, const int N,
+               const double c1,
+               typename std::enable_if<std::is_arithmetic<DataT>::value>::type * = 0)
+{
+  using namespace cs::convert;
+
+  const int count = N / Stride<DataT>::Elements;
+  if( count > 0 ) {
+    const __m128d   c1mm = _mm_set1_pd(c1);
+    const __m128d helper = BlockHelper<DataT>::create();
+
+    const int unroll = count / Stride<DataT>::PrefetchUnroll;
+    for(int i = 0; i < unroll; i++) {
+      _mm_prefetch(reinterpret_cast<const char*>(&src[Stride<DataT>::PrefetchWidth]),
+          _MM_HINT_NTA);
+
+      Unroll<DataT,Stride<DataT>::PrefetchUnroll-1>::run(dest, src, c1mm, helper);
+
+      dest += Stride<DataT>::UnrolledElements;
+      src  += Stride<DataT>::UnrolledElements;
+    }
+
+    const int remain = count % Stride<DataT>::PrefetchUnroll;
+    for(int i = 0; i < remain; i++) {
+      Unroll<DataT,0>::run(dest, src, c1mm, helper);
+
+      dest += Stride<DataT>::Elements;
+      src  += Stride<DataT>::Elements;
+    }
+
+    _mm_sfence();
+  }
+
+  const int remain = N % Stride<DataT>::Elements;
+  for(int i = 0; i < remain; i++) {
+    *dest++ = c1 * static_cast<double>(*src++);
   }
 }
 
