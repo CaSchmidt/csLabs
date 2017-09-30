@@ -91,6 +91,25 @@ QPen SimPlotTheme::yAxisPen(const QColor& color)
   return QPen(QBrush(color, Qt::SolidPattern), 0.0);
 }
 
+bool SimPlotTheme::isEmptyUnit(const QString& unit)
+{
+  for(const QChar& c : unit) {
+    if( !c.isSpace()  &&  c != QLatin1Char('-') ) {
+      return false;
+    }
+  }
+  return true;
+}
+
+QString SimPlotTheme::cleanUnit(const QString& unit)
+{
+  QString result(unit);
+  if( isEmptyUnit(unit) ) {
+    result = QStringLiteral("-");
+  }
+  return result;
+}
+
 QString SimPlotTheme::titleString(const QString& name, const QString& unit)
 {
   QString result;
