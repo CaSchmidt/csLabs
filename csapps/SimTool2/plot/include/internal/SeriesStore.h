@@ -35,18 +35,20 @@
 #include "internal/Scale.h"
 #include "internal/Series.h"
 
-class SeriesStore : public QHash<QString,Series> {
+class SeriesStore {
 public:
   SeriesStore();
   ~SeriesStore();
+
+  bool contains(const QString& seriesName) const;
+
+  QStringList names() const;
 
   bool insert(const Series& series);
   bool remove(const QString& seriesName);
 
   SimPlotRange rangeX(const QString& seriesName) const;
   SimPlotRange rangeY(const QString& seriesName) const;
-
-  QString titleString(const QString& seriesName) const;
 
   SimPlotRange totalRangeX() const;
 
@@ -58,6 +60,7 @@ private:
   bool removeFromScales(const QString& seriesName);
 
   QHash<QString,Scale> _scales;
+  QHash<QString,Series> _series;
 
   static Series _nullSeries;
 };

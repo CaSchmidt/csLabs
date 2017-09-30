@@ -242,7 +242,7 @@ bool SinglePlotImpl::remove(const QString& name)
   if( name == _row->activeSeriesName() ) {
     QString newActiveSeriesName;
 
-    QStringList names = _row->store().keys();
+    QStringList names = _row->store().names();
     if( !names.isEmpty() ) {
       qSort(names);
       newActiveSeriesName = names.front();

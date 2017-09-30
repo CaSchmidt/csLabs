@@ -31,10 +31,6 @@
 
 #include "internal/SeriesStore.h"
 
-////// Macros ////////////////////////////////////////////////////////////////
-
-#define _VAL(key)  (*this)[key]
-
 ////// private static ////////////////////////////////////////////////////////
 
 Series SeriesStore::_nullSeries;
@@ -42,8 +38,8 @@ Series SeriesStore::_nullSeries;
 ////// public ////////////////////////////////////////////////////////////////
 
 SeriesStore::SeriesStore()
-  : QHash<QString,Series>()
-  , _scales()
+  : _scales()
+  , _series()
 {
 }
 
@@ -51,16 +47,26 @@ SeriesStore::~SeriesStore()
 {
 }
 
+bool SeriesStore::contains(const QString& seriesName) const
+{
+  return _series.contains(seriesName);
+}
+
+QStringList SeriesStore::names() const
+{
+  return _series.keys();
+}
+
 bool SeriesStore::insert(const Series& series)
 {
-  if( contains(series.name()) ) {
+  if( _series.contains(series.name()) ) {
     return false;
   }
-  if( QHash<QString,Series>::insert(series.name(), series) == end() ) {
+  if( _series.insert(series.name(), series) == _series.end() ) {
     return false;
   }
   if( !addToScales(series.name()) ) {
-    QHash<QString,Series>::remove(series.name());
+    _series.remove(series.name());
     return false;
   }
   return true;
@@ -68,11 +74,11 @@ bool SeriesStore::insert(const Series& series)
 
 bool SeriesStore::remove(const QString& seriesName)
 {
-  if( !contains(seriesName) ) {
+  if( !_series.contains(seriesName) ) {
     return false;
   }
   removeFromScales(seriesName);
-  QHash<QString,Series>::remove(seriesName);
+  _series.remove(seriesName);
   return true;
 }
 
@@ -80,11 +86,11 @@ SimPlotRange SeriesStore::rangeX(const QString& seriesName) const
 {
   SimPlotRange result;
 
-  if( !contains(seriesName) ) {
+  if( !_series.contains(seriesName) ) {
     return result;
   }
 
-  result = _scales[_VAL(seriesName).scale()].rangeX();
+  result = _scales[_series[seriesName].scale()].rangeX();
 
   return result;
 }
@@ -93,29 +99,11 @@ SimPlotRange SeriesStore::rangeY(const QString& seriesName) const
 {
   SimPlotRange result;
 
-  if( !contains(seriesName) ) {
+  if( !_series.contains(seriesName) ) {
     return result;
   }
 
-  result = _scales[_VAL(seriesName).scale()].rangeY();
-
-  return result;
-}
-
-QString SeriesStore::titleString(const QString& seriesName) const
-{
-  QString result;
-
-  if( !contains(seriesName) ) {
-    return result;
-  }
-
-  const QString unit = _VAL(seriesName).unit();
-  result = QString(QStringLiteral("%1 [%2]"))
-      .arg(seriesName)
-      .arg(unit.isEmpty()
-           ? QStringLiteral("-")
-           : unit);
+  result = _scales[_series[seriesName].scale()].rangeY();
 
   return result;
 }
@@ -133,8 +121,8 @@ SimPlotRange SeriesStore::totalRangeX() const
 
 Series& SeriesStore::series(const QString& seriesName)
 {
-  QHash<QString,Series>::iterator it = find(seriesName);
-  if( it == end() ) {
+  QHash<QString,Series>::iterator it = _series.find(seriesName);
+  if( it == _series.end() ) {
     return _nullSeries;
   }
   return it.value();
@@ -142,8 +130,8 @@ Series& SeriesStore::series(const QString& seriesName)
 
 const Series& SeriesStore::series(const QString& seriesName) const
 {
-  QHash<QString,Series>::const_iterator it = constFind(seriesName);
-  if( it == constEnd() ) {
+  QHash<QString,Series>::const_iterator it = _series.constFind(seriesName);
+  if( it == _series.constEnd() ) {
     return _nullSeries;
   }
   return it.value();
@@ -153,12 +141,12 @@ const Series& SeriesStore::series(const QString& seriesName) const
 
 bool SeriesStore::addToScales(const QString& seriesName)
 {
-  if( !contains(seriesName) ) {
+  if( !_series.contains(seriesName) ) {
     return false;
   }
-  const QString scaleName = _VAL(seriesName).scale();
+  const QString scaleName = _series[seriesName].scale();
   if( !_scales.contains(scaleName)  &&
-      _scales.insert(scaleName, Scale(this)) == _scales.end() ) {
+      _scales.insert(scaleName, Scale(&_series)) == _scales.end() ) {
     return false;
   }
   if( !_scales[scaleName].insert(seriesName) ) {
@@ -172,10 +160,10 @@ bool SeriesStore::addToScales(const QString& seriesName)
 
 bool SeriesStore::removeFromScales(const QString& seriesName)
 {
-  if( !contains(seriesName) ) {
+  if( !_series.contains(seriesName) ) {
     return false;
   }
-  const QString scaleName = _VAL(seriesName).scale();
+  const QString scaleName = _series[seriesName].scale();
   if( !_scales.contains(scaleName) ) {
     return false;
   }

@@ -68,7 +68,8 @@ void Scope::paint(QPainter *painter) const
 
   painter->resetTransform();
   painter->setClipRect(_rect);
-  for(const Series& series : _row->store()) {
+  for(const QString& seriesName : _row->store().names()) {
+    const Series& series = _row->store().series(seriesName);
     if( series.isEmpty()  ||  series == activeSeries ) {
       continue;
     }
