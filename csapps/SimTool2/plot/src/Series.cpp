@@ -38,11 +38,7 @@
 Series::Series(ISimPlotSeriesData *data, const QColor& color)
   : _dataPtr(data)
   , _color(color)
-  , _scaleName()
 {
-  if( !isEmpty() ) {
-    _scaleName = _dataPtr->unit();
-  }
 }
 
 Series::~Series()
@@ -72,21 +68,6 @@ QString Series::name() const
 QString Series::unit() const
 {
   return _dataPtr->unit();
-}
-
-QString Series::scale() const
-{
-  return _scaleName;
-}
-
-void Series::setScale(const QString& scaleName)
-{
-  _scaleName = scaleName;
-}
-
-void Series::resetScale()
-{
-  _scaleName = _dataPtr->unit();
 }
 
 const ISimPlotSeriesData *Series::constData() const

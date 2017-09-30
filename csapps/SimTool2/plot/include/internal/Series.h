@@ -54,17 +54,12 @@ public:
   QString name() const;
   QString unit() const;
 
-  QString scale() const;
-  void setScale(const QString& scaleName);
-  void resetScale();
-
   const ISimPlotSeriesData *constData() const;
   ISimPlotSeriesData *data();
 
 private:
   SeriesDataPtr _dataPtr;
   QColor _color;
-  QString _scaleName;
 };
 
 inline bool operator==(const Series& a, const Series& b)

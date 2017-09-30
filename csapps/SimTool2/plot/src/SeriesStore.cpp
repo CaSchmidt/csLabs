@@ -90,7 +90,7 @@ SimPlotRange SeriesStore::rangeX(const QString& seriesName) const
     return result;
   }
 
-  result = _scales[_series[seriesName].scale()].rangeX();
+  result = _scales[_series[seriesName].unit()].rangeX();
 
   return result;
 }
@@ -103,7 +103,7 @@ SimPlotRange SeriesStore::rangeY(const QString& seriesName) const
     return result;
   }
 
-  result = _scales[_series[seriesName].scale()].rangeY();
+  result = _scales[_series[seriesName].unit()].rangeY();
 
   return result;
 }
@@ -144,7 +144,7 @@ bool SeriesStore::addToScales(const QString& seriesName)
   if( !_series.contains(seriesName) ) {
     return false;
   }
-  const QString scaleName = _series[seriesName].scale();
+  const QString scaleName = _series[seriesName].unit();
   if( !_scales.contains(scaleName)  &&
       _scales.insert(scaleName, Scale(&_series)) == _scales.end() ) {
     return false;
@@ -163,7 +163,7 @@ bool SeriesStore::removeFromScales(const QString& seriesName)
   if( !_series.contains(seriesName) ) {
     return false;
   }
-  const QString scaleName = _series[seriesName].scale();
+  const QString scaleName = _series[seriesName].unit();
   if( !_scales.contains(scaleName) ) {
     return false;
   }
