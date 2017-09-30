@@ -270,7 +270,8 @@ void SimPlotWidget::initializeContextMenu()
 {
   _contextMenu = new QMenu(this);
 
-  _contextMenu->addAction(tr("Clipboard"), this, &SimPlotWidget::exportToClipboard);
+  QAction *clipboardAction = createAction(tr("Clipboard"), QKeySequence::Copy);
+  connect(clipboardAction, &QAction::triggered, this, &SimPlotWidget::exportToClipboard);
 
   _contextMenu->addSeparator(); //////////////////////////////////////////////
 
