@@ -40,13 +40,13 @@ public:
   WLogDepthSpin(QWidget *parent);
   ~WLogDepthSpin();
 
-  void setSimStep(double simStep);
+  void setSimStep(int simStep_ms);
 
 protected:
   QString textFromValue(int val) const;
 
 private:
-  double _simStep;
+  int _simStep_ms;
 };
 
 #endif // __WLOGDEPTHSPIN_H__

@@ -41,7 +41,7 @@
 
 WLogDepthSpin::WLogDepthSpin(QWidget *parent)
   : QSpinBox(parent)
-  , _simStep(SimConfig().step)
+  , _simStep_ms(SimConfig().stepMS())
 {
   setSingleStep(1);
   setMinimum(SimDataSeries::minDepth());
@@ -54,9 +54,9 @@ WLogDepthSpin::~WLogDepthSpin()
 {
 }
 
-void WLogDepthSpin::setSimStep(double simStep)
+void WLogDepthSpin::setSimStep(int simStep_ms)
 {
-  _simStep = simStep;
+  _simStep_ms = simStep_ms;
 
   blockSignals(true);
   setValue(value());
@@ -68,5 +68,5 @@ void WLogDepthSpin::setSimStep(double simStep)
 QString WLogDepthSpin::textFromValue(int val) const
 {
   const int size = SimDataSeries::calculateSize(val);
-  return sim::locale().toString(double(size)*_simStep, 'f', 3);
+  return sim::locale().toString(double(size*_simStep_ms)/1000.0, 'f', 3);
 }

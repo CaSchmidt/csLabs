@@ -1,9 +1,9 @@
 {
     "configuration": {
-        "duration": 10,
+        "duration_s": 10,
         "logDepth": 10,
         "mode": "RealTime",
-        "step": 0.01
+        "step_ms": 10
     },
     "mainWindow": {
         "geometry": {

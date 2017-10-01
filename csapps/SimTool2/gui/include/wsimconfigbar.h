@@ -59,8 +59,6 @@ signals:
   void configChanged(const SimConfig&);
 
 private:
-  double simStep() const;
-
   QSpinBox *_durationSpin;
   WLogDepthSpin *_logDepthSpin;
   csMultiToolButton *_modeButton;

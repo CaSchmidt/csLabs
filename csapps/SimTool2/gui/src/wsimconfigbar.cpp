@@ -46,10 +46,10 @@
 
 ////// Macros ////////////////////////////////////////////////////////////////
 
-#define DEFAULT_MODE       SimConfig().mode
-#define DEFAULT_STEP      (SimConfig().step*1000.0) // [ms]
-#define DEFAULT_DURATION   SimConfig().duration
-#define DEFAULT_LOGDEPTH   SimConfig().logDepth
+#define DEFAULT_MODE        SimConfig().mode()
+#define DEFAULT_STEP_MS     SimConfig().stepMS()
+#define DEFAULT_DURATION_S  SimConfig().durationS()
+#define DEFAULT_LOGDEPTH    SimConfig().logDepth()
 
 ////// public ////////////////////////////////////////////////////////////////
 
@@ -82,7 +82,7 @@ WSimConfigBar::WSimConfigBar(QWidget *parent)
                            QSizePolicy::Expanding);
   _stepSpin->setMinimum(1);
   _stepSpin->setMaximum(1000);
-  _stepSpin->setValue(DEFAULT_STEP);
+  _stepSpin->setValue(DEFAULT_STEP_MS);
   _stepSpin->setSuffix(tr("ms"));
   addWidget(_stepSpin);
 
@@ -96,7 +96,7 @@ WSimConfigBar::WSimConfigBar(QWidget *parent)
                                QSizePolicy::Expanding);
   _durationSpin->setMinimum(1);
   _durationSpin->setMaximum(1000000);
-  _durationSpin->setValue(DEFAULT_DURATION);
+  _durationSpin->setValue(DEFAULT_DURATION_S);
   _durationSpin->setSuffix(tr("s"));
   addWidget(_durationSpin);
 
@@ -109,7 +109,7 @@ WSimConfigBar::WSimConfigBar(QWidget *parent)
   _logDepthSpin->setSizePolicy(_logDepthSpin->sizePolicy().horizontalPolicy(),
                                QSizePolicy::Expanding);
   _logDepthSpin->setValue(DEFAULT_LOGDEPTH);
-  _logDepthSpin->setSimStep(simStep());
+  _logDepthSpin->setSimStep(_stepSpin->value());
   addWidget(_logDepthSpin);
 
   // Signals & Slots /////////////////////////////////////////////////////////
@@ -134,8 +134,8 @@ WSimConfigBar::~WSimConfigBar()
 SimConfig WSimConfigBar::get() const
 {
   return SimConfig((SimOperationMode)_modeButton->currentSelection(),
-                   simStep(),
-                   double(_durationSpin->value()),
+                   _stepSpin->value(),
+                   _durationSpin->value(),
                    _logDepthSpin->value());
 }
 
@@ -144,12 +144,12 @@ SimConfig WSimConfigBar::get() const
 void WSimConfigBar::set(const SimConfig& config)
 {
   blockSignals(true);
-  _modeButton->setCurrentSelection(config.mode);
-  setMode(config.mode);
-  _stepSpin->setValue(config.step*1000.0);
-  _durationSpin->setValue(config.duration);
-  _logDepthSpin->setValue(config.logDepth);
-  _logDepthSpin->setSimStep(config.step);
+  _modeButton->setCurrentSelection(config.mode());
+  setMode(config.mode());
+  _stepSpin->setValue(config.stepMS());
+  _durationSpin->setValue(config.durationS());
+  _logDepthSpin->setValue(config.logDepth());
+  _logDepthSpin->setSimStep(config.stepMS());
   blockSignals(false);
 }
 
@@ -168,14 +168,7 @@ void WSimConfigBar::setMode(int id)
 void WSimConfigBar::valuesChanged(int)
 {
   _logDepthSpin->blockSignals(true);
-  _logDepthSpin->setSimStep(simStep());;
+  _logDepthSpin->setSimStep(_stepSpin->value());
   _logDepthSpin->blockSignals(false);
   emit configChanged(get());
-}
-
-////// private ///////////////////////////////////////////////////////////////
-
-double WSimConfigBar::simStep() const
-{
-  return double(_stepSpin->value())/1000.0;
 }
