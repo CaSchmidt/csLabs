@@ -78,7 +78,7 @@ namespace priv {
     return xfer;
   }
 
-}; // namespace priv
+} // namespace priv
 
 ////// public ////////////////////////////////////////////////////////////////
 

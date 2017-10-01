@@ -102,5 +102,5 @@ SIM_MOD_IMPORT void sim_printf2(void *ctx, const uint32_t lvl,
 }
 
 #ifdef __cplusplus
-}; // extern "C"
+} // extern "C"
 #endif

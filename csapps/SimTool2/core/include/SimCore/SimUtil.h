@@ -49,6 +49,6 @@ namespace sim {
   SIM_CORE_EXPORT SimOperationMode toOperationMode(const QString& string);
   SIM_CORE_EXPORT QString toString(const SimOperationMode mode);
 
-}; // namespace sim
+} // namespace sim
 
 #endif // __SIMUTIL_H__

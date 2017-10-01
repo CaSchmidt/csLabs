@@ -122,7 +122,7 @@ namespace priv {
     return result;
   }
 
-}; // namespace priv
+} // namespace priv
 
 ////// public ////////////////////////////////////////////////////////////////
 

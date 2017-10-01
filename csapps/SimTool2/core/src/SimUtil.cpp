@@ -112,4 +112,4 @@ namespace sim {
     return QStringLiteral("Invalid");
   }
 
-}; // namespace sim
+} // namespace sim

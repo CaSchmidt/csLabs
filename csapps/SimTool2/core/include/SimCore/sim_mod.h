@@ -98,7 +98,7 @@ typedef void(*sim_step_func)(double dt, void *ctx);
 typedef void(*sim_stop_func)(void *ctx);
 
 #ifdef __cplusplus
-}; // extern "C"
+} // extern "C"
 #endif
 
 #endif // __SIM_MOD_H__

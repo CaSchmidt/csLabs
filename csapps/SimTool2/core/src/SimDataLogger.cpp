@@ -54,7 +54,7 @@ namespace priv {
     return time;
   }
 
-}; // namespace priv
+} // namespace priv
 
 ////// public ////////////////////////////////////////////////////////////////
 

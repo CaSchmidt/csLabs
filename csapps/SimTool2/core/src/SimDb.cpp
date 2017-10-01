@@ -177,7 +177,7 @@ namespace priv {
     return SimValueRef(new SimValue<T>(name, index, mutex, store));
   }
 
-}; // namespace priv
+} // namespace priv
 
 ////// public ////////////////////////////////////////////////////////////////
 
