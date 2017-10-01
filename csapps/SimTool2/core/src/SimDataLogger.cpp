@@ -95,7 +95,7 @@ bool SimDataLogger::addLog(const QString& name)
   }
 
   if( _logTime.isNull() ) {
-    _logTime = priv::createLogTime(ctx->cfg.logDepth, ctx->cfg.step);
+    _logTime = priv::createLogTime(ctx->cfg.logDepth(), ctx->cfg.step());
   }
   if( _logTime.isNull() ) {
     return false;
@@ -165,7 +165,7 @@ void SimDataLogger::exitState(int state)
       return;
     }
 
-    _logTime = priv::createLogTime(ctx->cfg.logDepth, ctx->cfg.step);
+    _logTime = priv::createLogTime(ctx->cfg.logDepth(), ctx->cfg.step());
     if( _logTime.isNull() ) {
       _logs.clear();
       return;

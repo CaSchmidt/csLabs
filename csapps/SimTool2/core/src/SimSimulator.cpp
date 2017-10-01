@@ -175,7 +175,7 @@ void SimSimulator::enterState(int state)
 void SimSimulator::exitState(int state)
 {
   SimContext *ctx = qobject_cast<SimContext*>(parent());
-  if( state == StepState  &&  ctx->cfg.mode == RealTimeMode ) {
+  if( state == StepState  &&  ctx->cfg.mode() == RealTimeMode ) {
     _rtTimer.stop();
     _rtTimerId = 0;
   }
@@ -251,8 +251,8 @@ void SimSimulator::init()
 
   _offCntStep = _offNumSteps = _rtTimerId = 0;
 
-  if( ctx->cfg.mode == OfflineMode ) {
-    _offNumSteps = (int)(ctx->cfg.duration/ctx->cfg.step);
+  if( ctx->cfg.mode() == OfflineMode ) {
+    _offNumSteps = ctx->cfg.durationS()*1000/ctx->cfg.stepMS();
     _offCntStep = 0;
   }
 }
@@ -279,10 +279,10 @@ void SimSimulator::step()
 {
   SimContext *ctx = qobject_cast<SimContext*>(parent());
 
-  if(        ctx->cfg.mode == OfflineMode ) {
+  if(        ctx->cfg.mode() == OfflineMode ) {
     QMetaObject::invokeMethod(this, "offlineStep", Qt::QueuedConnection);
-  } else if( ctx->cfg.mode == RealTimeMode ) {
-    _rtTimer.start(ctx->cfg.step*1000.0, this);
+  } else if( ctx->cfg.mode() == RealTimeMode ) {
+    _rtTimer.start(ctx->cfg.stepMS(), this);
     _rtTimerId = _rtTimer.timerId();
   }
 }
@@ -293,11 +293,11 @@ void SimSimulator::stepModules()
 
   syncInputs();
   foreach(const SimModuleRunnerRef& runner, _runners) {
-    runner->step(ctx->cfg.step);
+    runner->step(ctx->cfg.step());
   }
   syncOutputs();
 
-  _logTimeStamp += ctx->cfg.step;
+  _logTimeStamp += ctx->cfg.step();
   ctx->logger.syncLog(_logTimeStamp);
 }
 

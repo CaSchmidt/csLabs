@@ -38,21 +38,52 @@
 #include <SimCore/SimDataSeries.h>
 
 struct SimConfig {
-  SimConfig(const SimOperationMode _mode = RealTimeMode,
-            const double _step           =  0.01, // [s]
-            const double _duration       = 10.0,  // [s]
-            const int    _logDepth       = SimDataSeries::minDepth())
-    : mode(_mode)
-    , step(_step)
-    , duration(_duration)
-    , logDepth(_logDepth)
+  SimConfig(const SimOperationMode mode = RealTimeMode,
+            const int           step_ms = 10, // [ms]
+            const int        duration_s = 10, // [s]
+            const int          logDepth = SimDataSeries::minDepth())
+    : _mode(mode)
+    , _step_ms(step_ms)
+    , _duration_s(duration_s)
+    , _logDepth(logDepth)
   {
   }
 
-  SimOperationMode mode;
-  double step;
-  double duration;
-  int logDepth;
+  inline SimOperationMode mode() const
+  {
+    return _mode;
+  }
+
+  inline double step() const
+  {
+    return double(_step_ms)/1000.0;
+  }
+
+  inline int stepMS() const
+  {
+    return _step_ms;
+  }
+
+  inline double duration() const
+  {
+    return double(_duration_s);
+  }
+
+  inline int durationS() const
+  {
+    return _duration_s;
+  }
+
+  inline int logDepth() const
+  {
+    return _logDepth;
+  }
+
+private:
+  SimOperationMode _mode;
+  int _step_ms;
+  int _duration_s;
+  int _logDepth;
 };
 
 Q_DECLARE_METATYPE(SimConfig)

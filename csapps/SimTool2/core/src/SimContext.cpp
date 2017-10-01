@@ -105,10 +105,15 @@ bool SimContext::open(const QString& filename)
   // (2) Configuration ///////////////////////////////////////////////////////
 
   const QJsonObject cfgObj = ctxObj[QStringLiteral("configuration")].toObject();
-  cfg.mode = sim::toOperationMode(cfgObj[QStringLiteral("mode")].toString(sim::toString(SimConfig().mode)));
-  cfg.step = cfgObj[QStringLiteral("step")].toDouble(SimConfig().step);
-  cfg.duration = cfgObj[QStringLiteral("duration")].toDouble(SimConfig().duration);
-  cfg.logDepth = cfgObj[QStringLiteral("logDepth")].toInt(SimConfig().logDepth);
+  const SimOperationMode mode =
+      sim::toOperationMode(cfgObj[QStringLiteral("mode")].toString(sim::toString(SimConfig().mode())));
+  const int step_ms =
+      cfgObj[QStringLiteral("step_ms")].toInt(SimConfig().stepMS());
+  const int duration_s =
+      cfgObj[QStringLiteral("duration_s")].toInt(SimConfig().durationS());
+  const int logDepth =
+      cfgObj[QStringLiteral("logDepth")].toInt(SimConfig().logDepth());
+  cfg = SimConfig(mode, step_ms, duration_s, logDepth);
   emit configChanged(cfg);
 
   // (3) Reset Environment ///////////////////////////////////////////////////
@@ -166,10 +171,10 @@ bool SimContext::save(const QString& filename) const
   // (1) Configuration ///////////////////////////////////////////////////////
 
   QJsonObject cfgObj;
-  cfgObj[QStringLiteral("mode")] = sim::toString(cfg.mode);
-  cfgObj[QStringLiteral("step")] = cfg.step;
-  cfgObj[QStringLiteral("duration")] = cfg.duration;
-  cfgObj[QStringLiteral("logDepth")] = cfg.logDepth;
+  cfgObj[QStringLiteral("mode")] = sim::toString(cfg.mode());
+  cfgObj[QStringLiteral("step_ms")] = cfg.stepMS();
+  cfgObj[QStringLiteral("duration_s")] = cfg.durationS();
+  cfgObj[QStringLiteral("logDepth")] = cfg.logDepth();
   ctxObj[QStringLiteral("configuration")] = cfgObj;
 
   // (2) Variables ///////////////////////////////////////////////////////////
