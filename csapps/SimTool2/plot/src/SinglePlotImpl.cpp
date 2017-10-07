@@ -46,6 +46,7 @@
 SinglePlotImpl::SinglePlotImpl(const SimPlotTheme& theme, Widget *widget)
   : IPlotImplementation(theme)
   , _widget(widget)
+  , _rangeX()
   , _rect()
   , _row()
   , _xAxis()
@@ -147,6 +148,7 @@ void SinglePlotImpl::replot()
 
 void SinglePlotImpl::reset()
 {
+  _rangeX = totalRangeX();
   _row->resetView();
   replot();
 }
@@ -189,13 +191,24 @@ QTransform SinglePlotImpl::mapViewToScreenX() const
 
 SimPlotRange SinglePlotImpl::rangeX() const
 {
+  // return _rangeX;
   return _row->rangeX();
+}
+
+void SinglePlotImpl::setRangeX(const SimPlotRange& rangeX)
+{
+  _rangeX = rangeX;
 }
 
 void SinglePlotImpl::setXTitle(const QString& title)
 {
   _xTitle->setTitle(title);
   replot();
+}
+
+SimPlotRange SinglePlotImpl::totalRangeX() const
+{
+  return _row->store().totalRangeX();
 }
 
 // IPlotImplementation - SimPlotSeriesHandle /////////////////////////////////

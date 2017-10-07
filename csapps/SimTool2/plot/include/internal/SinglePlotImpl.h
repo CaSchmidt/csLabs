@@ -63,7 +63,9 @@ public:
   // X-Axis
   QTransform mapViewToScreenX() const;
   SimPlotRange rangeX() const;
+  void setRangeX(const SimPlotRange& rangeX);
   void setXTitle(const QString& title);
+  SimPlotRange totalRangeX() const;
 
   // SimPlotSeriesHandle
   SimPlotSeriesHandle handle(const QString& name) const;
@@ -75,6 +77,7 @@ public:
 
 private:
   Widget *_widget;
+  SimPlotRange _rangeX;
   QRectF _rect;
   ScopeRow *_row;
   XAxis *_xAxis;
