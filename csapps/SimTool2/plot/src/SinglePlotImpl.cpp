@@ -191,8 +191,7 @@ QTransform SinglePlotImpl::mapViewToScreenX() const
 
 SimPlotRange SinglePlotImpl::rangeX() const
 {
-  // return _rangeX;
-  return _row->rangeX();
+  return _rangeX;
 }
 
 void SinglePlotImpl::setRangeX(const SimPlotRange& rangeX)

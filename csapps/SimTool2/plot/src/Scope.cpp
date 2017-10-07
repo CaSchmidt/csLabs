@@ -33,6 +33,7 @@
 
 #include "internal/Scope.h"
 
+#include "internal/IPlotImplementation.h"
 #include "internal/Mapping.h"
 #include "internal/ScopeRow.h"
 
@@ -97,7 +98,7 @@ void Scope::draw(QPainter *painter, const Series& series,
   const SimPlotRange rangeY = _row->store().rangeY(series.name());
   const QTransform xform =
       mapViewToScreen(_rect.size(),
-                      _row->rangeX(),
+                      _row->plot()->rangeX(),
                       rangeY.clamped(_row->viewY(), 100)) *
       QTransform::fromTranslate(_rect.topLeft().x(),
                                 _rect.topLeft().y());
@@ -105,17 +106,17 @@ void Scope::draw(QPainter *painter, const Series& series,
 
   const ISimPlotSeriesData *data = series.constData();
 
-  if( !_row->viewX().isValid()  ||
-      _row->viewX().min() >= data->rangeX().max()  ||
-      _row->viewX().max() <= data->rangeX().min() ) {
+  if( !_row->plot()->rangeX().isValid()  ||
+      _row->plot()->rangeX().min() >= data->rangeX().max()  ||
+      _row->plot()->rangeX().max() <= data->rangeX().min() ) {
     return;
   }
 
-  const int L = data->findLeft(_row->viewX().min()) >= 0
-      ? data->findLeft(_row->viewX().min())
+  const int L = data->findLeft(_row->plot()->rangeX().min()) >= 0
+      ? data->findLeft(_row->plot()->rangeX().min())
       : 0;
-  const int R = data->findRight(_row->viewX().max()) >= 0
-      ? data->findRight(_row->viewX().max())
+  const int R = data->findRight(_row->plot()->rangeX().max()) >= 0
+      ? data->findRight(_row->plot()->rangeX().max())
       : data->size() - 1;
 
   if( L >= R ) {

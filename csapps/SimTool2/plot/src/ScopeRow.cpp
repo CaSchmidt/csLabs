@@ -49,7 +49,6 @@ ScopeRow::ScopeRow(IPlotImplementation *plot)
   , _plot(plot)
   , _store()
   , _activeSeriesName()
-  , _viewX()
   , _viewY()
 {
   _yTitle = new YTitle(this);
@@ -164,27 +163,17 @@ void ScopeRow::setActiveSeries(const QString& seriesName)
   const Series& s = _store.series(_activeSeriesName);
   if( !s.isEmpty() ) {
     _yTitle->setTitle(SimPlotTheme::titleString(s.name(), s.unit()));
-    if( !_activeSeriesName.isEmpty()  &&  !_viewX.isValid() ) {
-      _viewX = _store.rangeX(_activeSeriesName);
+    if( !_activeSeriesName.isEmpty()  &&  !_plot->rangeX().isValid() ) {
+      _plot->setRangeX(_store.rangeX(_activeSeriesName));
     }
   } else {
     _yTitle->setTitle(QString());
   }
 }
 
-SimPlotRange ScopeRow::rangeX() const
-{
-  return _viewX;
-}
-
 SimPlotRange ScopeRow::rangeY() const
 {
   return _store.rangeY(_activeSeriesName).clamped(_viewY, 100);
-}
-
-SimPlotRange ScopeRow::viewX() const
-{
-  return _viewX;
 }
 
 SimPlotRange ScopeRow::viewY() const
@@ -194,18 +183,16 @@ SimPlotRange ScopeRow::viewY() const
 
 QTransform ScopeRow::mapScaleToScreen() const
 {
-  return ::mapViewToScreen(_scope->size(), _viewX, rangeY());
+  return ::mapViewToScreen(_scope->size(), _plot->rangeX(), rangeY());
 }
 
 QTransform ScopeRow::mapViewToScreen() const
 {
-  return ::mapViewToScreen(_scope->size(), _viewX, _viewY);
+  return ::mapViewToScreen(_scope->size(), _plot->rangeX(), _viewY);
 }
 
 void ScopeRow::resetView()
 {
-  _viewX = _store.totalRangeX();
-
   _viewY.initialize();
   _viewY.update(0);
   _viewY.update(100);
@@ -213,7 +200,7 @@ void ScopeRow::resetView()
 
 void ScopeRow::rectangularZoom(const QRectF& zoomRect)
 {
-  if( !_viewX.isValid()  ||  !_viewY.isValid() ) {
+  if( !_plot->rangeX().isValid()  ||  !_viewY.isValid() ) {
     return;
   }
 
@@ -222,9 +209,7 @@ void ScopeRow::rectangularZoom(const QRectF& zoomRect)
     return;
   }
 
-  _viewX.initialize();
-  _viewX.update(newView.left());
-  _viewX.update(newView.right());
+  _plot->setRangeX(SimPlotRange(newView.left(), newView.right()));
 
   _viewY.initialize();
   _viewY.update(newView.top());
@@ -233,7 +218,7 @@ void ScopeRow::rectangularZoom(const QRectF& zoomRect)
 
 void ScopeRow::horizontalZoom(const QRectF& zoomRect)
 {
-  if( !_viewX.isValid()  ||  !_viewY.isValid() ) {
+  if( !_plot->rangeX().isValid()  ||  !_viewY.isValid() ) {
     return;
   }
 
@@ -242,14 +227,12 @@ void ScopeRow::horizontalZoom(const QRectF& zoomRect)
     return;
   }
 
-  _viewX.initialize();
-  _viewX.update(newView.left());
-  _viewX.update(newView.right());
+  _plot->setRangeX(SimPlotRange(newView.left(), newView.right()));
 }
 
 void ScopeRow::verticalZoom(const QRectF& zoomRect)
 {
-  if( !_viewX.isValid()  ||  !_viewY.isValid() ) {
+  if( !_plot->rangeX().isValid()  ||  !_viewY.isValid() ) {
     return;
   }
 
@@ -265,24 +248,24 @@ void ScopeRow::verticalZoom(const QRectF& zoomRect)
 
 void ScopeRow::pan(const QPointF& delta)
 {
-  if( !_viewX.isValid()  ||  !_viewY.isValid() ) {
+  if( !_plot->rangeX().isValid()  ||  !_viewY.isValid()  ||  !_plot->totalRangeX().isValid() ) {
     return;
   }
 
-  const QTransform  xform = ::mapScreenToView(_scope->size(), _viewX, _viewY, true);
+  const QTransform  xform = ::mapScreenToView(_scope->size(), _plot->rangeX(), _viewY, true);
   const QPointF deltaView = xform.map(delta);
 
   // Horizontal
 
-  const SimPlotRange boundsX = _store.totalRangeX();
+  const SimPlotRange boundsX = _plot->totalRangeX();
 
-  qreal leftX = _viewX.min() - deltaView.x();
+  qreal leftX = _plot->rangeX().min() - deltaView.x();
   if(        leftX < boundsX.min() ) {
     leftX += boundsX.min() - leftX;
-  } else if( leftX + _viewX.span() > boundsX.max() ) {
-    leftX -= leftX + _viewX.span() - boundsX.max();
+  } else if( leftX + _plot->rangeX().span() > boundsX.max() ) {
+    leftX -= leftX + _plot->rangeX().span() - boundsX.max();
   }
-  _viewX = SimPlotRange(leftX, leftX + _viewX.span());
+  _plot->setRangeX(SimPlotRange(leftX, leftX + _plot->rangeX().span()));
 
   // Vertical
 
@@ -308,12 +291,12 @@ QRectF ScopeRow::zoomedView(const QRectF& zoomRect) const
     return result;
   }
 
-  const QTransform xform = ::mapScreenToView(_scope->size(), _viewX, _viewY);
+  const QTransform xform = ::mapScreenToView(_scope->size(), _plot->rangeX(), _viewY);
   const QRectF  zoomView =
       xform.map(inter.translated(-_scope->topLeft())).boundingRect();
 
-  const QRectF view(QPointF(_viewX.min(), _viewY.min()),
-                    QPointF(_viewX.max(), _viewY.max()));
+  const QRectF view(QPointF(_plot->rangeX().min(), _viewY.min()),
+                    QPointF(_plot->rangeX().max(), _viewY.max()));
 
   result = view & zoomView;
 

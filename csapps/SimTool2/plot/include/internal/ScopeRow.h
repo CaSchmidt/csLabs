@@ -72,10 +72,8 @@ public:
   const Series& activeSeries() const;
   void setActiveSeries(const QString& seriesName);
 
-  SimPlotRange rangeX() const;
   SimPlotRange rangeY() const;
 
-  SimPlotRange viewX() const;
   SimPlotRange viewY() const;
 
   QTransform mapScaleToScreen() const;
@@ -98,7 +96,6 @@ private:
   IPlotImplementation *_plot;
   SeriesStore _store;
   QString _activeSeriesName;
-  SimPlotRange _viewX;
   SimPlotRange _viewY;
 };
 
