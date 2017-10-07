@@ -49,7 +49,7 @@ namespace cs {
   };
   Q_DECLARE_FLAGS(TableExtractionFlags, TableExtractionFlag)
 
-}; // namespace cs
+} // namespace cs
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(cs::TableExtractionFlags)
 

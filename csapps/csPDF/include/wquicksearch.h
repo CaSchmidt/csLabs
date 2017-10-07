@@ -36,7 +36,7 @@
 
 namespace Ui {
   class WQuickSearch;
-}; // namespace Ui
+} // namespace Ui
 
 class WQuickSearch : public QWidget {
   Q_OBJECT

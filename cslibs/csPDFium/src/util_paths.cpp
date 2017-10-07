@@ -127,7 +127,7 @@ namespace util {
       }
     }
 
-  }; // namespace priv
+  } // namespace priv
 
   QList<QPainterPath> extractPaths(const FPDF_PAGE page, const QMatrix& ctm,
                                    const csPDFium::PathExtractionFlags flags)
@@ -148,4 +148,4 @@ namespace util {
     return paths;
   }
 
-}; // namespace util
+} // namespace util

@@ -51,7 +51,7 @@ namespace csPDFium {
 
   CS_PDFIUM_EXPORT void destroy();
 
-}; // namespace csPDFium
+} // namespace csPDFium
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(csPDFium::PathExtractionFlags)
 

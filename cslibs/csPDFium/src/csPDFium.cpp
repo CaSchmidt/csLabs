@@ -47,4 +47,4 @@ namespace csPDFium {
     FPDF_DestroyLibrary();
   }
 
-}; // namespace csPDFium
+} // namespace csPDFium

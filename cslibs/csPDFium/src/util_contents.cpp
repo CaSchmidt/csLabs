@@ -62,4 +62,4 @@ namespace util {
     parseContents(next, doc, parent);
   }
 
-}; // namespace util
+} // namespace util

@@ -64,6 +64,6 @@ namespace csPDFium {
     return min <= max;
   }
 
-}; // namespace csPDFium
+} // namespace csPDFium
 
 #endif // __CSPDFUTIL_H__

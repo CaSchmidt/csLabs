@@ -36,7 +36,7 @@
 
 namespace Ui {
   class WMainWindow;
-}; // namespace Ui
+} // namespace Ui
 
 class WMainWindow : public QMainWindow {
   Q_OBJECT

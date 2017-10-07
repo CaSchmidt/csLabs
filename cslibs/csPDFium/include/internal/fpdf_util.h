@@ -65,6 +65,6 @@ namespace util {
 
   QMatrix getPageCTM(const FPDF_PAGE page);
 
-}; // namespace util
+} // namespace util
 
 #endif // __FPDF_UTIL_H__

@@ -104,7 +104,7 @@ namespace priv {
     return item;
   }
 
-}; // namespace priv
+} // namespace priv
 
 ////// Static ////////////////////////////////////////////////////////////////
 

@@ -69,7 +69,7 @@ namespace priv {
     return copy;
   }
 
-}; // namespace priv
+} // namespace priv
 
 ////// public ////////////////////////////////////////////////////////////////
 

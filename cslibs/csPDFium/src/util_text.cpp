@@ -119,4 +119,4 @@ namespace util {
     return words;
   }
 
-}; // namespace util
+} // namespace util
