@@ -585,7 +585,7 @@ void csPdfUiDocumentView::wheelEvent(QWheelEvent *event)
     }
 
   } else if( condPageBounce ) {
-    if(        isTopTouched() ) {
+    if(        isTopTouched()  &&  dy > 0 ) {
       if( _wheelBounces > 0 ) {
         _wheelBounces = -1;
       } else {
@@ -597,7 +597,7 @@ void csPdfUiDocumentView::wheelEvent(QWheelEvent *event)
         return;
       }
 
-    } else if( isBottomTouched() ) {
+    } else if( isBottomTouched()  &&  dy < 0 ) {
       if( _wheelBounces < 0 ) {
         _wheelBounces = 1;
       } else {
