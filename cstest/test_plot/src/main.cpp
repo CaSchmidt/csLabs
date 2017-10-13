@@ -57,6 +57,15 @@ void test_findRight(const ISimPlotSeriesData *data)
   fflush(stdout);
 }
 
+void info(const ISimPlotSeriesData *data)
+{
+  printf("%s [%s]: rangeX = [%.3f,%.3f], rangeY = [%.3f,%.3f]\n",
+         qPrintable(data->name()), qPrintable(data->unit()),
+         data->rangeX().min(), data->rangeX().max(),
+         data->rangeY().min(), data->rangeY().max());
+  fflush(stdout);
+}
+
 int main(int argc, char **argv)
 {
   std::srand(std::time(0));
@@ -77,6 +86,10 @@ int main(int argc, char **argv)
   // test_findRight(sine);
   SimPlotSeriesHandle h3 = plot->insert(sine);
   // h3.activate();
+
+  info(h1.constData());
+  info(h2.constData());
+  info(h3.constData());
 
   QFont font = plot->font();
   font.setPointSize(10);

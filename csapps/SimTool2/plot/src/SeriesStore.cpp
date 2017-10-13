@@ -29,6 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <SimPlot/SimPlotTheme.h>
+
 #include "internal/SeriesStore.h"
 
 ////// private static ////////////////////////////////////////////////////////
@@ -65,7 +67,7 @@ bool SeriesStore::insert(const Series& series)
   if( _series.insert(series.name(), series) == _series.end() ) {
     return false;
   }
-  if( !addToScales(series.name()) ) {
+  if( !SimPlotTheme::isEmptyUnit(series.unit())  &&  !addToScales(series.name()) ) {
     _series.remove(series.name());
     return false;
   }
@@ -90,7 +92,12 @@ SimPlotRange SeriesStore::rangeX(const QString& seriesName) const
     return result;
   }
 
-  result = _scales[_series[seriesName].unit()].rangeX();
+  const QString scaleName = _series[seriesName].unit();
+  if( _scales.contains(scaleName) ) {
+    result = _scales[scaleName].rangeX();
+  } else {
+    result = _series[seriesName].constData()->rangeX();
+  }
 
   return result;
 }
@@ -103,7 +110,12 @@ SimPlotRange SeriesStore::rangeY(const QString& seriesName) const
     return result;
   }
 
-  result = _scales[_series[seriesName].unit()].rangeY();
+  const QString scaleName = _series[seriesName].unit();
+  if( _scales.contains(scaleName) ) {
+    result = _scales[scaleName].rangeY();
+  } else {
+    result = _series[seriesName].constData()->rangeY();
+  }
 
   return result;
 }
@@ -112,8 +124,8 @@ SimPlotRange SeriesStore::totalRangeX() const
 {
   SimPlotRange result;
 
-  for(const Scale& scale : _scales) {
-    result.update(scale.rangeX());
+  for(const Series& series : _series) {
+    result.update(series.constData()->rangeX());
   }
 
   return result;
@@ -123,6 +135,7 @@ Series& SeriesStore::series(const QString& seriesName)
 {
   QHash<QString,Series>::iterator it = _series.find(seriesName);
   if( it == _series.end() ) {
+    _nullSeries = Series();
     return _nullSeries;
   }
   return it.value();
