@@ -76,6 +76,7 @@ int main(int argc, char **argv)
   // test_findLeft(sine);
   // test_findRight(sine);
   SimPlotSeriesHandle h3 = plot->insert(sine);
+  // h3.activate();
 
   QFont font = plot->font();
   font.setPointSize(10);

@@ -54,7 +54,7 @@ struct SIM_PLOT_EXPORT SimPlotTheme {
   QBrush backgroundBrush() const;
   QPen framePen() const;
   QPen gridPen() const;
-  QPen rubberPen();
+  QPen rubberPen() const;
   QPen textPen() const;
 
   static QPen seriesPen(const QColor& color, const qreal width = 1.0);

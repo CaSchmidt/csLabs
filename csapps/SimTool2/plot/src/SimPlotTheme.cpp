@@ -69,7 +69,7 @@ QPen SimPlotTheme::gridPen() const
               Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
 }
 
-QPen SimPlotTheme::rubberPen()
+QPen SimPlotTheme::rubberPen() const
 {
   return QPen(QBrush(rubberColor, Qt::SolidPattern), 1.0,
               Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
@@ -113,11 +113,7 @@ QString SimPlotTheme::cleanUnit(const QString& unit)
 QString SimPlotTheme::titleString(const QString& name, const QString& unit)
 {
   QString result;
-  if( unit.isEmpty() ) {
-    result = name;
-  } else {
-    result = QStringLiteral("%1 [%2]").arg(name).arg(unit);
-  }
+  result = QStringLiteral("%1 [%2]").arg(name).arg(cleanUnit(unit));
   return result;
 }
 
