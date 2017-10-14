@@ -29,72 +29,33 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __SCOPEROW_H__
-#define __SCOPEROW_H__
+#ifndef __PANANDZOOM_H__
+#define __PANANDZOOM_H__
 
-#include "internal/IPlotElement.h"
-#include "internal/SeriesStore.h"
+#include <QtCore/QRectF>
 
-class IAxisElement;
-class IPlotImplementation;
-class ITitleElement;
-class Scope;
+#include <SimPlot/SimPlotRange.h>
 
-class ScopeRow : public IPlotElement {
-public:
-  ScopeRow(IPlotImplementation *plot);
-  ~ScopeRow();
+namespace Pan {
 
-  QRectF boundingRect() const;
+  SimPlotRange horizontal(const QPointF& delta, const QSizeF& screen,
+                          const SimPlotRange& viewX,
+                          const SimPlotRange& viewY,
+                          const SimPlotRange& boundsX);
 
-  void resize(const QPointF& topLeft, const QSizeF& hint);
+  SimPlotRange vertical(const QPointF& delta, const QSizeF& screen,
+                        const SimPlotRange& viewX,
+                        const SimPlotRange& viewY,
+                        const SimPlotRange& boundsY);
 
-  void paint(QPainter *painter) const;
+} // namespace Pan
 
-  const Scope *scope() const;
+namespace ZoomIn {
 
-  IAxisElement *yAxis();
-  const IAxisElement *yAxis() const;
+  QRectF rectangular(const QRectF& zoomRect, const QRectF& screen,
+                     const SimPlotRange& viewX,
+                     const SimPlotRange& viewY);
 
-  ITitleElement *yTitle();
-  const ITitleElement *yTitle() const;
+} // namespace ZoomIn
 
-  bool insert(const Series& series);
-
-  bool remove(const QString& seriesName);
-
-  const IPlotImplementation *plot() const;
-
-  const SeriesStore& store() const;
-  SeriesStore& store();
-
-  QString activeSeriesName() const;
-  const Series& activeSeries() const;
-  void setActiveSeries(const QString& seriesName);
-
-  SimPlotRange rangeY() const;
-
-  SimPlotRange viewY() const;
-
-  QTransform mapScaleToScreen() const;
-  QTransform mapViewToScreen() const;
-
-  void resetView();
-
-  void rectangularZoom(const QRectF& zoomRect);
-  void horizontalZoom(const QRectF& zoomRect);
-  void verticalZoom(const QRectF& zoomRect);
-
-  void pan(const QPointF& delta);
-
-private:
-  ITitleElement *_yTitle;
-  IAxisElement *_yAxis;
-  Scope *_scope;
-  IPlotImplementation *_plot;
-  SeriesStore _store;
-  QString _activeSeriesName;
-  SimPlotRange _viewY;
-};
-
-#endif // __SCOPEROW_H__
+#endif // __PANANDZOOM_H__

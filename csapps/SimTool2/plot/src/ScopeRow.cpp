@@ -39,6 +39,7 @@
 #include "internal/Scope.h"
 #include "internal/Layout.h"
 #include "internal/Mapping.h"
+#include "internal/PanAndZoom.h"
 
 ////// public ////////////////////////////////////////////////////////////////
 
@@ -200,29 +201,21 @@ void ScopeRow::resetView()
 
 void ScopeRow::rectangularZoom(const QRectF& zoomRect)
 {
-  if( !_plot->rangeX().isValid()  ||  !_viewY.isValid() ) {
-    return;
-  }
-
-  const QRectF newView = zoomedView(zoomRect);
+  const QRectF newView =
+      ZoomIn::rectangular(zoomRect, _scope->boundingRect(), _plot->rangeX(), _viewY);
   if( newView.isEmpty() ) {
     return;
   }
 
   _plot->setRangeX(SimPlotRange(newView.left(), newView.right()));
 
-  _viewY.initialize();
-  _viewY.update(newView.top());
-  _viewY.update(newView.bottom());
+  _viewY = SimPlotRange(newView.top(), newView.bottom());
 }
 
 void ScopeRow::horizontalZoom(const QRectF& zoomRect)
 {
-  if( !_plot->rangeX().isValid()  ||  !_viewY.isValid() ) {
-    return;
-  }
-
-  const QRectF newView = zoomedView(zoomRect);
+  const QRectF newView =
+      ZoomIn::rectangular(zoomRect, _scope->boundingRect(), _plot->rangeX(), _viewY);
   if( newView.isEmpty() ) {
     return;
   }
@@ -232,73 +225,29 @@ void ScopeRow::horizontalZoom(const QRectF& zoomRect)
 
 void ScopeRow::verticalZoom(const QRectF& zoomRect)
 {
-  if( !_plot->rangeX().isValid()  ||  !_viewY.isValid() ) {
-    return;
-  }
-
-  const QRectF newView = zoomedView(zoomRect);
+  const QRectF newView =
+      ZoomIn::rectangular(zoomRect, _scope->boundingRect(), _plot->rangeX(), _viewY);
   if( newView.isEmpty() ) {
     return;
   }
 
-  _viewY.initialize();
-  _viewY.update(newView.top());
-  _viewY.update(newView.bottom());
+  _viewY = SimPlotRange(newView.top(), newView.bottom());
 }
 
 void ScopeRow::pan(const QPointF& delta)
 {
-  if( !_plot->rangeX().isValid()  ||  !_viewY.isValid()  ||  !_plot->totalRangeX().isValid() ) {
-    return;
+  const SimPlotRange oldX = _plot->rangeX();
+  const SimPlotRange oldY = _viewY;
+
+  const SimPlotRange newX =
+      Pan::horizontal(delta, _scope->size(), oldX, oldY, _plot->totalRangeX());
+  if( newX.isValid() ) {
+    _plot->setRangeX(newX);
   }
 
-  const QTransform  xform = ::mapScreenToView(_scope->size(), _plot->rangeX(), _viewY, true);
-  const QPointF deltaView = xform.map(delta);
-
-  // Horizontal
-
-  const SimPlotRange boundsX = _plot->totalRangeX();
-
-  qreal leftX = _plot->rangeX().min() - deltaView.x();
-  if(        leftX < boundsX.min() ) {
-    leftX += boundsX.min() - leftX;
-  } else if( leftX + _plot->rangeX().span() > boundsX.max() ) {
-    leftX -= leftX + _plot->rangeX().span() - boundsX.max();
+  const SimPlotRange newY =
+      Pan::vertical(delta, _scope->size(), oldX, oldY, SimPlotRange(0, 100));
+  if( newY.isValid() ) {
+    _viewY = newY;
   }
-  _plot->setRangeX(SimPlotRange(leftX, leftX + _plot->rangeX().span()));
-
-  // Vertical
-
-  const SimPlotRange boundsY(0, 100);
-
-  qreal bottomY = _viewY.min() + deltaView.y();
-  if(        bottomY < boundsY.min() ) {
-    bottomY += boundsY.min() - bottomY;
-  } else if( bottomY + _viewY.span() > boundsY.max() ) {
-    bottomY -= bottomY + _viewY.span() - boundsY.max();
-  }
-  _viewY = SimPlotRange(bottomY, bottomY + _viewY.span());
-}
-
-////// private ///////////////////////////////////////////////////////////////
-
-QRectF ScopeRow::zoomedView(const QRectF& zoomRect) const
-{
-  QRectF result;
-
-  const QRectF inter = _scope->boundingRect() & zoomRect;
-  if( inter.isEmpty() ) {
-    return result;
-  }
-
-  const QTransform xform = ::mapScreenToView(_scope->size(), _plot->rangeX(), _viewY);
-  const QRectF  zoomView =
-      xform.map(inter.translated(-_scope->topLeft())).boundingRect();
-
-  const QRectF view(QPointF(_plot->rangeX().min(), _viewY.min()),
-                    QPointF(_plot->rangeX().max(), _viewY.max()));
-
-  result = view & zoomView;
-
-  return result;
 }

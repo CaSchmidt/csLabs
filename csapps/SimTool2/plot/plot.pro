@@ -47,7 +47,8 @@ SOURCES += \
     src/Draw.cpp \
     src/IViewportControl.cpp \
     src/IXAxisControl.cpp \
-    src/ISeriesControl.cpp
+    src/ISeriesControl.cpp \
+    src/PanAndZoom.cpp
 
 HEADERS += \
     include/SimPlot/ISimPlotSeriesData.h \
@@ -76,4 +77,5 @@ HEADERS += \
     include/internal/Draw.h \
     include/internal/IViewportControl.h \
     include/internal/IXAxisControl.h \
-    include/internal/ISeriesControl.h
+    include/internal/ISeriesControl.h \
+    include/internal/PanAndZoom.h
