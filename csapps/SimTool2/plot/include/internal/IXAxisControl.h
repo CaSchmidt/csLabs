@@ -44,7 +44,6 @@ public:
 
   virtual QTransform mapViewToScreenX() const = 0;
   virtual SimPlotRange rangeX() const = 0;
-  virtual void setRangeX(const SimPlotRange& rangeX) = 0;
   virtual void setTitleX(const QString& title) = 0;
   virtual SimPlotRange totalRangeX() const = 0;
   virtual const IAxisElement *xAxis() const = 0;

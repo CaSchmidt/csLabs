@@ -75,17 +75,12 @@ public:
   SimPlotRange rangeY() const;
 
   SimPlotRange viewY() const;
+  void setViewY(const SimPlotRange& viewY);
 
   QTransform mapScaleToScreen() const;
   QTransform mapViewToScreen() const;
 
   void resetView();
-
-  void rectangularZoom(const QRectF& zoomRect);
-  void horizontalZoom(const QRectF& zoomRect);
-  void verticalZoom(const QRectF& zoomRect);
-
-  void pan(const QPointF& delta);
 
 private:
   ITitleElement *_yTitle;

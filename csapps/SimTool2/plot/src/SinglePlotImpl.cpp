@@ -34,6 +34,7 @@
 #include "internal/SinglePlotImpl.h"
 
 #include "internal/Layout.h"
+#include "internal/PanAndZoom.h"
 #include "internal/Scope.h"
 #include "internal/ScopeRow.h"
 #include "internal/XAxis.h"
@@ -212,25 +213,62 @@ bool SinglePlotImpl::setActiveSeries(const QString& name)
 
 void SinglePlotImpl::pan(const QPointF& delta)
 {
-  _row->pan(delta);
+  const SimPlotRange oldX = _rangeX;
+  const SimPlotRange oldY = _row->viewY();
+
+  const SimPlotRange newX =
+      Pan::horizontal(delta, _row->scope()->size(), oldX, oldY, totalRangeX());
+  if( newX.isValid() ) {
+    _rangeX = newX;
+  }
+
+  const SimPlotRange newY =
+      Pan::vertical(delta, _row->scope()->size(), oldX, oldY, SimPlotRange(0, 100));
+  if( newY.isValid() ) {
+    _row->setViewY(newY);
+  }
+
   replot();
 }
 
 void SinglePlotImpl::rectangularZoom(const QRectF& zoomRect)
 {
-  _row->rectangularZoom(zoomRect);
+  const QRectF newView =
+      ZoomIn::rectangular(zoomRect, _row->scope()->boundingRect(), _rangeX, _row->viewY());
+  if( newView.isEmpty() ) {
+    return;
+  }
+
+  _rangeX = SimPlotRange(newView.left(), newView.right());
+
+  _row->setViewY(SimPlotRange(newView.top(), newView.bottom()));
+
   replot();
 }
 
 void SinglePlotImpl::horizontalZoom(const QRectF& zoomRect)
 {
-  _row->horizontalZoom(zoomRect);
+  const QRectF newView =
+      ZoomIn::rectangular(zoomRect, _row->scope()->boundingRect(), _rangeX, _row->viewY());
+  if( newView.isEmpty() ) {
+    return;
+  }
+
+  _rangeX = SimPlotRange(newView.left(), newView.right());
+
   replot();
 }
 
 void SinglePlotImpl::verticalZoom(const QRectF& zoomRect)
 {
-  _row->verticalZoom(zoomRect);
+  const QRectF newView =
+      ZoomIn::rectangular(zoomRect, _row->scope()->boundingRect(), _rangeX, _row->viewY());
+  if( newView.isEmpty() ) {
+    return;
+  }
+
+  _row->setViewY(SimPlotRange(newView.top(), newView.bottom()));
+
   replot();
 }
 
@@ -244,11 +282,6 @@ QTransform SinglePlotImpl::mapViewToScreenX() const
 SimPlotRange SinglePlotImpl::rangeX() const
 {
   return _rangeX;
-}
-
-void SinglePlotImpl::setRangeX(const SimPlotRange& rangeX)
-{
-  _rangeX = rangeX;
 }
 
 void SinglePlotImpl::setTitleX(const QString& title)

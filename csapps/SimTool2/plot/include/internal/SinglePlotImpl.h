@@ -73,7 +73,6 @@ public:
 
   QTransform mapViewToScreenX() const;
   SimPlotRange rangeX() const;
-  void setRangeX(const SimPlotRange& rangeX);
   void setTitleX(const QString& title);
   SimPlotRange totalRangeX() const;
   const IAxisElement *xAxis() const;
