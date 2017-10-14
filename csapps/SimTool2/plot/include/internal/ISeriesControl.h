@@ -29,37 +29,23 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __IPLOTIMPLEMENTATION_H__
-#define __IPLOTIMPLEMENTATION_H__
+#ifndef __ISERIESCONTROL_H__
+#define __ISERIESCONTROL_H__
 
-#include <SimPlot/SimPlotTheme.h>
+#include <SimPlot/SimPlotSeriesHandle.h>
 
-#include "internal/IPlotElement.h"
-#include "internal/ISeriesControl.h"
-#include "internal/IViewportControl.h"
-#include "internal/IXAxisControl.h"
-
-class IAxisElement;
 class Series;
 
-class IPlotImplementation
-    : public IPlotElement
-    , public ISeriesControl
-    , public IViewportControl
-    , public IXAxisControl {
+class ISeriesControl {
 public:
-  IPlotImplementation(const SimPlotTheme& theme);
-  ~IPlotImplementation();
+  virtual ~ISeriesControl();
 
-  SimPlotTheme& theme();
-  const SimPlotTheme& theme() const;
-
-  virtual void replot() = 0;
-  virtual void reset() = 0;
-  virtual const Widget *widget() const = 0;
-
-private:
-  SimPlotTheme _theme;
+  virtual SimPlotSeriesHandle handle(const QString& name) const = 0;
+  virtual SimPlotSeriesHandle insert(ISimPlotSeriesData *data, const QColor& color) = 0;
+  virtual bool remove(const QString& name) = 0;
+  virtual const Series& series(const QString& name) const = 0;
+  virtual Series& series(const QString& name) = 0;
+  virtual bool setActiveSeries(const QString& name) = 0;
 };
 
-#endif // __IPLOTIMPLEMENTATION_H__
+#endif // __ISERIESCONTROL_H__

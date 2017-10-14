@@ -43,38 +43,40 @@ public:
   SinglePlotImpl(const SimPlotTheme& theme, Widget *widget);
   ~SinglePlotImpl();
 
-  // IPlotElement ////////////////////////////////////////////////////////////
+  void replot();
+  void reset();
+  const Widget *widget() const;
+
+  // IPlotElement
 
   QRectF boundingRect() const;
   void resize(const QPointF& topLeft, const QSizeF& hint);
   void paint(QPainter *painter) const;
 
-  // IPlotImplementation /////////////////////////////////////////////////////
+  // ISeriesControl
 
-  // Viewport
-  void replot();
-  void reset();
-  void pan(const QPointF& delta);
-  void rectangularZoom(const QRectF& zoomRect);
-  void horizontalZoom(const QRectF& zoomRect);
-  void verticalZoom(const QRectF& zoomRect);
-  const Widget *widget() const;
-
-  // X-Axis
-  QTransform mapViewToScreenX() const;
-  SimPlotRange rangeX() const;
-  void setRangeX(const SimPlotRange& rangeX);
-  void setTitleX(const QString& title);
-  SimPlotRange totalRangeX() const;
-  const IAxisElement *xAxis() const;
-
-  // SimPlotSeriesHandle
   SimPlotSeriesHandle handle(const QString& name) const;
   SimPlotSeriesHandle insert(ISimPlotSeriesData *data, const QColor& color);
   bool remove(const QString& name);
   const Series& series(const QString& name) const;
   Series& series(const QString& name);
   bool setActiveSeries(const QString& name);
+
+  // IViewportControl
+
+  void pan(const QPointF& delta);
+  void rectangularZoom(const QRectF& zoomRect);
+  void horizontalZoom(const QRectF& zoomRect);
+  void verticalZoom(const QRectF& zoomRect);
+
+  // IXAxisControl
+
+  QTransform mapViewToScreenX() const;
+  SimPlotRange rangeX() const;
+  void setRangeX(const SimPlotRange& rangeX);
+  void setTitleX(const QString& title);
+  SimPlotRange totalRangeX() const;
+  const IAxisElement *xAxis() const;
 
 private:
   Widget *_widget;

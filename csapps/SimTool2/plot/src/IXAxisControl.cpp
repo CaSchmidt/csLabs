@@ -29,37 +29,10 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __IPLOTIMPLEMENTATION_H__
-#define __IPLOTIMPLEMENTATION_H__
-
-#include <SimPlot/SimPlotTheme.h>
-
-#include "internal/IPlotElement.h"
-#include "internal/ISeriesControl.h"
-#include "internal/IViewportControl.h"
 #include "internal/IXAxisControl.h"
 
-class IAxisElement;
-class Series;
+////// public ////////////////////////////////////////////////////////////////
 
-class IPlotImplementation
-    : public IPlotElement
-    , public ISeriesControl
-    , public IViewportControl
-    , public IXAxisControl {
-public:
-  IPlotImplementation(const SimPlotTheme& theme);
-  ~IPlotImplementation();
-
-  SimPlotTheme& theme();
-  const SimPlotTheme& theme() const;
-
-  virtual void replot() = 0;
-  virtual void reset() = 0;
-  virtual const Widget *widget() const = 0;
-
-private:
-  SimPlotTheme _theme;
-};
-
-#endif // __IPLOTIMPLEMENTATION_H__
+IXAxisControl::~IXAxisControl()
+{
+}

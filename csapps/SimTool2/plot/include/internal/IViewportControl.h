@@ -29,37 +29,20 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __IPLOTIMPLEMENTATION_H__
-#define __IPLOTIMPLEMENTATION_H__
+#ifndef __IVIEWPORTCONTROL_H__
+#define __IVIEWPORTCONTROL_H__
 
-#include <SimPlot/SimPlotTheme.h>
+class QPointF;
+class QRectF;
 
-#include "internal/IPlotElement.h"
-#include "internal/ISeriesControl.h"
-#include "internal/IViewportControl.h"
-#include "internal/IXAxisControl.h"
-
-class IAxisElement;
-class Series;
-
-class IPlotImplementation
-    : public IPlotElement
-    , public ISeriesControl
-    , public IViewportControl
-    , public IXAxisControl {
+class IViewportControl {
 public:
-  IPlotImplementation(const SimPlotTheme& theme);
-  ~IPlotImplementation();
+  virtual ~IViewportControl();
 
-  SimPlotTheme& theme();
-  const SimPlotTheme& theme() const;
-
-  virtual void replot() = 0;
-  virtual void reset() = 0;
-  virtual const Widget *widget() const = 0;
-
-private:
-  SimPlotTheme _theme;
+  virtual void pan(const QPointF& delta) = 0;
+  virtual void rectangularZoom(const QRectF& zoomRect) = 0;
+  virtual void horizontalZoom(const QRectF& zoomRect) = 0;
+  virtual void verticalZoom(const QRectF& zoomRect) = 0;
 };
 
-#endif // __IPLOTIMPLEMENTATION_H__
+#endif // __IVIEWPORTCONTROL_H__

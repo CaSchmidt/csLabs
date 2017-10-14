@@ -29,37 +29,25 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __IPLOTIMPLEMENTATION_H__
-#define __IPLOTIMPLEMENTATION_H__
+#ifndef __IXAXISCONTROL_H__
+#define __IXAXISCONTROL_H__
 
-#include <SimPlot/SimPlotTheme.h>
+#include <QtGui/QTransform>
 
-#include "internal/IPlotElement.h"
-#include "internal/ISeriesControl.h"
-#include "internal/IViewportControl.h"
-#include "internal/IXAxisControl.h"
+#include <SimPlot/SimPlotRange.h>
 
 class IAxisElement;
-class Series;
 
-class IPlotImplementation
-    : public IPlotElement
-    , public ISeriesControl
-    , public IViewportControl
-    , public IXAxisControl {
+class IXAxisControl {
 public:
-  IPlotImplementation(const SimPlotTheme& theme);
-  ~IPlotImplementation();
+  virtual ~IXAxisControl();
 
-  SimPlotTheme& theme();
-  const SimPlotTheme& theme() const;
-
-  virtual void replot() = 0;
-  virtual void reset() = 0;
-  virtual const Widget *widget() const = 0;
-
-private:
-  SimPlotTheme _theme;
+  virtual QTransform mapViewToScreenX() const = 0;
+  virtual SimPlotRange rangeX() const = 0;
+  virtual void setRangeX(const SimPlotRange& rangeX) = 0;
+  virtual void setTitleX(const QString& title) = 0;
+  virtual SimPlotRange totalRangeX() const = 0;
+  virtual const IAxisElement *xAxis() const = 0;
 };
 
-#endif // __IPLOTIMPLEMENTATION_H__
+#endif // __IXAXISCONTROL_H__

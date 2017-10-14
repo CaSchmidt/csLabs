@@ -44,7 +44,10 @@ SOURCES += \
     src/SimPlotRange.cpp \
     src/SimPlotTheme.cpp \
     src/SimPlotSeriesHandle.cpp \
-    src/Draw.cpp
+    src/Draw.cpp \
+    src/IViewportControl.cpp \
+    src/IXAxisControl.cpp \
+    src/ISeriesControl.cpp
 
 HEADERS += \
     include/SimPlot/ISimPlotSeriesData.h \
@@ -70,4 +73,7 @@ HEADERS += \
     include/SimPlot/SimPlotRange.h \
     include/SimPlot/SimPlotTheme.h \
     include/SimPlot/SimPlotSeriesHandle.h \
-    include/internal/Draw.h
+    include/internal/Draw.h \
+    include/internal/IViewportControl.h \
+    include/internal/IXAxisControl.h \
+    include/internal/ISeriesControl.h

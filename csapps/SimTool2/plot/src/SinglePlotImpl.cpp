@@ -62,6 +62,26 @@ SinglePlotImpl::~SinglePlotImpl()
   delete _xTitle;
 }
 
+void SinglePlotImpl::replot()
+{
+  _xAxis->clearLabels();
+  _row->yAxis()->clearLabels();
+  resize(_rect.topLeft(), _rect.size());
+  QMetaObject::invokeMethod(_widget, "update", Qt::QueuedConnection);
+}
+
+void SinglePlotImpl::reset()
+{
+  _rangeX = totalRangeX();
+  _row->resetView();
+  replot();
+}
+
+const Widget *SinglePlotImpl::widget() const
+{
+  return _widget;
+}
+
 // IPlotElement //////////////////////////////////////////////////////////////
 
 QRectF SinglePlotImpl::boundingRect() const
@@ -110,86 +130,7 @@ void SinglePlotImpl::paint(QPainter *painter) const
   _xTitle->paint(painter);
 }
 
-// IPlotImplementation - Viewport ////////////////////////////////////////////
-
-void SinglePlotImpl::replot()
-{
-  _xAxis->clearLabels();
-  _row->yAxis()->clearLabels();
-  resize(_rect.topLeft(), _rect.size());
-  QMetaObject::invokeMethod(_widget, "update", Qt::QueuedConnection);
-}
-
-void SinglePlotImpl::reset()
-{
-  _rangeX = totalRangeX();
-  _row->resetView();
-  replot();
-}
-
-void SinglePlotImpl::pan(const QPointF& delta)
-{
-  _row->pan(delta);
-  replot();
-}
-
-void SinglePlotImpl::rectangularZoom(const QRectF& zoomRect)
-{
-  _row->rectangularZoom(zoomRect);
-  replot();
-}
-
-void SinglePlotImpl::horizontalZoom(const QRectF& zoomRect)
-{
-  _row->horizontalZoom(zoomRect);
-  replot();
-}
-
-void SinglePlotImpl::verticalZoom(const QRectF& zoomRect)
-{
-  _row->verticalZoom(zoomRect);
-  replot();
-}
-
-const Widget *SinglePlotImpl::widget() const
-{
-  return _widget;
-}
-
-// IPlotImplementation - X-Axis //////////////////////////////////////////////
-
-QTransform SinglePlotImpl::mapViewToScreenX() const
-{
-  return _row->mapViewToScreen();
-}
-
-SimPlotRange SinglePlotImpl::rangeX() const
-{
-  return _rangeX;
-}
-
-void SinglePlotImpl::setRangeX(const SimPlotRange& rangeX)
-{
-  _rangeX = rangeX;
-}
-
-void SinglePlotImpl::setTitleX(const QString& title)
-{
-  _xTitle->setTitle(title);
-  replot();
-}
-
-SimPlotRange SinglePlotImpl::totalRangeX() const
-{
-  return _row->store().totalRangeX();
-}
-
-const IAxisElement *SinglePlotImpl::xAxis() const
-{
-  return _xAxis;
-}
-
-// IPlotImplementation - SimPlotSeriesHandle /////////////////////////////////
+// ISeriesControl ////////////////////////////////////////////////////////////
 
 SimPlotSeriesHandle SinglePlotImpl::handle(const QString& name) const
 {
@@ -263,4 +204,63 @@ bool SinglePlotImpl::setActiveSeries(const QString& name)
     replot();
   }
   return _row->activeSeriesName() == name;
+}
+
+// IViewportControl //////////////////////////////////////////////////////////
+
+void SinglePlotImpl::pan(const QPointF& delta)
+{
+  _row->pan(delta);
+  replot();
+}
+
+void SinglePlotImpl::rectangularZoom(const QRectF& zoomRect)
+{
+  _row->rectangularZoom(zoomRect);
+  replot();
+}
+
+void SinglePlotImpl::horizontalZoom(const QRectF& zoomRect)
+{
+  _row->horizontalZoom(zoomRect);
+  replot();
+}
+
+void SinglePlotImpl::verticalZoom(const QRectF& zoomRect)
+{
+  _row->verticalZoom(zoomRect);
+  replot();
+}
+
+// IXAxisControl /////////////////////////////////////////////////////////////
+
+QTransform SinglePlotImpl::mapViewToScreenX() const
+{
+  return _row->mapViewToScreen();
+}
+
+SimPlotRange SinglePlotImpl::rangeX() const
+{
+  return _rangeX;
+}
+
+void SinglePlotImpl::setRangeX(const SimPlotRange& rangeX)
+{
+  _rangeX = rangeX;
+}
+
+void SinglePlotImpl::setTitleX(const QString& title)
+{
+  _xTitle->setTitle(title);
+  replot();
+}
+
+SimPlotRange SinglePlotImpl::totalRangeX() const
+{
+  return _row->store().totalRangeX();
+}
+
+const IAxisElement *SinglePlotImpl::xAxis() const
+{
+  return _xAxis;
 }
