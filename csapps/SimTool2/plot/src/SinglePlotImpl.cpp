@@ -198,12 +198,14 @@ Series& SinglePlotImpl::series(const QString& name)
 
 bool SinglePlotImpl::setActiveSeries(const QString& name)
 {
-  const QString oldActiveSeriesName = _row->activeSeriesName();
-  _row->setActiveSeries(name);
-  if( oldActiveSeriesName != _row->activeSeriesName() ) {
-    replot();
+  if( !_row->setActiveSeries(name) ) {
+    return false;
   }
-  return _row->activeSeriesName() == name;
+  if( !_rangeX.isValid() ) {
+    _rangeX = _row->store().rangeX(_row->activeSeriesName());
+  }
+  replot();
+  return true;
 }
 
 // IViewportControl //////////////////////////////////////////////////////////

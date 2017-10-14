@@ -155,21 +155,16 @@ const Series& ScopeRow::activeSeries() const
   return _store.series(_activeSeriesName);
 }
 
-void ScopeRow::setActiveSeries(const QString& seriesName)
+bool ScopeRow::setActiveSeries(const QString& seriesName)
 {
-  if( !seriesName.isEmpty()  &&  !_store.contains(seriesName) ) {
-    return;
+  if( seriesName.isEmpty()  ||  !_store.contains(seriesName)  ||
+      _activeSeriesName == seriesName ) {
+    return false;
   }
   _activeSeriesName = seriesName;
   const Series& s = _store.series(_activeSeriesName);
-  if( !s.isEmpty() ) {
-    _yTitle->setTitle(SimPlotTheme::titleString(s.name(), s.unit()));
-    if( !_activeSeriesName.isEmpty()  &&  !_plot->rangeX().isValid() ) {
-      _plot->setRangeX(_store.rangeX(_activeSeriesName));
-    }
-  } else {
-    _yTitle->setTitle(QString());
-  }
+  _yTitle->setTitle(SimPlotTheme::titleString(s.name(), s.unit()));
+  return true;
 }
 
 SimPlotRange ScopeRow::rangeY() const
