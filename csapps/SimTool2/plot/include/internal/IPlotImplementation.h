@@ -40,6 +40,7 @@
 
 #include "internal/IPlotElement.h"
 
+class IAxisElement;
 class Series;
 
 class IPlotImplementation : public IPlotElement {
@@ -64,8 +65,9 @@ public:
   virtual QTransform mapViewToScreenX() const = 0;
   virtual SimPlotRange rangeX() const = 0;
   virtual void setRangeX(const SimPlotRange& rangeX) = 0;
-  virtual void setXTitle(const QString& title) = 0;  
+  virtual void setTitleX(const QString& title) = 0;
   virtual SimPlotRange totalRangeX() const = 0;
+  virtual const IAxisElement *xAxis() const = 0;
 
   // SimPlotSeriesHandle
   virtual SimPlotSeriesHandle handle(const QString& name) const = 0;

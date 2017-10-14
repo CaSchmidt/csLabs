@@ -79,9 +79,9 @@ SimPlotSeriesHandle SimPlotWidget::insert(ISimPlotSeriesData *data,
   return _impl->insert(data, color);
 }
 
-void SimPlotWidget::setXTitle(const QString& title)
+void SimPlotWidget::setTitleX(const QString& title)
 {
-  _impl->setXTitle(title);
+  _impl->setTitleX(title);
 }
 
 ////// public slots //////////////////////////////////////////////////////////

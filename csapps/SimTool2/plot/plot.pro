@@ -43,7 +43,8 @@ SOURCES += \
     src/YTitle.cpp \
     src/SimPlotRange.cpp \
     src/SimPlotTheme.cpp \
-    src/SimPlotSeriesHandle.cpp
+    src/SimPlotSeriesHandle.cpp \
+    src/Draw.cpp
 
 HEADERS += \
     include/SimPlot/ISimPlotSeriesData.h \
@@ -68,4 +69,5 @@ HEADERS += \
     include/internal/YTitle.h \
     include/SimPlot/SimPlotRange.h \
     include/SimPlot/SimPlotTheme.h \
-    include/SimPlot/SimPlotSeriesHandle.h
+    include/SimPlot/SimPlotSeriesHandle.h \
+    include/internal/Draw.h

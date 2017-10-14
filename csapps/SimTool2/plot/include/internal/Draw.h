@@ -29,60 +29,43 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __SINGLEPLOTIMPL_H__
-#define __SINGLEPLOTIMPL_H__
+#ifndef __DRAW_H__
+#define __DRAW_H__
 
-#include "internal/IPlotImplementation.h"
+#include <QtCore/QFlags>
 
 class IAxisElement;
-class ITitleElement;
-class ScopeRow;
+class QPainter;
+class QPen;
+class QRectF;
+class QTransform;
+class Series;
+class SimPlotRange;
 
-class SinglePlotImpl : public IPlotImplementation {
-public:
-  SinglePlotImpl(const SimPlotTheme& theme, Widget *widget);
-  ~SinglePlotImpl();
+namespace Draw {
 
-  // IPlotElement ////////////////////////////////////////////////////////////
+  enum Flag {
+    NoFlags  = 0,
+    IsActive = 0x01
+  };
+  Q_DECLARE_FLAGS(Flags, Flag)
 
-  QRectF boundingRect() const;
-  void resize(const QPointF& topLeft, const QSizeF& hint);
-  void paint(QPainter *painter) const;
+  void frame(QPainter *painter,
+             const QRectF& rect, const QPen& pen);
 
-  // IPlotImplementation /////////////////////////////////////////////////////
+  void gridX(QPainter *painter,
+             const IAxisElement *xAxis, const QTransform& mapping,
+             const QRectF& rect, const QPen& pen);
 
-  // Viewport
-  void replot();
-  void reset();
-  void pan(const QPointF& delta);
-  void rectangularZoom(const QRectF& zoomRect);
-  void horizontalZoom(const QRectF& zoomRect);
-  void verticalZoom(const QRectF& zoomRect);
-  const Widget *widget() const;
+  void gridY(QPainter *painter,
+             const IAxisElement *yAxis, const QTransform& mapping,
+             const QRectF& rect, const QPen& pen);
 
-  // X-Axis
-  QTransform mapViewToScreenX() const;
-  SimPlotRange rangeX() const;
-  void setRangeX(const SimPlotRange& rangeX);
-  void setTitleX(const QString& title);
-  SimPlotRange totalRangeX() const;
-  const IAxisElement *xAxis() const;
+  void series(QPainter *painter,
+              const QRectF& screen, const Series& theSeries,
+              const SimPlotRange& viewX, const  SimPlotRange& viewY,
+              const Flags flags = NoFlags);
 
-  // SimPlotSeriesHandle
-  SimPlotSeriesHandle handle(const QString& name) const;
-  SimPlotSeriesHandle insert(ISimPlotSeriesData *data, const QColor& color);
-  bool remove(const QString& name);
-  const Series& series(const QString& name) const;
-  Series& series(const QString& name);
-  bool setActiveSeries(const QString& name);
+} // namespace Draw
 
-private:
-  Widget *_widget;
-  SimPlotRange _rangeX;
-  QRectF _rect;
-  ScopeRow *_row;
-  IAxisElement *_xAxis;
-  ITitleElement *_xTitle;
-};
-
-#endif // __SINGLEPLOTIMPL_H__
+#endif // __DRAW_H__

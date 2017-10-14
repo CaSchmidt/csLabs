@@ -99,22 +99,22 @@ const Scope *ScopeRow::scope() const
   return _scope;
 }
 
-YAxis *ScopeRow::yAxis()
+IAxisElement *ScopeRow::yAxis()
 {
   return _yAxis;
 }
 
-const YAxis *ScopeRow::yAxis() const
+const IAxisElement *ScopeRow::yAxis() const
 {
   return _yAxis;
 }
 
-YTitle *ScopeRow::yTitle()
+ITitleElement *ScopeRow::yTitle()
 {
   return _yTitle;
 }
 
-const YTitle *ScopeRow::yTitle() const
+const ITitleElement *ScopeRow::yTitle() const
 {
   return _yTitle;
 }

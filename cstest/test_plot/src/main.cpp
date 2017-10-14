@@ -73,7 +73,7 @@ int main(int argc, char **argv)
   QApplication app(argc, argv);
 
   SimPlotWidget *plot = new SimPlotWidget();
-  plot->setXTitle(SimPlotTheme::titleString(QStringLiteral("Time"),
+  plot->setTitleX(SimPlotTheme::titleString(QStringLiteral("Time"),
                                             QStringLiteral("s")));
   plot->show();
   plot->resize(640, 480);

@@ -39,7 +39,7 @@
 class QMenu;
 
 class ISimPlotSeriesData;
-class SinglePlotImpl;
+class IPlotImplementation;
 
 class SIM_PLOT_EXPORT SimPlotWidget : public QWidget {
   Q_OBJECT
@@ -50,7 +50,7 @@ public:
   SimPlotSeriesHandle handle(const QString& name) const;
   SimPlotSeriesHandle insert(ISimPlotSeriesData *data, const QColor& color = QColor());
 
-  void setXTitle(const QString& title);
+  void setTitleX(const QString& title);
 
 public slots:
   void setActiveSeries(const QString& seriesName);
@@ -85,7 +85,7 @@ private:
   void initializeContextMenu();
   void initializeCursor();
 
-  SinglePlotImpl *_impl;
+  IPlotImplementation *_impl;
   QMenu *_contextMenu;
   PanZoom _panZoom;
   QPoint _dragStart;

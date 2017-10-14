@@ -38,8 +38,6 @@
 #include "internal/ScopeRow.h"
 #include "internal/XAxis.h"
 #include "internal/XTitle.h"
-#include "internal/YAxis.h"
-#include "internal/YTitle.h"
 
 ////// public ////////////////////////////////////////////////////////////////
 
@@ -102,32 +100,8 @@ void SinglePlotImpl::paint(QPainter *painter) const
   painter->save();
 
   painter->setBrush(Qt::NoBrush);
-  // background
+
   painter->fillRect(_rect, theme().backgroundBrush());
-  // grid
-  painter->setPen(theme().gridPen());
-  const QTransform mapping = _row->mapScaleToScreen();
-
-  const AxisLabels xAxisLabels = _xAxis->labels();
-  for(const AxisLabel& label : xAxisLabels) {
-    const qreal x = std::floor(mapping.map(QPointF(label.value(), 0)).x()) + 0.5;
-    const QPointF begin(_row->scope()->topLeft().x() + x,
-                        _row->scope()->topLeft().y() + 0.5);
-    const QPointF end(begin + QPointF(0, _row->scope()->size().height() - 1));
-    painter->drawLine(begin, end);
-  }
-
-  const AxisLabels yAxisLabels = _row->yAxis()->labels();
-  for(const AxisLabel& label : yAxisLabels) {
-    const qreal y = std::floor(mapping.map(QPointF(0, label.value())).y()) + 0.5;
-    const QPointF begin(_row->scope()->topLeft().x() + 0.5,
-                        _row->scope()->topLeft().y() + y);
-    const QPointF end(begin + QPointF(_row->scope()->size().width() - 1, 0));
-    painter->drawLine(begin, end);
-  }
-  // frame
-  painter->setPen(theme().framePen());
-  painter->drawRect(_row->scope()->boundingRect().adjusted(0.5, 0.5, -0.5, -0.5));
 
   painter->restore();
 
@@ -199,7 +173,7 @@ void SinglePlotImpl::setRangeX(const SimPlotRange& rangeX)
   _rangeX = rangeX;
 }
 
-void SinglePlotImpl::setXTitle(const QString& title)
+void SinglePlotImpl::setTitleX(const QString& title)
 {
   _xTitle->setTitle(title);
   replot();
@@ -208,6 +182,11 @@ void SinglePlotImpl::setXTitle(const QString& title)
 SimPlotRange SinglePlotImpl::totalRangeX() const
 {
   return _row->store().totalRangeX();
+}
+
+const IAxisElement *SinglePlotImpl::xAxis() const
+{
+  return _xAxis;
 }
 
 // IPlotImplementation - SimPlotSeriesHandle /////////////////////////////////

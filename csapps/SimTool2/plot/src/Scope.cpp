@@ -33,6 +33,7 @@
 
 #include "internal/Scope.h"
 
+#include "internal/Draw.h"
 #include "internal/IPlotImplementation.h"
 #include "internal/Mapping.h"
 #include "internal/ScopeRow.h"
@@ -65,7 +66,24 @@ void Scope::paint(QPainter *painter) const
 
   painter->setBrush(Qt::NoBrush);
 
+  // (1) Grid ////////////////////////////////////////////////////////////////
+
+  const QTransform mapping = _row->mapScaleToScreen();
+
+  Draw::gridX(painter,
+              _row->plot()->xAxis(), mapping, _rect, _row->plot()->theme().gridPen());
+  Draw::gridY(painter,
+              _row->yAxis(), mapping, _rect, _row->plot()->theme().gridPen());
+
+  // (2) Frame ///////////////////////////////////////////////////////////////
+
+  Draw::frame(painter,
+              _rect, _row->plot()->theme().framePen());
+
+  // (3) Series (Excluding Active Series) ////////////////////////////////////
+
   const Series& activeSeries = _row->activeSeries();
+  const SimPlotRange  rangeX = _row->plot()->rangeX();
 
   painter->resetTransform();
   painter->setClipRect(_rect);
@@ -74,54 +92,22 @@ void Scope::paint(QPainter *painter) const
     if( series.isEmpty()  ||  series == activeSeries ) {
       continue;
     }
-    draw(painter, series);
+    const SimPlotRange rangeY =
+        _row->store().rangeY(series.name()).clamped(_row->viewY(), 100);
+    Draw::series(painter,
+                 _rect, series, rangeX, rangeY);
   }
+
+  // (4) Active Series ///////////////////////////////////////////////////////
 
   if( !activeSeries.isEmpty() ) {
     painter->resetTransform();
     painter->setClipRect(_rect.adjusted(-1, -1, 1, 1));
-    draw(painter, activeSeries, true);
+    const SimPlotRange rangeY =
+        _row->store().rangeY(activeSeries.name()).clamped(_row->viewY(), 100);
+    Draw::series(painter,
+                 _rect, activeSeries, rangeX, rangeY, Draw::IsActive);
   }
 
   painter->restore();
-}
-
-////// private ///////////////////////////////////////////////////////////////
-
-void Scope::draw(QPainter *painter, const Series& series,
-                 const bool isActive) const
-{
-  QPen pen = SimPlotTheme::seriesPen(series.color(), isActive ? 2.0 : 1.0);
-  pen.setCosmetic(true);
-  painter->setPen(pen);
-
-  const SimPlotRange rangeY = _row->store().rangeY(series.name());
-  const QTransform xform =
-      mapViewToScreen(_rect.size(),
-                      _row->plot()->rangeX(),
-                      rangeY.clamped(_row->viewY(), 100)) *
-      QTransform::fromTranslate(_rect.topLeft().x(),
-                                _rect.topLeft().y());
-  painter->setTransform(xform);
-
-  const ISimPlotSeriesData *data = series.constData();
-
-  if( !_row->plot()->rangeX().isValid()  ||
-      _row->plot()->rangeX().min() >= data->rangeX().max()  ||
-      _row->plot()->rangeX().max() <= data->rangeX().min() ) {
-    return;
-  }
-
-  const int L = data->findLeft(_row->plot()->rangeX().min()) >= 0
-      ? data->findLeft(_row->plot()->rangeX().min())
-      : 0;
-  const int R = data->findRight(_row->plot()->rangeX().max()) >= 0
-      ? data->findRight(_row->plot()->rangeX().max())
-      : data->size() - 1;
-
-  if( L >= R ) {
-    return;
-  }
-
-  data->drawLines(painter, L, R);
 }

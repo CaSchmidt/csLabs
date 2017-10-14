@@ -35,9 +35,9 @@
 #include "internal/IPlotElement.h"
 #include "internal/SeriesStore.h"
 
+class IAxisElement;
 class IPlotImplementation;
-class YTitle;
-class YAxis;
+class ITitleElement;
 class Scope;
 
 class ScopeRow : public IPlotElement {
@@ -53,11 +53,11 @@ public:
 
   const Scope *scope() const;
 
-  YAxis *yAxis();
-  const YAxis *yAxis() const;
+  IAxisElement *yAxis();
+  const IAxisElement *yAxis() const;
 
-  YTitle *yTitle();
-  const YTitle *yTitle() const;
+  ITitleElement *yTitle();
+  const ITitleElement *yTitle() const;
 
   bool insert(const Series& series);
 
@@ -90,8 +90,8 @@ public:
 private:
   QRectF zoomedView(const QRectF& zoomRect) const;
 
-  YTitle *_yTitle;
-  YAxis *_yAxis;
+  ITitleElement *_yTitle;
+  IAxisElement *_yAxis;
   Scope *_scope;
   IPlotImplementation *_plot;
   SeriesStore _store;

@@ -49,9 +49,6 @@ public:
   void paint(QPainter *painter) const;
 
 private:
-  void draw(QPainter *painter, const Series& series,
-            const bool isActive = false) const;
-
   QRectF _rect;
   ScopeRow *_row;
 };
