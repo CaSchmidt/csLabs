@@ -70,6 +70,7 @@ public:
 
   QString activeSeriesName() const;
   const Series& activeSeries() const;
+  void clearActiveSeries();
   bool setActiveSeries(const QString& seriesName);
 
   SimPlotRange rangeY() const;

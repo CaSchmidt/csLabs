@@ -173,6 +173,7 @@ bool SinglePlotImpl::remove(const QString& name)
   replot();
 
   if( name == _row->activeSeriesName() ) {
+    _row->clearActiveSeries();
     QString newActiveSeriesName;
 
     QStringList names = _row->store().names();

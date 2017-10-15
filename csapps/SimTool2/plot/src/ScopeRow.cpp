@@ -154,6 +154,12 @@ const Series& ScopeRow::activeSeries() const
   return _store.series(_activeSeriesName);
 }
 
+void ScopeRow::clearActiveSeries()
+{
+  _activeSeriesName.clear();
+  _yTitle->setTitle(QString());
+}
+
 bool ScopeRow::setActiveSeries(const QString& seriesName)
 {
   if( seriesName.isEmpty()  ||  !_store.contains(seriesName)  ||
