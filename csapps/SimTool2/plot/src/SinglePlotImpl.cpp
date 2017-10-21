@@ -94,8 +94,6 @@ QRectF SinglePlotImpl::boundingRect() const
 
 void SinglePlotImpl::resize(const QPointF& topLeft, const QSizeF& hint)
 {
-  Q_UNUSED(topLeft);
-
   _rect = QRectF(topLeft, hint);
 
   const QFontMetricsF metrics(_widget->font());

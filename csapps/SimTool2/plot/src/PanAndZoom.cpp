@@ -81,6 +81,7 @@ namespace Pan {
     } else if( bottomY + viewY.span() > boundsY.max() ) {
       bottomY -= bottomY + viewY.span() - boundsY.max();
     }
+
     return SimPlotRange(bottomY, bottomY + viewY.span());
   }
 
@@ -92,15 +93,13 @@ namespace ZoomIn {
                      const SimPlotRange& viewX,
                      const SimPlotRange& viewY)
   {
-    QRectF result;
-
     if( !viewX.isValid()  ||  !viewY.isValid()  ||  screen.isEmpty() ) {
-      return result;
+      return QRectF();
     }
 
     const QRectF inter = screen & zoomRect;
     if( inter.isEmpty() ) {
-      return result;
+      return QRectF();
     }
 
     const QTransform xform = ::mapScreenToView(screen.size(), viewX, viewY);
@@ -110,9 +109,7 @@ namespace ZoomIn {
     const QRectF view(QPointF(viewX.min(), viewY.min()),
                       QPointF(viewX.max(), viewY.max()));
 
-    result = view & zoomView;
-
-    return result;
+    return view & zoomView;
   }
 
 } // namespace ZoomIn
