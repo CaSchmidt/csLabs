@@ -32,6 +32,7 @@
 #ifndef __IPLOTIMPLEMENTATION_H__
 #define __IPLOTIMPLEMENTATION_H__
 
+#include <SimPlot/SimPlot.h>
 #include <SimPlot/SimPlotTheme.h>
 
 #include "internal/IPlotElement.h"
@@ -48,8 +49,12 @@ class IPlotImplementation
     , public IViewportControl
     , public IXAxisControl {
 public:
-  IPlotImplementation(const SimPlotTheme& theme);
+  IPlotImplementation(const SimPlot::DrawFlags drawFlags, const SimPlotTheme& theme);
   ~IPlotImplementation();
+
+  SimPlot::DrawFlags drawFlags() const;
+  void setDrawFlags(const SimPlot::DrawFlags flags);
+  void setDrawFlag(const SimPlot::DrawFlag flag, const bool on);
 
   SimPlotTheme& theme();
   const SimPlotTheme& theme() const;
@@ -59,6 +64,7 @@ public:
   virtual const Widget *widget() const = 0;
 
 private:
+  SimPlot::DrawFlags _drawFlags;
   SimPlotTheme _theme;
 };
 

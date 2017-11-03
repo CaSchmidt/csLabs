@@ -42,8 +42,8 @@
 
 ////// public ////////////////////////////////////////////////////////////////
 
-SinglePlotImpl::SinglePlotImpl(const SimPlotTheme& theme, Widget *widget)
-  : IPlotImplementation(theme)
+SinglePlotImpl::SinglePlotImpl(const SimPlot::DrawFlags drawFlags, const SimPlotTheme& theme, Widget *widget)
+  : IPlotImplementation(drawFlags, theme)
   , _widget(widget)
   , _rangeX()
   , _rect()

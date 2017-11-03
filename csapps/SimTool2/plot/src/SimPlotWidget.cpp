@@ -54,7 +54,7 @@ SimPlotWidget::SimPlotWidget(QWidget *parent, Qt::WindowFlags f)
   , _dragStart()
   , _zoomRect()
 {
-  _impl = new SinglePlotImpl(SimPlotTheme::themeTextbook(), this);
+  _impl = new SinglePlotImpl(SimPlot::NoDrawFlags, SimPlotTheme::themeTextbook(), this);
 
   setFocusPolicy(Qt::StrongFocus);
   setMouseTracking(true);
@@ -77,6 +77,21 @@ SimPlotSeriesHandle SimPlotWidget::insert(ISimPlotSeriesData *data,
                                           const QColor& color)
 {
   return _impl->insert(data, color);
+}
+
+SimPlot::DrawFlags SimPlotWidget::drawFlags() const
+{
+  return _impl->drawFlags();
+}
+
+void SimPlotWidget::setDrawFlags(const SimPlot::DrawFlags flags)
+{
+  _impl->setDrawFlags(flags);
+}
+
+void SimPlotWidget::setDrawFlag(const SimPlot::DrawFlag flag, const bool on)
+{
+  _impl->setDrawFlag(flag, on);
 }
 
 void SimPlotWidget::setTitleX(const QString& title)

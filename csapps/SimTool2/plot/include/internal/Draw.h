@@ -32,7 +32,7 @@
 #ifndef __DRAW_H__
 #define __DRAW_H__
 
-#include <QtCore/QFlags>
+#include <SimPlot/SimPlot.h>
 
 class IAxisElement;
 class QPainter;
@@ -43,12 +43,6 @@ class Series;
 class SimPlotRange;
 
 namespace Draw {
-
-  enum Flag {
-    NoFlags  = 0,
-    IsActive = 0x01
-  };
-  Q_DECLARE_FLAGS(Flags, Flag)
 
   void frame(QPainter *painter,
              const QRectF& rect, const QPen& pen);
@@ -64,7 +58,7 @@ namespace Draw {
   void series(QPainter *painter,
               const QRectF& screen, const Series& theSeries,
               const SimPlotRange& viewX, const  SimPlotRange& viewY,
-              const Flags flags = NoFlags);
+              const SimPlot::DrawFlags flags = SimPlot::NoDrawFlags);
 
 } // namespace Draw
 

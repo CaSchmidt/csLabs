@@ -95,7 +95,7 @@ void Scope::paint(QPainter *painter) const
     const SimPlotRange rangeY =
         _row->store().rangeY(series.name()).clamped(_row->viewY(), 100);
     Draw::series(painter,
-                 _rect, series, rangeX, rangeY);
+                 _rect, series, rangeX, rangeY, _row->plot()->drawFlags());
   }
 
   // (4) Active Series ///////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ void Scope::paint(QPainter *painter) const
     const SimPlotRange rangeY =
         _row->store().rangeY(activeSeries.name()).clamped(_row->viewY(), 100);
     Draw::series(painter,
-                 _rect, activeSeries, rangeX, rangeY, Draw::IsActive);
+                 _rect, activeSeries, rangeX, rangeY, _row->plot()->drawFlags() | SimPlot::IsActive);
   }
 
   painter->restore();

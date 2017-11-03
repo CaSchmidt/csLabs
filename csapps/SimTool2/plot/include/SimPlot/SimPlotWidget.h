@@ -34,6 +34,7 @@
 
 #include <QtWidgets/QWidget>
 
+#include <SimPlot/SimPlot.h>
 #include <SimPlot/SimPlotSeriesHandle.h>
 
 class QMenu;
@@ -49,6 +50,10 @@ public:
 
   SimPlotSeriesHandle handle(const QString& name) const;
   SimPlotSeriesHandle insert(ISimPlotSeriesData *data, const QColor& color = QColor());
+
+  SimPlot::DrawFlags drawFlags() const;
+  void setDrawFlags(const SimPlot::DrawFlags flags);
+  void setDrawFlag(const SimPlot::DrawFlag flag, const bool on);
 
   void setTitleX(const QString& title);
 

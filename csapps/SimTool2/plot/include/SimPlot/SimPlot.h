@@ -29,61 +29,21 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __SINGLEPLOTIMPL_H__
-#define __SINGLEPLOTIMPL_H__
+#ifndef __SIMPLOT_H__
+#define __SIMPLOT_H__
 
-#include "internal/IPlotImplementation.h"
+#include <QtCore/QFlags>
 
-class IAxisElement;
-class ITitleElement;
-class ScopeRow;
+namespace SimPlot {
 
-class SinglePlotImpl : public IPlotImplementation {
-public:
-  SinglePlotImpl(const SimPlot::DrawFlags drawFlags, const SimPlotTheme& theme, Widget *widget);
-  ~SinglePlotImpl();
+  enum DrawFlag {
+    NoDrawFlags = 0,
+    IsActive = 0x01
+  };
+  Q_DECLARE_FLAGS(DrawFlags, DrawFlag)
 
-  void replot();
-  void reset();
-  const Widget *widget() const;
+} // namespace SimPlot
 
-  // IPlotElement
+Q_DECLARE_OPERATORS_FOR_FLAGS(SimPlot::DrawFlags)
 
-  QRectF boundingRect() const;
-  void resize(const QPointF& topLeft, const QSizeF& hint);
-  void paint(QPainter *painter) const;
-
-  // ISeriesControl
-
-  SimPlotSeriesHandle handle(const QString& name) const;
-  SimPlotSeriesHandle insert(ISimPlotSeriesData *data, const QColor& color);
-  bool remove(const QString& name);
-  const Series& series(const QString& name) const;
-  Series& series(const QString& name);
-  bool setActiveSeries(const QString& name);
-
-  // IViewportControl
-
-  void pan(const QPointF& delta);
-  void rectangularZoom(const QRectF& zoomRect);
-  void horizontalZoom(const QRectF& zoomRect);
-  void verticalZoom(const QRectF& zoomRect);
-
-  // IXAxisControl
-
-  QTransform mapViewToScreenX() const;
-  SimPlotRange rangeX() const;
-  void setTitleX(const QString& title);
-  SimPlotRange totalRangeX() const;
-  const IAxisElement *xAxis() const;
-
-private:
-  Widget *_widget;
-  SimPlotRange _rangeX;
-  QRectF _rect;
-  ScopeRow *_row;
-  IAxisElement *_xAxis;
-  ITitleElement *_xTitle;
-};
-
-#endif // __SINGLEPLOTIMPL_H__
+#endif // __SIMPLOT_H__

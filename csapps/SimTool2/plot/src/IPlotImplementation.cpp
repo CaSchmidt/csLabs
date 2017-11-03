@@ -33,13 +33,40 @@
 
 ////// public ////////////////////////////////////////////////////////////////
 
-IPlotImplementation::IPlotImplementation(const SimPlotTheme& theme)
-  : _theme(theme)
+IPlotImplementation::IPlotImplementation(const SimPlot::DrawFlags drawFlags, const SimPlotTheme& theme)
+  : _drawFlags(drawFlags)
+  , _theme(theme)
 {
 }
 
 IPlotImplementation::~IPlotImplementation()
 {
+}
+
+SimPlot::DrawFlags IPlotImplementation::drawFlags() const
+{
+  return _drawFlags;
+}
+
+void IPlotImplementation::setDrawFlags(const SimPlot::DrawFlags flags)
+{
+  const SimPlot::DrawFlags oldFlags = _drawFlags;
+  _drawFlags = flags & ~SimPlot::IsActive;
+  if( oldFlags != _drawFlags ) {
+    replot();
+  }
+}
+
+void IPlotImplementation::setDrawFlag(const SimPlot::DrawFlag flag, const bool on)
+{
+  if( flag == SimPlot::IsActive ) {
+    return;
+  }
+  const SimPlot::DrawFlags oldFlags = _drawFlags;
+  _drawFlags.setFlag(flag, on);
+  if( oldFlags != _drawFlags ) {
+    replot();
+  }
 }
 
 SimPlotTheme& IPlotImplementation::theme()

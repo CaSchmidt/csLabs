@@ -81,7 +81,7 @@ namespace Draw {
   void series(QPainter *painter,
               const QRectF& screen, const Series& theSeries,
               const SimPlotRange& viewX, const SimPlotRange& viewY,
-              const Flags flags)
+              const SimPlot::DrawFlags flags)
   {
     if( theSeries.isEmpty() ) {
       return;
@@ -96,7 +96,7 @@ namespace Draw {
     }
 
     QPen pen = SimPlotTheme::seriesPen(theSeries.color(),
-                                       flags.testFlag(IsActive) ? 2.0 : 1.0);
+                                       flags.testFlag(SimPlot::IsActive) ? 2.0 : 1.0);
     pen.setCosmetic(true);
     painter->setPen(pen);
 

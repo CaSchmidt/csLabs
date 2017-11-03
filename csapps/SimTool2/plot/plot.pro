@@ -78,4 +78,5 @@ HEADERS += \
     include/internal/IViewportControl.h \
     include/internal/IXAxisControl.h \
     include/internal/ISeriesControl.h \
-    include/internal/PanAndZoom.h
+    include/internal/PanAndZoom.h \
+    include/SimPlot/SimPlot.h
