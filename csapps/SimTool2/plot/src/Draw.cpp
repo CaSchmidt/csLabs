@@ -101,7 +101,7 @@ namespace Draw {
     painter->setPen(pen);
 
     const QTransform xform =
-        ::mapViewToScreen(screen.size(), viewX, viewY) *
+        Mapping::viewToScreen(screen.size(), viewX, viewY) *
         QTransform::fromTranslate(screen.topLeft().x(), screen.topLeft().y());
     painter->setTransform(xform);
 

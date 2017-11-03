@@ -46,7 +46,7 @@ namespace Pan {
       return SimPlotRange();
     }
 
-    const QTransform  xform = ::mapScreenToView(screen, viewX, viewY, true);
+    const QTransform  xform = Mapping::screenToView(screen, viewX, viewY, true);
     const QPointF deltaView = xform.map(delta);
 
     // Horizontal
@@ -70,7 +70,7 @@ namespace Pan {
       return SimPlotRange();
     }
 
-    const QTransform  xform = ::mapScreenToView(screen, viewX, viewY, true);
+    const QTransform  xform = Mapping::screenToView(screen, viewX, viewY, true);
     const QPointF deltaView = xform.map(delta);
 
     // Vertical
@@ -102,7 +102,7 @@ namespace ZoomIn {
       return QRectF();
     }
 
-    const QTransform xform = ::mapScreenToView(screen.size(), viewX, viewY);
+    const QTransform xform = Mapping::screenToView(screen.size(), viewX, viewY);
     const QRectF  zoomView =
         xform.map(inter.translated(-screen.topLeft())).boundingRect();
 

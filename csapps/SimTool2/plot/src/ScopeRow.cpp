@@ -189,12 +189,12 @@ void ScopeRow::setViewY(const SimPlotRange& viewY)
 
 QTransform ScopeRow::mapScaleToScreen() const
 {
-  return ::mapViewToScreen(_scope->size(), _plot->rangeX(), rangeY());
+  return Mapping::viewToScreen(_scope->size(), _plot->rangeX(), rangeY());
 }
 
 QTransform ScopeRow::mapViewToScreen() const
 {
-  return ::mapViewToScreen(_scope->size(), _plot->rangeX(), _viewY);
+  return Mapping::viewToScreen(_scope->size(), _plot->rangeX(), _viewY);
 }
 
 void ScopeRow::resetView()

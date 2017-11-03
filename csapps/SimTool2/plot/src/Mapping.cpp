@@ -33,55 +33,59 @@
 
 ////// Public ////////////////////////////////////////////////////////////////
 
-QTransform mapViewToScreen(const QSizeF& screen,
-                           const SimPlotRange& viewX, const SimPlotRange& viewY)
-{
-  QTransform result;
+namespace Mapping {
 
-  if( !viewX.isValid()  ||  !viewY.isValid() ) {
-    return result;
-  }
+  QTransform viewToScreen(const QSizeF& screen,
+                          const SimPlotRange& viewX, const SimPlotRange& viewY)
+  {
+    QTransform result;
 
-  const qreal dx = -viewX.min();
-  const qreal dy = -viewY.min();
+    if( !viewX.isValid()  ||  !viewY.isValid()  ||  screen.isEmpty() ) {
+      return result;
+    }
 
-  const qreal sx = (screen.width()  - 1)/viewX.span();
-  const qreal sy = (screen.height() - 1)/viewY.span();
+    const qreal dx = -viewX.min();
+    const qreal dy = -viewY.min();
 
-  result *= QTransform::fromTranslate(dx, dy);
-  result *= QTransform::fromScale(sx, sy);
-  result *= QTransform(1,  0,
-                       0, -1,
-                       0.5, screen.height() - 0.5);
+    const qreal sx = (screen.width()  - 1)/viewX.span();
+    const qreal sy = (screen.height() - 1)/viewY.span();
 
-  return result;
-}
-
-QTransform mapScreenToView(const QSizeF& screen,
-                           const SimPlotRange& viewX, const SimPlotRange& viewY,
-                           const bool isRelative)
-{
-  QTransform result;
-
-  if( !viewX.isValid()  ||  !viewY.isValid() ) {
-    return result;
-  }
-
-  const qreal sx = viewX.span()/(screen.width()  - 1);
-  const qreal sy = viewY.span()/(screen.height() - 1);
-
-  const qreal dx = viewX.min();
-  const qreal dy = viewY.min();
-
-  if( !isRelative ) {
+    result *= QTransform::fromTranslate(dx, dy);
+    result *= QTransform::fromScale(sx, sy);
     result *= QTransform(1,  0,
                          0, -1,
-                         0, screen.height() - 1);
-  }
-  result *= QTransform::fromScale(sx, sy);
-  if( !isRelative ) {
-    result *= QTransform::fromTranslate(dx, dy);
+                         0.5, screen.height() - 0.5);
+
+    return result;
   }
 
-  return result;
-}
+  QTransform screenToView(const QSizeF& screen,
+                          const SimPlotRange& viewX, const SimPlotRange& viewY,
+                          const bool isRelative)
+  {
+    QTransform result;
+
+    if( !viewX.isValid()  ||  !viewY.isValid()  ||  screen.isEmpty() ) {
+      return result;
+    }
+
+    const qreal sx = viewX.span()/(screen.width()  - 1);
+    const qreal sy = viewY.span()/(screen.height() - 1);
+
+    const qreal dx = viewX.min();
+    const qreal dy = viewY.min();
+
+    if( !isRelative ) {
+      result *= QTransform(1,  0,
+                           0, -1,
+                           0, screen.height() - 1);
+    }
+    result *= QTransform::fromScale(sx, sy);
+    if( !isRelative ) {
+      result *= QTransform::fromTranslate(dx, dy);
+    }
+
+    return result;
+  }
+
+} // namespace Mapping

@@ -77,7 +77,8 @@ SimDataType SimVariable::type() const
 
 void SimVariable::setType(const SimDataType t)
 {
-  _type = t;}
+  _type = t;
+}
 
 const QString& SimVariable::unit() const
 {
