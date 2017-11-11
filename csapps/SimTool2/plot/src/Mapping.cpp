@@ -40,7 +40,7 @@ namespace Mapping {
   {
     QTransform result;
 
-    if( !viewX.isValid()  ||  !viewY.isValid()  ||  screen.isEmpty() ) {
+    if( screen.isEmpty()  ||  !viewX.isValid()  ||  !viewY.isValid() ) {
       return result;
     }
 
@@ -65,7 +65,7 @@ namespace Mapping {
   {
     QTransform result;
 
-    if( !viewX.isValid()  ||  !viewY.isValid()  ||  screen.isEmpty() ) {
+    if( screen.isEmpty()  ||  !viewX.isValid()  ||  !viewY.isValid() ) {
       return result;
     }
 
