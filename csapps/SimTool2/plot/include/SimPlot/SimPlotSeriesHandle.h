@@ -54,7 +54,9 @@ public:
   QString unit() const;
 
   QColor color() const;
-  void setColor(const QColor& color);
+  void setColor(const QColor& color, const bool replot = true);
+
+  void replot();
 
   const ISimPlotSeriesData *constData() const;
   ISimPlotSeriesData *data();

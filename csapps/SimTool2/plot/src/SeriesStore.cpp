@@ -67,7 +67,7 @@ bool SeriesStore::insert(const Series& series)
   if( _series.insert(series.name(), series) == _series.end() ) {
     return false;
   }
-  if( !SimPlotTheme::isEmptyUnit(series.unit())  &&  !addToScales(series.name()) ) {
+  if( !addToScales(series.name()) ) {
     _series.remove(series.name());
     return false;
   }
@@ -93,7 +93,7 @@ SimPlotRange SeriesStore::rangeX(const QString& seriesName) const
   }
 
   const QString scaleName = _series[seriesName].unit();
-  if( _scales.contains(scaleName) ) {
+  if( isGroupedScale(seriesName, scaleName) ) {
     result = _scales[scaleName].rangeX();
   } else {
     result = _series[seriesName].constData()->rangeX();
@@ -111,7 +111,7 @@ SimPlotRange SeriesStore::rangeY(const QString& seriesName) const
   }
 
   const QString scaleName = _series[seriesName].unit();
-  if( _scales.contains(scaleName) ) {
+  if( isGroupedScale(seriesName, scaleName) ) {
     result = _scales[scaleName].rangeY();
   } else {
     result = _series[seriesName].constData()->rangeY();
@@ -158,6 +158,9 @@ bool SeriesStore::addToScales(const QString& seriesName)
     return false;
   }
   const QString scaleName = _series[seriesName].unit();
+  if( SimPlotTheme::isEmptyUnit(scaleName) ) {
+    return true;
+  }
   if( !_scales.contains(scaleName)  &&
       _scales.insert(scaleName, Scale(&_series)) == _scales.end() ) {
     return false;
@@ -171,18 +174,22 @@ bool SeriesStore::addToScales(const QString& seriesName)
   return true;
 }
 
-bool SeriesStore::removeFromScales(const QString& seriesName)
+void SeriesStore::removeFromScales(const QString& seriesName)
 {
   if( !_series.contains(seriesName) ) {
-    return false;
+    return;
   }
   const QString scaleName = _series[seriesName].unit();
   if( !_scales.contains(scaleName) ) {
-    return false;
+    return;
   }
   _scales[scaleName].remove(seriesName);
   if( _scales[scaleName].isEmpty() ) {
     _scales.remove(scaleName);
   }
-  return true;
+}
+
+bool SeriesStore::isGroupedScale(const QString& seriesName, const QString& scaleName) const
+{
+  return _scales.contains(scaleName)  &&  _scales[scaleName].contains(seriesName);
 }

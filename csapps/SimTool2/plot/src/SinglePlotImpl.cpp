@@ -147,9 +147,9 @@ SimPlotSeriesHandle SinglePlotImpl::insert(ISimPlotSeriesData *data,
     return SimPlotSeriesHandle();
   }
 
-  if( !_row->insert(Series(data, color.isValid()
-                           ? color
-                           : theme().nextColor())) ) {
+  if( !_row->store().insert(Series(data, color.isValid()
+                                   ? color
+                                   : theme().nextColor())) ) {
     return SimPlotSeriesHandle();
   }
 
@@ -164,7 +164,7 @@ SimPlotSeriesHandle SinglePlotImpl::insert(ISimPlotSeriesData *data,
 
 bool SinglePlotImpl::remove(const QString& name)
 {
-  if( !_row->remove(name) ) {
+  if( !_row->store().remove(name) ) {
     return false;
   }
 

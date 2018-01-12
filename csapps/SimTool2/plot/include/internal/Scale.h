@@ -46,7 +46,7 @@ public:
 
   bool contains(const QString& seriesName) const;
   bool insert(const QString& seriesName);
-  bool remove(const QString& seriesName);
+  void remove(const QString& seriesName);
 
   SimPlotRange rangeX() const;
   SimPlotRange rangeY() const;

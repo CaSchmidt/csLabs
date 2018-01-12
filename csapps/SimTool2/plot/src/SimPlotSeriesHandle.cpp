@@ -98,7 +98,7 @@ QColor SimPlotSeriesHandle::color() const
   return _impl->series(_name).color();
 }
 
-void SimPlotSeriesHandle::setColor(const QColor& color)
+void SimPlotSeriesHandle::setColor(const QColor& color, const bool replot)
 {
   if( !isValid()  ||  !color.isValid() ) {
     return;
@@ -106,9 +106,17 @@ void SimPlotSeriesHandle::setColor(const QColor& color)
   Series& series = _impl->series(_name);
   const QColor oldColor = series.color();
   series.setColor(color);
-  if( oldColor != series.color() ) {
+  if( replot  &&  oldColor != series.color() ) {
     _impl->replot();
   }
+}
+
+void SimPlotSeriesHandle::replot()
+{
+  if( !isValid() ) {
+    return;
+  }
+  _impl->replot();
 }
 
 const ISimPlotSeriesData *SimPlotSeriesHandle::constData() const

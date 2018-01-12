@@ -59,10 +59,6 @@ public:
   ITitleElement *yTitle();
   const ITitleElement *yTitle() const;
 
-  bool insert(const Series& series);
-
-  bool remove(const QString& seriesName);
-
   const IPlotImplementation *plot() const;
 
   const SeriesStore& store() const;

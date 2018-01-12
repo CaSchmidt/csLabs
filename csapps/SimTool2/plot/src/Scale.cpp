@@ -67,13 +67,12 @@ bool Scale::insert(const QString& seriesName)
   return true;
 }
 
-bool Scale::remove(const QString& seriesName)
+void Scale::remove(const QString& seriesName)
 {
   if( !_ranges.remove(seriesName) ) {
-    return false;
+    return;
   }
   updateRange();
-  return true;
 }
 
 SimPlotRange Scale::rangeX() const

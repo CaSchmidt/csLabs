@@ -119,16 +119,6 @@ const ITitleElement *ScopeRow::yTitle() const
   return _yTitle;
 }
 
-bool ScopeRow::insert(const Series& series)
-{
-  return _store.insert(series);
-}
-
-bool ScopeRow::remove(const QString& seriesName)
-{
-  return _store.remove(seriesName);
-}
-
 const IPlotImplementation *ScopeRow::plot() const
 {
   return _plot;

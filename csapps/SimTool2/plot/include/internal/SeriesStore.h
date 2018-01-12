@@ -57,7 +57,9 @@ public:
 
 private:
   bool addToScales(const QString& seriesName);
-  bool removeFromScales(const QString& seriesName);
+  void removeFromScales(const QString& seriesName);
+
+  bool isGroupedScale(const QString& seriesName, const QString& scaleName) const;
 
   QHash<QString,Scale> _scales;
   QHash<QString,Series> _series;
