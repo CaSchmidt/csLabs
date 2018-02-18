@@ -59,7 +59,7 @@ namespace priv_alphanum {
     } else if( (int)'A' <= (int)ch  &&  (int)ch <= (int)'Z' ) {
       dig = (int)ch - (int)'A' + 10;
     }
-    if( dig > base ) {
+    if( dig >= base ) {
       return -1;
     }
     return dig;
