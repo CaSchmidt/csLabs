@@ -34,7 +34,7 @@
 
 #include <type_traits>
 
-#undef CS_FLAGS_HAVE_VALUE_OPERATORS
+#include <csUtil/csutil_config.h>
 
 template<typename EnumT,
          typename std::enable_if<std::is_enum<EnumT>::value>::type * = nullptr>
