@@ -80,6 +80,21 @@ void test_from_signed()
   }
 }
 
+void test_double_input()
+{
+  std::array<char,128> s;
+  s.fill(0);
+
+  printf("double: ");
+  fgets(s.data(), s.size()-1, stdin);
+
+  double d = 0;
+  const cs::from_chars_result res =
+      cs::from_chars(s.data(), s.data()+s.size(), d);
+
+  printf("VAL: %g, RES: %d\n", d, res.ec);
+}
+
 int main(int /*argc*/, char ** /*argv*/)
 {
   std::array<char,10> s{"z42"};
@@ -111,6 +126,9 @@ int main(int /*argc*/, char ** /*argv*/)
   printf("---------------------\n");
 
   test_from_signed();
+  printf("---------------------\n");
+
+  test_double_input();
   printf("---------------------\n");
 
   return EXIT_SUCCESS;

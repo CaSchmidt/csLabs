@@ -25,7 +25,16 @@ DEPENDPATH  += ../include
 
 
 SOURCES += \
-    src/csCharConv.cpp
+    src/csCharConv.cpp \
+    3rdparty/double-conversion/double-conversion.cc \
+    3rdparty/double-conversion/bignum-dtoa.cc \
+    3rdparty/double-conversion/fast-dtoa.cc \
+    3rdparty/double-conversion/fixed-dtoa.cc \
+    3rdparty/double-conversion/strtod.cc \
+    3rdparty/double-conversion/bignum.cc \
+    3rdparty/double-conversion/cached-powers.cc \
+    3rdparty/double-conversion/diy-fp.cc \
+    src/csCharConv-fp.cpp
 
 HEADERS += \
     ../include/csUtil/csCharConv.h \
