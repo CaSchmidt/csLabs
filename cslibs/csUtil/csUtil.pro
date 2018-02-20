@@ -9,7 +9,7 @@ TEMPLATE = lib
 include(../../global.pri)
 TARGET = csUtil$${TARGET_POSTFIX}
 
-QT -= gui
+QT -= core gui
 
 DESTDIR    = ../../lib
 DLLDESTDIR = ../../bin

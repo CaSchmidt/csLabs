@@ -32,15 +32,25 @@
 #ifndef __CSUTIL_CONFIG_H__
 #define __CSUTIL_CONFIG_H__
 
-#include <QtCore/QtGlobal>
+////// Compiler Configuration ////////////////////////////////////////////////
 
-#if defined(CS_BUILD_UTIL_LIB)
-# define CS_UTIL_EXPORT  Q_DECL_EXPORT
+#ifdef _MSC_VER
+# define CS_DECL_EXPORT  __declspec(dllexport)
+# define CS_DECL_IMPORT  __declspec(dllimport)
 #else
-# define CS_UTIL_EXPORT  Q_DECL_IMPORT
+# define CS_DECL_EXPORT
+# define CS_DECL_IMPORT
 #endif
 
-////// Configuration /////////////////////////////////////////////////////////
+////// Build Configuration ///////////////////////////////////////////////////
+
+#if defined(CS_BUILD_UTIL_LIB)
+# define CS_UTIL_EXPORT  CS_DECL_EXPORT
+#else
+# define CS_UTIL_EXPORT  CS_DECL_IMPORT
+#endif
+
+////// Feature Configuration /////////////////////////////////////////////////
 
 #undef CS_FLAGS_HAVE_VALUE_OPERATORS
 

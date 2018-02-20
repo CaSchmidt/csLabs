@@ -5,7 +5,7 @@ TARGET = test_charconvs$${TARGET_POSTFIX}
 
 DESTDIR = ../../bin
 
-QT -= gui
+QT -= core gui
 
 CONFIG += c++11
 CONFIG += console
