@@ -7,6 +7,8 @@
 
 #include <csUtil/csCharConv.h>
 
+// from_chars() //////////////////////////////////////////////////////////////
+
 template<typename ValueT>
 void print_from(const char *first, const char *last, const int base = 10)
 {
@@ -16,19 +18,6 @@ void print_from(const char *first, const char *last, const int base = 10)
 
   printf("STR: %4s -> VAL: %4d, RES: %d\n", first, value, res.ec);
 }
-
-/*
-void test_to_unicode()
-{
-  std::array<char16_t,10> u{u"42"};
-
-  unsigned char value = 0;
-  const cs::from_chars_result<char16_t> res =
-      cs::from_chars<unsigned char,char16_t>(u.data(), u.data()+u.size(), value);
-
-  printf("Unicode: value = %d, res = %d\n", value, res.ec);
-}
-*/
 
 void test_to_unsigned()
 {
@@ -47,6 +36,45 @@ void test_to_signed()
     print_from<int8_t>(s.data(), s.data()+s.size());
   }
 }
+
+template<typename ValueT>
+void print_from_fp(const char *fmt)
+{
+  std::array<char,32> s;
+
+  snprintf(s.data(), s.size(), fmt);
+
+  ValueT value = 0;
+  const cs::from_chars_result res =
+      cs::from_chars(s.data(), s.data()+s.size(), value);
+
+  printf("STR: %s -> VAL: %g, RES: %d\n", s.data(), value, res.ec);
+}
+
+template<typename ValueT>
+void test_to_fp()
+{
+  printf("*** IEEE-754 binary%d **********\n", static_cast<int>(sizeof(ValueT)*8));
+  print_from_fp<ValueT>("inf");
+  print_from_fp<ValueT>("+inf");
+  print_from_fp<ValueT>("-inf");
+  print_from_fp<ValueT>("nan");
+  print_from_fp<ValueT>("+nan");
+  print_from_fp<ValueT>("-nan");
+  print_from_fp<ValueT>("z42");
+  print_from_fp<ValueT>("42");
+  print_from_fp<ValueT>("+42");
+  print_from_fp<ValueT>("-42");
+  print_from_fp<ValueT>("1.0000000001");
+  print_from_fp<ValueT>("2.9999999999");
+  print_from_fp<ValueT>("1e+3");
+  print_from_fp<ValueT>("1e-3");
+  print_from_fp<ValueT>("1E+3");
+  print_from_fp<ValueT>("1E-3");
+  print_from_fp<ValueT>(".5e-6");
+}
+
+// to_chars() ////////////////////////////////////////////////////////////////
 
 template<typename ValueT>
 void print_to(char *first, char *last, const ValueT value, const int base = 10)
@@ -80,20 +108,7 @@ void test_from_signed()
   }
 }
 
-void test_double_input()
-{
-  std::array<char,128> s;
-  s.fill(0);
-
-  printf("double: ");
-  fgets(s.data(), s.size()-1, stdin);
-
-  double d = 0;
-  const cs::from_chars_result res =
-      cs::from_chars(s.data(), s.data()+s.size(), d);
-
-  printf("VAL: %g, RES: %d\n", d, res.ec);
-}
+// Main //////////////////////////////////////////////////////////////////////
 
 int main(int /*argc*/, char ** /*argv*/)
 {
@@ -111,11 +126,6 @@ int main(int /*argc*/, char ** /*argv*/)
 
   printf("---------------------\n");
 
-  /*
-  test_to_unicode();
-  printf("---------------------\n");
-  */
-
   test_to_unsigned();
   printf("---------------------\n");
 
@@ -128,7 +138,10 @@ int main(int /*argc*/, char ** /*argv*/)
   test_from_signed();
   printf("---------------------\n");
 
-  test_double_input();
+  test_to_fp<double>();
+  printf("---------------------\n");
+
+  test_to_fp<float>();
   printf("---------------------\n");
 
   return EXIT_SUCCESS;
