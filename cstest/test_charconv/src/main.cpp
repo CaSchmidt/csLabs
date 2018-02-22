@@ -38,9 +38,10 @@ void test_to_signed()
 }
 
 template<typename ValueT>
-void print_from_fp(const char *fmt)
+void print_from(const char *fmt)
 {
   std::array<char,32> s;
+  s.fill(0);
 
   snprintf(s.data(), s.size(), fmt);
 
@@ -55,23 +56,28 @@ template<typename ValueT>
 void test_to_fp()
 {
   printf("*** IEEE-754 binary%d **********\n", static_cast<int>(sizeof(ValueT)*8));
-  print_from_fp<ValueT>("inf");
-  print_from_fp<ValueT>("+inf");
-  print_from_fp<ValueT>("-inf");
-  print_from_fp<ValueT>("nan");
-  print_from_fp<ValueT>("+nan");
-  print_from_fp<ValueT>("-nan");
-  print_from_fp<ValueT>("z42");
-  print_from_fp<ValueT>("42");
-  print_from_fp<ValueT>("+42");
-  print_from_fp<ValueT>("-42");
-  print_from_fp<ValueT>("1.0000000001");
-  print_from_fp<ValueT>("2.9999999999");
-  print_from_fp<ValueT>("1e+3");
-  print_from_fp<ValueT>("1e-3");
-  print_from_fp<ValueT>("1E+3");
-  print_from_fp<ValueT>("1E-3");
-  print_from_fp<ValueT>(".5e-6");
+  print_from<ValueT>("inf");
+  print_from<ValueT>("+inf");
+  print_from<ValueT>("-inf");
+  print_from<ValueT>("nan");
+  print_from<ValueT>("+nan");
+  print_from<ValueT>("-nan");
+  print_from<ValueT>("z42");
+  print_from<ValueT>("42");
+  print_from<ValueT>("+42");
+  print_from<ValueT>("-42");
+  print_from<ValueT>("1.0000000001");
+  print_from<ValueT>("2.9999999999");
+  print_from<ValueT>("0.0001");
+  print_from<ValueT>("0.00001");
+  print_from<ValueT>("0.0001234");
+  print_from<ValueT>("0.00001234");
+  print_from<ValueT>("0.0005678");
+  print_from<ValueT>("0.00005678");
+  print_from<ValueT>("100000.1234");
+  print_from<ValueT>("1000000.1234");
+  print_from<ValueT>("100000.5678");
+  print_from<ValueT>("1000000.5678");
 }
 
 // to_chars() ////////////////////////////////////////////////////////////////
@@ -94,7 +100,8 @@ void print_to(char *first, char *last, const ValueT value, const int base = 10)
 
 void test_from_unsigned()
 {
-  std::array<char,5> s = { 0, 0, 0, 0, 0 };
+  std::array<char,5> s;
+  s.fill(0);
   for(int i = 0; i <= 255; i++) {
     print_to(s.data(), s.data()+s.size()-1, (uint8_t)i);
   }
@@ -102,10 +109,63 @@ void test_from_unsigned()
 
 void test_from_signed()
 {
-  std::array<char,5> s = { 0, 0, 0, 0, 0 };
+  std::array<char,5> s;
+  s.fill(0);
   for(int i = -128; i <= 127; i++) {
     print_to(s.data(), s.data()+s.size()-1, (int8_t)i);
   }
+}
+
+template<typename ValueT>
+void print_to(const ValueT value, const cs::chars_format fmt, const int precision)
+{
+  std::array<char,128> s;
+  s.fill(0);
+
+  const cs::to_chars_result res =
+      cs::to_chars(s.data(), s.data()+s.size(), value, fmt, precision);
+
+  char ch_fmt = 'f';
+  if(        fmt == cs::chars_format::general ) {
+    ch_fmt = 'g';
+  } else if( fmt == cs::chars_format::scientific ) {
+    ch_fmt = 'e';
+  }
+
+  std::array<char,80> fmtstr;
+  if( precision > 0 ) {
+    snprintf(fmtstr.data(), fmtstr.size(),
+             "VAL: %%.%d%c -> STR: %%s, RES: %%d\n", precision, ch_fmt);
+  } else {
+    snprintf(fmtstr.data(), fmtstr.size(),
+             "VAL: %%%c -> STR: %%s, RES: %%d\n", ch_fmt);
+  }
+
+  // printf("%s\n", fmtstr.data());
+  printf(fmtstr.data(), value, s.data(), res.ec);
+}
+
+template<typename ValueT>
+void test_from_fp(const cs::chars_format fmt = cs::chars_format::general,
+                  const int precision = -1)
+{
+  print_to(std::numeric_limits<ValueT>::infinity(), fmt, precision);
+  print_to(-std::numeric_limits<ValueT>::infinity(), fmt, precision);
+  print_to(std::numeric_limits<ValueT>::quiet_NaN(), fmt, precision);
+  print_to(static_cast<ValueT>(1), fmt, precision);
+  print_to(static_cast<ValueT>(0.1), fmt, precision);
+  print_to(static_cast<ValueT>(0.0001), fmt, precision);
+  print_to(static_cast<ValueT>(0.00001), fmt, precision);
+  print_to(static_cast<ValueT>(0.0001234), fmt, precision);
+  print_to(static_cast<ValueT>(0.00001234), fmt, precision);
+  print_to(static_cast<ValueT>(0.0005678), fmt, precision);
+  print_to(static_cast<ValueT>(0.00005678), fmt, precision);
+  print_to(static_cast<ValueT>(0.00012345678), fmt, precision);
+  print_to(static_cast<ValueT>(0.000012345678), fmt, precision);
+  print_to(static_cast<ValueT>(100000.1234), fmt, precision);
+  print_to(static_cast<ValueT>(1000000.1234), fmt, precision);
+  print_to(static_cast<ValueT>(100000.5678), fmt, precision);
+  print_to(static_cast<ValueT>(1000000.5678), fmt, precision);
 }
 
 // Main //////////////////////////////////////////////////////////////////////
@@ -141,8 +201,18 @@ int main(int /*argc*/, char ** /*argv*/)
   test_to_fp<double>();
   printf("---------------------\n");
 
+  /*
   test_to_fp<float>();
   printf("---------------------\n");
+  */
+
+  test_from_fp<double>();
+  printf("---------------------\n");
+
+  /*
+  test_from_fp<float>();
+  printf("---------------------\n");
+  */
 
   return EXIT_SUCCESS;
 }

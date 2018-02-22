@@ -117,6 +117,22 @@ namespace cs {
   CS_UTIL_EXPORT to_chars_result to_chars(char *first, char *last,
                                           uint64_t value, int base = 10);
 
+  CS_UTIL_EXPORT to_chars_result to_chars(char *first, char *last, float value);
+
+  CS_UTIL_EXPORT to_chars_result to_chars(char *first, char *last, double value);
+
+  CS_UTIL_EXPORT to_chars_result to_chars(char *first, char *last, float value,
+                                          chars_format fmt);
+
+  CS_UTIL_EXPORT to_chars_result to_chars(char *first, char *last, double value,
+                                          chars_format fmt);
+
+  CS_UTIL_EXPORT to_chars_result to_chars(char *first, char *last, float value,
+                                          chars_format fmt, int precision);
+
+  CS_UTIL_EXPORT to_chars_result to_chars(char *first, char *last, double value,
+                                          chars_format fmt, int precision);
+
 } // namespace cs
 
 #endif // __CSCHARCONV_H__

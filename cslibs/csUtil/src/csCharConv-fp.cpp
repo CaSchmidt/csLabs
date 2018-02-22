@@ -30,6 +30,7 @@
 *****************************************************************************/
 
 #include <cmath>
+#include <cstring>
 
 #include <limits>
 
@@ -48,48 +49,38 @@ namespace cs {
 
     // from_chars() Implementation ///////////////////////////////////////////
 
-    template<typename IeeeT>
-    struct to_ieee {
-      static constexpr IeeeT run(const double_conversion::StringToDoubleConverter& c,
-                                 const char *buffer,
-                                 const int length,
-                                 int *processed)
-      {
-        // SFINAE
-      }
-    };
+    template<typename ValueT>
+    inline ValueT to_ieee(const double_conversion::StringToDoubleConverter& conv,
+                          const char *buffer, const int length, int *processed,
+                          typename std::enable_if<
+                          std::is_same<ValueT,double>::value
+                          >::type * = nullptr)
+    {
+      return conv.StringToDouble(buffer, length, processed);
+    }
 
-    template<>
-    struct to_ieee<double> {
-      static constexpr double run(const double_conversion::StringToDoubleConverter& c,
-                                  const char *buffer,
-                                  const int length,
-                                  int *processed)
-      {
-        return c.StringToDouble(buffer, length, processed);
-      }
-    };
-
-    template<>
-    struct to_ieee<float> {
-      static constexpr float run(const double_conversion::StringToDoubleConverter& c,
-                                 const char *buffer,
-                                 const int length,
-                                 int *processed)
-      {
-        return c.StringToFloat(buffer, length, processed);
-      }
-    };
+    template<typename ValueT>
+    inline ValueT to_ieee(const double_conversion::StringToDoubleConverter& conv,
+                          const char *buffer, const int length, int *processed,
+                          typename std::enable_if<
+                          std::is_same<ValueT,float>::value
+                          >::type * = nullptr)
+    {
+      return conv.StringToFloat(buffer, length, processed);
+    }
 
     inline int from_flags(const chars_format /*fmt*/)
     {
       return double_conversion::StringToDoubleConverter::ALLOW_TRAILING_JUNK;
     }
 
-    template<typename T>
+    template<typename ValueT>
     inline from_chars_result to_fp(const char *first, const char *last,
-                                   T& value,
-                                   chars_format fmt)
+                                   ValueT& value,
+                                   chars_format fmt,
+                                   typename std::enable_if<
+                                   std::is_floating_point<ValueT>::value
+                                   >::type * = nullptr)
     {
       if( first == nullptr  ||  last == nullptr  ||  last <= first ) {
         return from_chars_result{first, std::errc::invalid_argument};
@@ -104,7 +95,7 @@ namespace cs {
                "nan");
 
       int processed = 0;
-      const T v = to_ieee<T>::run(conv, first, length(first, last), &processed);
+      const ValueT v = to_ieee<ValueT>(conv, first, length(first, last), &processed);
 
       if( std::isnan(v)  &&  processed < 3 ) { // Empty or Junk String
         return from_chars_result{first, std::errc::invalid_argument};
@@ -113,6 +104,188 @@ namespace cs {
       value = v;
 
       return from_chars_result{first+processed, std::errc()};
+    }
+
+    // to_chars() Implementation /////////////////////////////////////////////
+
+    // NOTE: Operates on [begin,end)
+    char *find_dot(char *begin, char *end, const char ch_dot)
+    {
+      for(char *ptr = begin; ptr < end; ptr++) {
+        if( *ptr == ch_dot ) {
+          return ptr;
+        }
+      }
+      return nullptr;
+    }
+
+    // NOTE: Operates on [begin,end)
+    char *find_exp(char *begin, char *end, const char ch_exp)
+    {
+      if( begin != nullptr ) {
+        for(char *ptr = end - 1; ptr >= begin; ptr--) {
+          if( *ptr == ch_exp ) {
+            return ptr;
+          }
+        }
+      }
+      return nullptr;
+    }
+
+    /*
+     * NOTE:
+     * begin -> the position of the decimal dot
+     *   end -> the position of the exponent OR '\0'
+     */
+    void remove_trailing_zeros(char *begin, char *end, const char ch_dot)
+    {
+      if( begin == nullptr ) {
+        return;
+      }
+
+      char *ptr = end - 1;
+      for(; ptr >= begin; ptr--) {
+        if( *ptr != '0' ) {
+          break;
+        }
+      }
+
+      if( ptr == end - 1 ) {
+        return;
+      }
+
+      if( *ptr != ch_dot ) {
+        ptr++;
+      }
+
+      while( *end != '\0' ) {
+        *ptr++ = *end++;
+      }
+
+      *ptr = '\0';
+    }
+
+    template<typename ValueT>
+    inline void from_ieee_shortest(const double_conversion::DoubleToStringConverter& conv,
+                                   const ValueT value,
+                                   double_conversion::StringBuilder *builder,
+                                   typename std::enable_if<
+                                   std::is_same<ValueT,double>::value
+                                   >::type * = nullptr)
+    {
+      conv.ToShortest(value, builder);
+    }
+
+    template<typename ValueT>
+    inline void from_ieee_shortest(const double_conversion::DoubleToStringConverter& conv,
+                                   const ValueT value,
+                                   double_conversion::StringBuilder *builder,
+                                   typename std::enable_if<
+                                   std::is_same<ValueT,float>::value
+                                   >::type * = nullptr)
+    {
+      conv.ToShortestSingle(value, builder);
+    }
+
+    template<typename ValueT>
+    inline to_chars_result from_fp(char *first, char *last,
+                                   const ValueT value,
+                                   const chars_format fmt,
+                                   int precision,
+                                   typename std::enable_if<
+                                   std::is_floating_point<ValueT>::value
+                                   >::type * = nullptr)
+    {
+      // Frequently Used Constants ///////////////////////////////////////////
+
+      const char ch_dot = '.';
+      const char ch_exp = 'e';
+
+      const int max_ldg_zeros = 4;
+      const int max_trl_zeros = 0;
+
+      // sign + decimal point
+      // e.g. -d.d
+      const int min_fixed = 2;
+      // sign + decimal point + exponent + exponent's sign + exponent's 3 digits
+      // e.g. -d.dE-ddd
+      const int min_expon = 7;
+
+      // (1) Sanity Check ////////////////////////////////////////////////////
+
+      if( first == nullptr  ||  last == nullptr  ||  last <= first ) {
+        return to_chars_result{first, std::errc::invalid_argument};
+      }
+
+      // (2) Setup ///////////////////////////////////////////////////////////
+
+      // cf. http://en.cppreference.com/w/cpp/io/c/fprintf
+      if(        precision <  0 ) {
+        precision = 6;
+      } else if( precision == 0 ) {
+        precision = 1;
+      }
+
+      double_conversion::StringBuilder builder(first, length(first, last));
+
+      const int flags =
+          double_conversion::DoubleToStringConverter::EMIT_POSITIVE_EXPONENT_SIGN |
+          double_conversion::DoubleToStringConverter::UNIQUE_ZERO;
+
+      const double_conversion::DoubleToStringConverter conv(flags,
+                                                            "inf", "nan", ch_exp,
+                                                            -4, 6,
+                                                            max_ldg_zeros,
+                                                            max_trl_zeros);
+
+      // (3) Conversion //////////////////////////////////////////////////////
+
+      bool ok = false;
+      if(        fmt == chars_format::general ) {
+        if( length(first, last) <
+            min_expon + max_ldg_zeros + max_trl_zeros + precision + 1 ) {
+          return to_chars_result{first, std::errc::invalid_argument};
+        }
+
+        ok = conv.ToPrecision(value, precision, &builder);
+
+      } else if( fmt == chars_format::scientific ) {
+        if( length(first, last) <
+            min_expon + (1 + precision) + 1 ) {
+          return to_chars_result{first, std::errc::invalid_argument};
+        }
+
+        ok = conv.ToExponential(value, precision, &builder);
+
+      } else {
+        if( length(first, last) <
+            min_fixed + double_conversion::DoubleToStringConverter::kMaxFixedDigitsBeforePoint + precision + 1 ) {
+          return to_chars_result{first, std::errc::invalid_argument};
+        }
+
+        ok = conv.ToFixed(value, precision, &builder);
+
+      }
+      builder.Finalize();
+
+      if( !ok ) {
+        return to_chars_result{first, std::errc::invalid_argument};
+      }
+
+      // (4) Remove Trailing Zeros ///////////////////////////////////////////
+
+#ifdef CS_TO_CHARS_HAVE_REMOVE_TRAILING_ZEROS
+      if( fmt == chars_format::general ) {
+        const std::size_t len0 = strlen(first);
+        char *pos_dot = find_dot(  first, first + len0, ch_dot);
+        char *pos_exp = find_exp(pos_dot, first + len0, ch_exp);
+        remove_trailing_zeros(pos_dot, pos_exp == nullptr
+                              ? first + len0
+                              : pos_exp, ch_dot);
+      }
+#endif
+
+      return to_chars_result{first+strlen(first)+1, std::errc()};
     }
 
   } // namespace charconv
@@ -136,5 +309,39 @@ namespace cs {
   }
 
   // to_chars() //////////////////////////////////////////////////////////////
+
+  CS_UTIL_EXPORT to_chars_result to_chars(char *first, char *last, float value)
+  {
+    return charconv::from_fp(first, last, value, chars_format::general, -1);
+  }
+
+  CS_UTIL_EXPORT to_chars_result to_chars(char *first, char *last, double value)
+  {
+    return charconv::from_fp(first, last, value, chars_format::general, -1);
+  }
+
+  CS_UTIL_EXPORT to_chars_result to_chars(char *first, char *last, float value,
+                                          chars_format fmt)
+  {
+    return charconv::from_fp(first, last, value, fmt, -1);
+  }
+
+  CS_UTIL_EXPORT to_chars_result to_chars(char *first, char *last, double value,
+                                          chars_format fmt)
+  {
+    return charconv::from_fp(first, last, value, fmt, -1);
+  }
+
+  CS_UTIL_EXPORT to_chars_result to_chars(char *first, char *last, float value,
+                                          chars_format fmt, int precision)
+  {
+    return charconv::from_fp(first, last, value, fmt, precision);
+  }
+
+  CS_UTIL_EXPORT to_chars_result to_chars(char *first, char *last, double value,
+                                          chars_format fmt, int precision)
+  {
+    return charconv::from_fp(first, last, value, fmt, precision);
+  }
 
 } // namespace cs
