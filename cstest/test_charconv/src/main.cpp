@@ -201,18 +201,14 @@ int main(int /*argc*/, char ** /*argv*/)
   test_to_fp<double>();
   printf("---------------------\n");
 
-  /*
   test_to_fp<float>();
   printf("---------------------\n");
-  */
 
   test_from_fp<double>();
   printf("---------------------\n");
 
-  /*
   test_from_fp<float>();
   printf("---------------------\n");
-  */
 
   return EXIT_SUCCESS;
 }

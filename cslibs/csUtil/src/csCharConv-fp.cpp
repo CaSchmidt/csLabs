@@ -214,7 +214,7 @@ namespace cs {
       // (1) Sanity Check ////////////////////////////////////////////////////
 
       if( first == nullptr  ||  last == nullptr  ||  last <= first ) {
-        return to_chars_result{first, std::errc::invalid_argument};
+        return to_chars_result{last, std::errc::invalid_argument};
       }
 
       // (2) Setup ///////////////////////////////////////////////////////////
@@ -244,7 +244,7 @@ namespace cs {
       if(        fmt == chars_format::general ) {
         if( length(first, last) <
             min_expon + max_ldg_zeros + max_trl_zeros + precision + 1 ) {
-          return to_chars_result{first, std::errc::invalid_argument};
+          return to_chars_result{last, std::errc::value_too_large};
         }
 
         ok = conv.ToPrecision(value, precision, &builder);
@@ -252,7 +252,7 @@ namespace cs {
       } else if( fmt == chars_format::scientific ) {
         if( length(first, last) <
             min_expon + (1 + precision) + 1 ) {
-          return to_chars_result{first, std::errc::invalid_argument};
+          return to_chars_result{last, std::errc::value_too_large};
         }
 
         ok = conv.ToExponential(value, precision, &builder);
@@ -260,7 +260,7 @@ namespace cs {
       } else {
         if( length(first, last) <
             min_fixed + double_conversion::DoubleToStringConverter::kMaxFixedDigitsBeforePoint + precision + 1 ) {
-          return to_chars_result{first, std::errc::invalid_argument};
+          return to_chars_result{last, std::errc::value_too_large};
         }
 
         ok = conv.ToFixed(value, precision, &builder);
@@ -268,8 +268,8 @@ namespace cs {
       }
       builder.Finalize();
 
-      if( !ok ) {
-        return to_chars_result{first, std::errc::invalid_argument};
+      if( !ok ) { // Assume invalid value or precision...
+        return to_chars_result{last, std::errc::invalid_argument};
       }
 
       // (4) Remove Trailing Zeros ///////////////////////////////////////////
