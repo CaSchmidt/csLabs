@@ -1,7 +1,7 @@
 TEMPLATE = app
 
 include(../../global.pri)
-TARGET = test_charconvs$${TARGET_POSTFIX}
+TARGET = test_charconv$${TARGET_POSTFIX}
 
 DESTDIR = ../../bin
 
