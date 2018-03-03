@@ -34,7 +34,8 @@ SOURCES += \
     3rdparty/double-conversion/bignum.cc \
     3rdparty/double-conversion/cached-powers.cc \
     3rdparty/double-conversion/diy-fp.cc \
-    src/csCharConv-fp.cpp
+    src/csCharConv-fp.cpp \
+    src/csFormat.cpp
 
 HEADERS += \
     ../include/csUtil/csCharConv.h \
@@ -42,4 +43,5 @@ HEADERS += \
     ../include/csUtil/csEndian.h \
     ../include/csUtil/csFlags.h \
     ../include/csUtil/csPointer.h \
-    ../include/csUtil/csutil_config.h
+    ../include/csUtil/csutil_config.h \
+    ../include/csUtil/csFormat.h
