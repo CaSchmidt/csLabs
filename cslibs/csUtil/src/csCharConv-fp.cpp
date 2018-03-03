@@ -82,17 +82,17 @@ namespace cs {
                                    std::is_floating_point<ValueT>::value
                                    >::type * = nullptr)
     {
+      using StrToDbl = double_conversion::StringToDoubleConverter;
+
       if( first == nullptr  ||  last == nullptr  ||  last <= first ) {
         return from_chars_result{first, std::errc::invalid_argument};
       }
 
       const int flags = from_flags(fmt);
-      const double_conversion::StringToDoubleConverter
-          conv(flags,
-               std::numeric_limits<double>::quiet_NaN(),
-               std::numeric_limits<double>::quiet_NaN(),
-               "inf",
-               "nan");
+      const StrToDbl conv(flags,
+                          std::numeric_limits<double>::quiet_NaN(),
+                          std::numeric_limits<double>::quiet_NaN(),
+                          "inf", "nan");
 
       int processed = 0;
       const ValueT v = to_ieee<ValueT>(conv, first, length(first, last), &processed);
@@ -196,6 +196,8 @@ namespace cs {
                                    std::is_floating_point<ValueT>::value
                                    >::type * = nullptr)
     {
+      using DblToStr = double_conversion::DoubleToStringConverter;
+
       // Frequently Used Constants ///////////////////////////////////////////
 
       const char ch_dot = '.';
@@ -229,14 +231,13 @@ namespace cs {
       double_conversion::StringBuilder builder(first, length(first, last));
 
       const int flags =
-          double_conversion::DoubleToStringConverter::EMIT_POSITIVE_EXPONENT_SIGN |
-          double_conversion::DoubleToStringConverter::UNIQUE_ZERO;
+          DblToStr::EMIT_POSITIVE_EXPONENT_SIGN |
+          DblToStr::UNIQUE_ZERO;
 
-      const double_conversion::DoubleToStringConverter conv(flags,
-                                                            "inf", "nan", ch_exp,
-                                                            -4, 6,
-                                                            max_ldg_zeros,
-                                                            max_trl_zeros);
+      const DblToStr conv(flags,
+                          "inf", "nan", ch_exp,
+                          -4, 6,
+                          max_ldg_zeros, max_trl_zeros);
 
       // (3) Conversion //////////////////////////////////////////////////////
 
@@ -259,7 +260,7 @@ namespace cs {
 
       } else {
         if( length(first, last) <
-            min_fixed + double_conversion::DoubleToStringConverter::kMaxFixedDigitsBeforePoint + precision + 1 ) {
+            min_fixed + DblToStr::kMaxFixedDigitsBeforePoint + precision + 1 ) {
           return to_chars_result{last, std::errc::value_too_large};
         }
 
