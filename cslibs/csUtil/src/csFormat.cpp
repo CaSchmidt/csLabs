@@ -46,8 +46,8 @@ namespace cs {
     struct Options {
       Options()
         : base(10)
-        , fill(' ')
-        , format('g')
+        , fill(CharT(' '))
+        , format(CharT('g'))
         , precision(6)
         , width(0)
       {
@@ -65,6 +65,7 @@ namespace cs {
     public:
       typedef unsigned int                       index_type;
       typedef std::basic_string<CharT>          string_type;
+      typedef typename string_type::size_type     size_type;
       typedef std::pair<index_type,string_type>  token_type;
       typedef std::list<token_type>             tokens_type;
 
@@ -89,8 +90,8 @@ namespace cs {
       void arg(const CharT *s,
                const int width, const CharT fill)
       {
-        const string_type::size_type size = length(s);
-        replace_index(s, s + size, width, fill);
+        const size_type len = length(s);
+        replace_index(s, s + len, width, fill);
       }
 
       template<typename ValueT>
@@ -106,8 +107,8 @@ namespace cs {
         if( res.ec != std::errc() ) {
           return;
         }
-        const string_type::size_type size = distance(_temp.data(), res.ptr);
-        replace_index(_temp.data(), _temp.data() + size, width, fill);
+        const size_type len = length(_temp.data(), res.ptr);
+        replace_index(_temp.data(), _temp.data() + len, width, fill);
       }
 
       template<typename ValueT>
@@ -119,9 +120,9 @@ namespace cs {
       {
         _temp.fill(0);
         cs::chars_format fmt;
-        if(        format == 'e'  ||  format == 'E' ) {
+        if(        format == CharT('e')  ||  format == CharT('E') ) {
           fmt = cs::chars_format::scientific;
-        } else if( format == 'f'  ||  format == 'F' ) {
+        } else if( format == CharT('f')  ||  format == CharT('F') ) {
           fmt = cs::chars_format::fixed;
         } else { // Default
           fmt = cs::chars_format::general;
@@ -131,13 +132,13 @@ namespace cs {
         if( res.ec != std::errc() ) {
           return;
         }
-        const string_type::size_type size = distance(_temp.data(), res.ptr);
-        replace_index(_temp.data(), _temp.data() + size, width, fill);
+        const size_type len = length(_temp.data(), res.ptr);
+        replace_index(_temp.data(), _temp.data() + len, width, fill);
       }
 
-      static inline typename string_type::size_type length(const CharT *s)
+      static inline size_type length(const CharT *s)
       {
-        string_type::size_type result = 0;
+        size_type result = 0;
         if( s == nullptr ) {
           return result;
         }
@@ -154,13 +155,13 @@ namespace cs {
 
       string_type yield() const
       {
-        string_type::size_type length = 0;
+        size_type len = 0;
         for(const token_type& token : _tokens) {
-          length += token.second.size();
+          len += token.second.size();
         }
 
         string_type result;
-        result.reserve(length);
+        result.reserve(len);
         for(const token_type& token : _tokens) {
           result += token.second;
         }
@@ -169,11 +170,11 @@ namespace cs {
       }
 
     private:
-      Formatter();
-      Formatter(const Formatter<CharT>& other);
-      Formatter& operator=(const Formatter<CharT>& other);
-      Formatter(Formatter<CharT>&& other);
-      Formatter& operator=(Formatter<CharT>&& other);
+      Formatter() = delete;
+      Formatter(const Formatter<CharT>& other) = delete;
+      Formatter& operator=(const Formatter<CharT>& other) = delete;
+      Formatter(Formatter<CharT>&& other) = delete;
+      Formatter& operator=(Formatter<CharT>&& other) = delete;
 
       Options<CharT> _options;
       std::array<CharT,128> _temp;
@@ -182,14 +183,14 @@ namespace cs {
       // NOTE: Processes [begin,end)
       void tokenize(const CharT *begin, const CharT *end)
       {
-        string_type::size_type count = 0;
+        size_type count = 0;
         const CharT *copy = begin;
         const CharT  *pos = begin;
         while( pos < end ) {
 
           // (1) Handle '%' character ////////////////////////////////////////////
 
-          if( *pos == '%'  &&  pos + 1 < end ) {
+          if( *pos == CharT('%')  &&  pos + 1 < end ) {
             if( CharT('1') <= pos[1]  &&  pos[1] <= CharT('9') ) {
               append_token(copy, pos, count);
 
@@ -207,7 +208,7 @@ namespace cs {
               copy = pos;
               count = 0;
 
-            } else if( pos[1] == '%' ) { // Escape literal '%'
+            } else if( pos[1] == CharT('%') ) { // Escape literal '%'
               count++; // Count 2nd character; literal '%'
               pos += 2;
 
@@ -236,7 +237,7 @@ namespace cs {
 
       // NOTE: Processes [begin,end)
       const CharT *append_token(const CharT *begin, const CharT *end,
-                                const typename string_type::size_type length)
+                                const size_type length)
       {
         if( length < 1  ||  begin >= end ) {
           return begin;
@@ -244,11 +245,11 @@ namespace cs {
 
         string_type tokstr(length, 0);
 
-        string_type::size_type count = 0;
+        size_type count = 0;
         CharT *dest = const_cast<CharT*>(tokstr.data());
         while( begin < end  &&  count < length ) {
-          if( *begin == '%'  &&  begin + 1 < end ) {
-            if( begin[1] == '%' ) {
+          if( *begin == CharT('%')  &&  begin + 1 < end ) {
+            if( begin[1] == CharT('%') ) {
               begin++;  // skip 1st character
             } else {
               copy(dest, begin, count); // copy 1st character
@@ -267,23 +268,23 @@ namespace cs {
       }
 
       static inline void copy(CharT* &dest, const CharT* &src,
-                              typename string_type::size_type& count)
+                              size_type& count)
       {
         count++;
         *dest++ = *src++;
       }
 
       // NOTE: Processes [begin,end)
-      static inline typename string_type::size_type distance(const CharT *begin,
-                                                             const CharT *end)
+      static inline size_type length(const CharT *begin,
+                                     const CharT *end)
       {
         if( end <= begin ) {
           return 0;
         }
         const CharT *last = end - 1;
         return *last == CharT('\0') // Interval includes '\0'?
-            ? static_cast<string_type::size_type>(last - begin)
-            : static_cast<string_type::size_type>(end - begin);
+            ? static_cast<size_type>(last - begin)
+            : static_cast<size_type>(end - begin);
       }
 
       index_type next_index() const
@@ -314,12 +315,10 @@ namespace cs {
           return;
         }
 
-        const string_type::size_type   length =
-            static_cast<string_type::size_type>(end - begin);
-        const string_type::size_type abswidth =
-            static_cast<string_type::size_type>(width < 0
-                                                ? -width
-                                                :  width);
+        const size_type   length = static_cast<size_type>(end - begin);
+        const size_type abswidth = static_cast<size_type>(width < 0
+                                                          ? -width
+                                                          :  width);
 
         std::basic_string<CharT> repstr(std::max(abswidth, length), fill);
         if( length >= abswidth  ||  width <= 0 ) {

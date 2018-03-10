@@ -41,10 +41,8 @@
 
 namespace cs {
   namespace format {
-
     template<typename CharT>
     class Formatter;
-
   }
 }
 
@@ -89,11 +87,11 @@ public:
 private:
   using Formatter = cs::format::Formatter<char>;
 
-  csFormat();
-  csFormat(const csFormat&);
-  csFormat& operator=(const csFormat&);
-  csFormat(csFormat&&);
-  csFormat& operator=(csFormat&&);
+  csFormat() = delete;
+  csFormat(const csFormat&) = delete;
+  csFormat& operator=(const csFormat&) = delete;
+  csFormat(csFormat&&) = delete;
+  csFormat& operator=(csFormat&&) = delete;
 
   std::unique_ptr<Formatter> impl;
 };
