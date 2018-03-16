@@ -142,7 +142,7 @@ namespace cs {
         if( s == nullptr ) {
           return result;
         }
-        while( *s++ != '\0' ) {
+        while( *s++ != CharT('\0') ) {
           result++;
         }
         return result;
