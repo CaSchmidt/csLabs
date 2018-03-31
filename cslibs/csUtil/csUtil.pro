@@ -35,7 +35,8 @@ SOURCES += \
     3rdparty/double-conversion/cached-powers.cc \
     3rdparty/double-conversion/diy-fp.cc \
     src/csCharConv-fp.cpp \
-    src/csFormat.cpp
+    src/csFormat.cpp \
+    src/csLogger.cpp
 
 HEADERS += \
     ../include/csUtil/csCharConv.h \
@@ -44,4 +45,6 @@ HEADERS += \
     ../include/csUtil/csFlags.h \
     ../include/csUtil/csPointer.h \
     ../include/csUtil/csutil_config.h \
-    ../include/csUtil/csFormat.h
+    ../include/csUtil/csFormat.h \
+    ../include/csUtil/csILogger.h \
+    ../include/csUtil/csLogger.h
