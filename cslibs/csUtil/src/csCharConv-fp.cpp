@@ -34,7 +34,7 @@
 
 #include <limits>
 
-#include "3rdparty/double-conversion/double-conversion.h"
+#include "3rdparty/double-conversion/src/double-conversion.h"
 
 #include "csUtil/csCharConv.h"
 

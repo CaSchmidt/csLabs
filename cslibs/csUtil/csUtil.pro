@@ -26,14 +26,14 @@ DEPENDPATH  += ../include
 
 SOURCES += \
     src/csCharConv.cpp \
-    3rdparty/double-conversion/double-conversion.cc \
-    3rdparty/double-conversion/bignum-dtoa.cc \
-    3rdparty/double-conversion/fast-dtoa.cc \
-    3rdparty/double-conversion/fixed-dtoa.cc \
-    3rdparty/double-conversion/strtod.cc \
-    3rdparty/double-conversion/bignum.cc \
-    3rdparty/double-conversion/cached-powers.cc \
-    3rdparty/double-conversion/diy-fp.cc \
+    3rdparty/double-conversion/src/double-conversion.cc \
+    3rdparty/double-conversion/src/bignum-dtoa.cc \
+    3rdparty/double-conversion/src/fast-dtoa.cc \
+    3rdparty/double-conversion/src/fixed-dtoa.cc \
+    3rdparty/double-conversion/src/strtod.cc \
+    3rdparty/double-conversion/src/bignum.cc \
+    3rdparty/double-conversion/src/cached-powers.cc \
+    3rdparty/double-conversion/src/diy-fp.cc \
     src/csCharConv-fp.cpp \
     src/csFormat.cpp \
     src/csLogger.cpp
