@@ -40,11 +40,11 @@ SOURCES += \
 
 HEADERS += \
     ../include/csUtil/csCharConv.h \
-    ../include/csUtil/csConvert.h \
     ../include/csUtil/csEndian.h \
     ../include/csUtil/csFlags.h \
     ../include/csUtil/csPointer.h \
     ../include/csUtil/csutil_config.h \
     ../include/csUtil/csFormat.h \
     ../include/csUtil/csILogger.h \
-    ../include/csUtil/csLogger.h
+    ../include/csUtil/csLogger.h \
+    ../include/csUtil/csRawConverter.h

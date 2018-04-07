@@ -1,7 +1,7 @@
 TEMPLATE = app
 
 include(../../global.pri)
-TARGET = test_convert$${TARGET_POSTFIX}
+TARGET = test_rawconverter$${TARGET_POSTFIX}
 
 DESTDIR = ../../bin
 
@@ -23,4 +23,4 @@ SOURCES += \
     src/main.cpp
 
 HEADERS += \
-    ../../cslibs/include/csUtil/csConvert.h
+    ../../cslibs/include/csUtil/csRawConverter.h

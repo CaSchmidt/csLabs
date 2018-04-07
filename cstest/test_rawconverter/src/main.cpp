@@ -7,7 +7,7 @@
 # include <Windows.h>
 #endif
 
-#include <csUtil/csConvert.h>
+#include <csUtil/csRawConverter.h>
 
 ////// Names /////////////////////////////////////////////////////////////////
 
