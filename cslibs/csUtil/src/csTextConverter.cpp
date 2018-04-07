@@ -37,7 +37,7 @@
 #include "3rdparty/icu-ucnv/src/unicode/ucnv.h"
 #include "3rdparty/icu-ucnv/src/unicode/ustring.h"
 
-#include <csUtil/csTextConverter.h>
+#include "csUtil/csTextConverter.h"
 
 ////// Private ///////////////////////////////////////////////////////////////
 

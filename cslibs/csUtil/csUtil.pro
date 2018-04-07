@@ -110,7 +110,8 @@ SOURCES += \
     src/csCharConv-fp.cpp \
     src/csFormat.cpp \
     src/csLogger.cpp \
-    src/csTextConverter.cpp
+    src/csTextConverter.cpp \
+    src/csFileIO.cpp
 
 HEADERS += \
     ../include/csUtil/csCharConv.h \
@@ -122,4 +123,5 @@ HEADERS += \
     ../include/csUtil/csILogger.h \
     ../include/csUtil/csLogger.h \
     ../include/csUtil/csRawConverter.h \
-    ../include/csUtil/csTextConverter.h
+    ../include/csUtil/csTextConverter.h \
+    ../include/csUtil/csFileIO.h

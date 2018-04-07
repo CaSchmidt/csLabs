@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include <csUtil/csFileIO.h>
 #include <csUtil/csTextConverter.h>
 
 void print(const std::string& s)
@@ -38,6 +39,11 @@ int main(int /*argc*/, char ** /*argv*/)
 
   const std::string ebit = c_1252.fromUnicode(utf16);
   print(ebit); print_sep();
+
+  printf("*** File I/O\n");
+
+  const std::string fileutf8 = csReadTextFile("../cstest/test_textconverter/test äuml.txt");
+  print(fileutf8); print_sep();
 
   return EXIT_SUCCESS;
 }
