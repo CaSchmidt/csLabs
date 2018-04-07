@@ -1,0 +1,24 @@
+0.) Naming convention:
+
+ICU stores its data/resources in a separate file, eg.
+
+source/data/in/icudt61l.dat
+
+The "61" indicates ICU's version, "l" indicates the endianness.
+
+1.) Obtaining the conversion data:
+
+Use ICU's icupkg tool to list (-l) or extract (-x) the desired information.
+
+2.) Assembling a new data file:
+
+pkgdata -m static -p icudt61l -e icudt61 -L icudata-x64 -s files converters.txt
+
+Where
+
+-p icudt61l  is the search path ICU will use when resolving data
+-e icudt61   is the linker's entry point for the data
+
+3.) Creating C code to include in a program:
+
+Just run ICU's genccode on the created data file.
