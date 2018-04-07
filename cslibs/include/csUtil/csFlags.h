@@ -75,12 +75,12 @@ public:
     return *this;
   }
 
-  inline bool operator!() const
+  constexpr bool operator!() const
   {
     return _value == 0;
   }
 
-  inline csFlags<EnumT> operator~() const
+  constexpr csFlags<EnumT> operator~() const
   {
     return csFlags<EnumT>(~_value);
   }
@@ -93,7 +93,7 @@ public:
     return *this;
   }
 
-  inline csFlags<EnumT> operator&(const csFlags<EnumT>& other) const
+  constexpr csFlags<EnumT> operator&(const csFlags<EnumT>& other) const
   {
     return csFlags<EnumT>(_value & other._value);
   }
@@ -106,7 +106,7 @@ public:
     return *this;
   }
 
-  inline csFlags<EnumT> operator|(const csFlags<EnumT>& other) const
+  constexpr csFlags<EnumT> operator|(const csFlags<EnumT>& other) const
   {
     return csFlags<EnumT>(_value | other._value);
   }
@@ -119,7 +119,7 @@ public:
     return *this;
   }
 
-  inline csFlags<EnumT> operator^(const csFlags<EnumT>& other) const
+  constexpr csFlags<EnumT> operator^(const csFlags<EnumT>& other) const
   {
     return csFlags<EnumT>(_value ^ other._value);
   }
@@ -138,18 +138,18 @@ public:
 
   // Tests ///////////////////////////////////////////////////////////////////
 
-  inline bool testFlag(const EnumT flag) const
+  constexpr bool testFlag(const EnumT flag) const
   {
     return (_value & static_cast<value_type>(flag)) == static_cast<value_type>(flag);
   }
 
-  inline bool testFlags(const csFlags<EnumT>& other) const
+  constexpr bool testFlags(const csFlags<EnumT>& other) const
   {
     return (_value & other._value) == other._value;
   }
 
 #ifdef CS_FLAGS_HAVE_VALUE_OPERATORS
-  inline operator value_type() const
+  constexpr operator value_type() const
   {
     return _value;
   }
@@ -162,7 +162,7 @@ public:
     return *this;
   }
 
-  inline csFlags<EnumT> operator&(const value_type value) const
+  constexpr csFlags<EnumT> operator&(const value_type value) const
   {
     return csFlags<EnumT>(_value & value);
   }
@@ -175,7 +175,7 @@ public:
     return *this;
   }
 
-  inline csFlags<EnumT> operator|(const value_type value) const
+  constexpr csFlags<EnumT> operator|(const value_type value) const
   {
     return csFlags<EnumT>(_value | value);
   }
@@ -188,7 +188,7 @@ public:
     return *this;
   }
 
-  inline csFlags<EnumT> operator^(const value_type value) const
+  constexpr csFlags<EnumT> operator^(const value_type value) const
   {
     return csFlags<EnumT>(_value ^ value);
   }
