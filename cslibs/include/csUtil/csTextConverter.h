@@ -69,6 +69,12 @@ public:
 
   static csTextConverter create(const char *name);
 
+  static csTextConverter createAscii();
+  static csTextConverter createLatin1(); // ISO-8859-1
+  static csTextConverter createLatin9(); // ISO-8859-15
+  static csTextConverter createUtf8();
+  static csTextConverter createWindows1252();
+
   static std::list<std::string> listAvailable();
 
 private:

@@ -238,6 +238,31 @@ csTextConverter csTextConverter::create(const char *name)
   return result;
 }
 
+csTextConverter csTextConverter::createAscii()
+{
+  return create("ASCII");
+}
+
+csTextConverter csTextConverter::createLatin1()
+{
+  return create("ISO-8859-1");
+}
+
+csTextConverter csTextConverter::createLatin9()
+{
+  return create("ISO-8859-15");
+}
+
+csTextConverter csTextConverter::createUtf8()
+{
+  return create("UTF-8");
+}
+
+csTextConverter csTextConverter::createWindows1252()
+{
+  return create("WINDOWS-1252");
+}
+
 std::list<std::string> csTextConverter::listAvailable()
 {
   std::set<std::string> names;
