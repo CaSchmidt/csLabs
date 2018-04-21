@@ -39,9 +39,14 @@ namespace Audio {
 
   ////// public //////////////////////////////////////////////////////////////
 
-  Buffer::~Buffer()
+  Buffer::Buffer(BufferImpl *ptr)
+    : d(ptr)
   {
   }
+
+  Buffer::~Buffer() = default;
+  Buffer::Buffer(Buffer&&) noexcept = default;
+  Buffer& Buffer::operator=(Buffer&&) noexcept = default;
 
   bool Buffer::isNull() const
   {
@@ -153,13 +158,6 @@ namespace Audio {
     }
 
     return result;
-  }
-
-  ////// private /////////////////////////////////////////////////////////////
-
-  Buffer::Buffer(BufferImpl *ptr)
-    : d(ptr)
-  {
   }
 
 } // namespace Audio

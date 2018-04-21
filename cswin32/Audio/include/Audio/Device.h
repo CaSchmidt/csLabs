@@ -42,10 +42,11 @@ namespace Audio {
 
   class Device {
   public:
+    Device(DeviceImpl *ptr = nullptr);
     ~Device();
 
-    Device(Device&&) = default;
-    Device& operator=(Device&&) = default;
+    Device(Device&&) noexcept;
+    Device& operator=(Device&&) noexcept;
 
     bool isNull() const;
     void clear();
@@ -54,8 +55,6 @@ namespace Audio {
     static Device create(handle_t hwnd);
 
   private:
-    Device(DeviceImpl *ptr = nullptr);
-
     Device(const Device&) = delete;
     Device& operator=(const Device&) = delete;
 

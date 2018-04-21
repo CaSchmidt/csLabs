@@ -37,9 +37,14 @@ namespace Audio {
 
   ////// public //////////////////////////////////////////////////////////////
 
-  Device::~Device()
+  Device::Device(DeviceImpl *ptr)
+    : d(ptr)
   {
   }
+
+  Device::~Device() = default;
+  Device::Device(Device&&) noexcept = default;
+  Device& Device::operator=(Device&&) noexcept = default;
 
   bool Device::isNull() const
   {
@@ -68,13 +73,6 @@ namespace Audio {
     }
 
     return result;
-  }
-
-  ////// private /////////////////////////////////////////////////////////////
-
-  Device::Device(DeviceImpl *ptr)
-    : d(ptr)
-  {
   }
 
 } // namespace Audio

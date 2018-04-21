@@ -43,10 +43,11 @@ namespace Audio {
 
   class Buffer {
   public:
+    Buffer(BufferImpl *ptr = nullptr);
     ~Buffer();
 
-    Buffer(Buffer&&) = default;
-    Buffer& operator=(Buffer&&) = default;
+    Buffer(Buffer&&) noexcept;
+    Buffer& operator=(Buffer&&) noexcept;
 
     bool isNull() const;
     void clear();
@@ -65,8 +66,6 @@ namespace Audio {
                          const dword_t frequency, const dword_t size);
 
   private:
-    Buffer(BufferImpl *ptr = nullptr);
-
     Buffer(const Buffer&) = delete;
     Buffer& operator=(const Buffer&) = delete;
 
