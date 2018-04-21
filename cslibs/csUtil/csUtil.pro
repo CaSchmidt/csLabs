@@ -124,4 +124,5 @@ HEADERS += \
     ../include/csUtil/csLogger.h \
     ../include/csUtil/csRawConverter.h \
     ../include/csUtil/csTextConverter.h \
-    ../include/csUtil/csFileIO.h
+    ../include/csUtil/csFileIO.h \
+    include/internal/csutil_internal.h

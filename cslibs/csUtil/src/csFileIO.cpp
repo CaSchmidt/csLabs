@@ -33,40 +33,66 @@
 
 #include "csUtil/csFileIO.h"
 
-////// Extern ////////////////////////////////////////////////////////////////
+#include "internal/csutil_internal.h"
+#include "csUtil/csTextConverter.h"
 
-extern std::u16string csUtf8ToUnicode(const char *s, const int len = -1);
+////// Private ///////////////////////////////////////////////////////////////
+
+namespace impl {
+
+  template<typename T>
+  inline T read(const std::string& filename_utf8, bool *ok)
+  {
+    using DataT = typename T::value_type;
+    T result;
+
+    if( ok != nullptr ) {
+      *ok = false;
+    }
+
+    try {
+      const std::ios_base::openmode mode = std::ios_base::in | std::ios_base::binary;
+      std::fstream file;
+#if defined(_MSC_VER) && defined(_WIN32)
+      const std::u16string filename_utf16 = csUtf8ToUnicode(filename_utf8.data());
+      file.open(reinterpret_cast<const wchar_t*>(filename_utf16.data()), mode);
+#else
+      file.open(filename_utf8, mode);
+#endif
+      if( !file.is_open() ) {
+        return result;
+      }
+
+      file.seekg(0, std::ios_base::end);
+      const auto size = file.tellg();
+      file.seekg(0);
+
+      result.resize(size);
+
+      DataT *dest = const_cast<DataT*>(result.data()); // C++17
+      file.read(reinterpret_cast<char*>(dest), size);
+    } catch(...) {
+      result.clear();
+      return result;
+    }
+
+    if( ok != nullptr ) {
+      *ok = true;
+    }
+
+    return result;
+  }
+
+} // namespace impl
 
 ////// Public ////////////////////////////////////////////////////////////////
 
-CS_UTIL_EXPORT std::string csReadTextFile(const std::string& filename_utf8)
+CS_UTIL_EXPORT std::string csReadTextFile(const std::string& filename_utf8, bool *ok)
 {
-  std::string result;
+  return impl::read<std::string>(filename_utf8, ok);
+}
 
-  const std::ios_base::openmode mode = std::ios_base::in | std::ios_base::binary;
-  std::fstream file;
-#if defined(_MSC_VER) && defined(_WIN32)
-  const std::u16string filename_utf16 = csUtf8ToUnicode(filename_utf8.data());
-  file.open(reinterpret_cast<const wchar_t*>(filename_utf16.data()), mode);
-#else
-  file.open(filename_utf8, mode);
-#endif
-  if( !file.is_open() ) {
-    return result;
-  }
-
-  file.seekg(0, std::ios_base::end);
-  const auto size = file.tellg();
-  file.seekg(0);
-
-  try {
-    result.resize(size);
-  } catch(...) {
-    result.clear();
-    return result;
-  }
-
-  file.read(const_cast<char*>(result.data()), size); // C++17
-
-  return result;
+CS_UTIL_EXPORT std::vector<uint8_t> csReadBinaryFile(const std::string& filename_utf8, bool *ok)
+{
+  return impl::read<std::vector<uint8_t>>(filename_utf8, ok);
 }

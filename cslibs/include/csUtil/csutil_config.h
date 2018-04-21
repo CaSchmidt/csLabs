@@ -44,10 +44,14 @@
 
 ////// Build Configuration ///////////////////////////////////////////////////
 
-#if defined(CS_BUILD_UTIL_LIB)
-# define CS_UTIL_EXPORT  CS_DECL_EXPORT
+#ifdef CS_BUILD_UTIL_STATIC
+# define CS_UTIL_EXPORT
 #else
-# define CS_UTIL_EXPORT  CS_DECL_IMPORT
+# if defined(CS_BUILD_UTIL_LIB)
+#  define CS_UTIL_EXPORT  CS_DECL_EXPORT
+# else
+#  define CS_UTIL_EXPORT  CS_DECL_IMPORT
+# endif
 #endif
 
 ////// Feature Configuration /////////////////////////////////////////////////

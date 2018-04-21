@@ -29,18 +29,13 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSFILEIO_H__
-#define __CSFILEIO_H__
+#ifndef __CSUTIL_INTERNAL_H__
+#define __CSUTIL_INTERNAL_H__
 
-#include <cstdint>
+#undef  __CSUTIL_CONFIG_H__
+#undef  CS_UTIL_EXPORT
+#ifndef CS_BUILD_UTIL_STATIC
+# define CS_BUILD_UTIL_STATIC
+#endif
 
-#include <string>
-#include <vector>
-
-#include <csUtil/csutil_config.h>
-
-CS_UTIL_EXPORT std::string csReadTextFile(const std::string& filename_utf8, bool *ok = nullptr);
-
-CS_UTIL_EXPORT std::vector<uint8_t> csReadBinaryFile(const std::string& filename_utf8, bool *ok = nullptr);
-
-#endif // __CSFILEIO_H__
+#endif // __CSUTIL_INTERNAL_H__
