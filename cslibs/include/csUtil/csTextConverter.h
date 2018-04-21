@@ -42,13 +42,13 @@ class csTextConverterData;
 
 class CS_UTIL_EXPORT csTextConverter {
 public:
+  csTextConverter(csTextConverterData *ptr = nullptr);
   ~csTextConverter();
 
-  csTextConverter(csTextConverter&&) = default;
-  csTextConverter& operator=(csTextConverter&&) = default;
+  csTextConverter(csTextConverter&&) noexcept;
+  csTextConverter& operator=(csTextConverter&&) noexcept;
 
   bool isNull() const;
-
   void clear();
 
   const char *name() const;
@@ -78,8 +78,6 @@ public:
   static std::list<std::string> listAvailable();
 
 private:
-  csTextConverter(csTextConverterData *ptr = nullptr);
-
   csTextConverter(const csTextConverter&) = delete;
   csTextConverter& operator=(const csTextConverter&) = delete;
 

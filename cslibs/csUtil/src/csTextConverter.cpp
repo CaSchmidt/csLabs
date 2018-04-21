@@ -176,9 +176,14 @@ public:
 
 ////// public ////////////////////////////////////////////////////////////////
 
-csTextConverter::~csTextConverter()
+csTextConverter::csTextConverter(csTextConverterData *ptr)
+  : d(ptr)
 {
 }
+
+csTextConverter::~csTextConverter() = default;
+csTextConverter::csTextConverter(csTextConverter&&) noexcept = default;
+csTextConverter& csTextConverter::operator=(csTextConverter&&) noexcept = default;
 
 bool csTextConverter::isNull() const
 {
@@ -206,13 +211,6 @@ std::string csTextConverter::fromUnicode(const char16_t *s, const int len) const
 std::u16string csTextConverter::toUnicode(const char *s, const int len) const
 {
   return priv::toUnicode(d->cnv, s, len);
-}
-
-////// private ///////////////////////////////////////////////////////////////
-
-csTextConverter::csTextConverter(csTextConverterData *ptr)
-  : d(ptr)
-{
 }
 
 ////// public static /////////////////////////////////////////////////////////
