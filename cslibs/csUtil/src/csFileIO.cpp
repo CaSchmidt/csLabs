@@ -30,6 +30,7 @@
 *****************************************************************************/
 
 #include <fstream>
+#include <type_traits>
 
 #include "csUtil/csFileIO.h"
 
@@ -41,7 +42,15 @@
 namespace impl {
 
   template<typename T>
-  inline T read(const std::string& filename_utf8, bool *ok)
+  struct is_compatible {
+    enum : bool {
+      value = sizeof(std::fstream::char_type) == sizeof(typename T::value_type)
+    };
+  };
+
+  template<typename T>
+  inline T read(const std::string& filename_utf8, bool *ok,
+                typename std::enable_if<is_compatible<T>::value>::type * = nullptr)
   {
     using DataT = typename T::value_type;
     T result;
