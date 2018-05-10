@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2014, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2013-2018, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -37,7 +37,6 @@
 #include <QtGui/QPixmap>
 #include <QtCore/QPoint>
 #include <QtWidgets/QWidget>
-#include <QtWidgets/5.9.1/QtWidgets/private/qeffects_p.h>
 
 #include "csQt/csImageTip.h"
 
@@ -50,7 +49,7 @@ class csTipWidget : public QWidget {
 public:
   csTipWidget(const QImage& image,
               const csImageTip::Flags flags = csImageTip::NoFlags,
-              QWidget *parent = 0, Qt::WindowFlags winFlags = 0);
+              QWidget *parent = nullptr, Qt::WindowFlags winFlags = 0);
   ~csTipWidget();
 
   static csTipWidget *instance;
@@ -66,7 +65,7 @@ private:
   QPixmap pixmap;
 };
 
-csTipWidget *csTipWidget::instance = 0;
+csTipWidget *csTipWidget::instance = nullptr;
 
 csTipWidget::csTipWidget(const QImage& image,
                          const csImageTip::Flags flags,
@@ -79,6 +78,7 @@ csTipWidget::csTipWidget(const QImage& image,
   instance = this;
 
   setAttribute(Qt::WA_TranslucentBackground, true);
+  setObjectName(QLatin1String("csTipWidget"));
 
   pixmap = QPixmap::fromImage(image);
   if( flags.testFlag(csImageTip::DrawBorder) ) {
@@ -87,7 +87,7 @@ csTipWidget::csTipWidget(const QImage& image,
     painter.setBackground(QBrush(Qt::NoBrush));
     painter.setBrush(QBrush(Qt::NoBrush));
     painter.setPen(QPen(QBrush(Qt::black, Qt::SolidPattern),
-                        0.0, Qt::SolidLine));
+                        0, Qt::SolidLine));
     painter.drawRect(0, 0, image.width()-1, image.height()-1);
   }
 
@@ -100,7 +100,7 @@ csTipWidget::csTipWidget(const QImage& image,
 
 csTipWidget::~csTipWidget()
 {
-  instance = 0;
+  instance = nullptr;
 }
 
 bool csTipWidget::eventFilter(QObject *, QEvent *event)
@@ -123,6 +123,9 @@ bool csTipWidget::eventFilter(QObject *, QEvent *event)
   case QEvent::WindowActivate:
   case QEvent::WindowDeactivate:
     hideTip();
+    break;
+
+  default:
     break;
   }
 
@@ -184,27 +187,8 @@ void csImageTip::showImage(const QPoint& globalPos, const QImage& image,
   } else {
     csTipWidget::instance->placeTip(globalPos, widget);
   }
-  csTipWidget::instance->setObjectName(QLatin1String("csTipWidget"));
 
-  if( flags.testFlag(NoEffects) ) {
-    csTipWidget::instance->show();
-  } else {
-#if !defined(QT_NO_EFFECTS) && !defined(Q_WS_MAC)
-# if 1
-    qFadeEffect(csTipWidget::instance);
-# else
-    if( QApplication::isEffectEnabled(Qt::UI_FadeTooltip) ) {
-      qFadeEffect(csTipWidget::instance);
-    } else if( QApplication::isEffectEnabled(Qt::UI_AnimateTooltip) ) {
-      qScrollEffect(csTipWidget::instance);
-    } else {
-      csTipWidget::instance->show();
-    }
-# endif
-#else
-    csTipWidget::instance->show();
-#endif
-  }
+  csTipWidget::instance->show();
 }
 
 #include "csImageTip.moc"
