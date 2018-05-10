@@ -29,13 +29,15 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QDesktopWidget>
+#include <QtCore/QPoint>
+#include <QtCore/QPropertyAnimation>
 #include <QtGui/QImage>
 #include <QtGui/QPainter>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QPixmap>
-#include <QtCore/QPoint>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QDesktopWidget>
+#include <QtWidgets/QGraphicsOpacityEffect>
 #include <QtWidgets/QWidget>
 
 #include "csQt/csImageTip.h"
@@ -188,7 +190,25 @@ void csImageTip::showImage(const QPoint& globalPos, const QImage& image,
     csTipWidget::instance->placeTip(globalPos, widget);
   }
 
-  csTipWidget::instance->show();
+  if( flags.testFlag(csImageTip::NoEffects) ) {
+    csTipWidget::instance->show();
+
+  } else {
+    QGraphicsOpacityEffect *opacity =
+        new QGraphicsOpacityEffect(csTipWidget::instance);
+    opacity->setOpacity(0);
+    csTipWidget::instance->setGraphicsEffect(opacity);
+
+    QPropertyAnimation *animation =
+        new QPropertyAnimation(opacity, "opacity", csTipWidget::instance);
+    animation->setDuration(250);
+    animation->setStartValue(qreal(0));
+    animation->setEndValue(qreal(1));
+    animation->setEasingCurve(QEasingCurve::InQuad);
+
+    csTipWidget::instance->show();
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
+  }
 }
 
 #include "csImageTip.moc"
