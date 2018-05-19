@@ -1,0 +1,20 @@
+set(trdparty_dblcnv_FILES
+  3rdparty/double-conversion/src/bignum-dtoa.cc
+  3rdparty/double-conversion/src/bignum-dtoa.h
+  3rdparty/double-conversion/src/bignum.cc
+  3rdparty/double-conversion/src/bignum.h
+  3rdparty/double-conversion/src/cached-powers.cc
+  3rdparty/double-conversion/src/cached-powers.h
+  3rdparty/double-conversion/src/diy-fp.cc
+  3rdparty/double-conversion/src/diy-fp.h
+  3rdparty/double-conversion/src/double-conversion.cc
+  3rdparty/double-conversion/src/double-conversion.h
+  3rdparty/double-conversion/src/fast-dtoa.cc
+  3rdparty/double-conversion/src/fast-dtoa.h
+  3rdparty/double-conversion/src/fixed-dtoa.cc
+  3rdparty/double-conversion/src/fixed-dtoa.h
+  3rdparty/double-conversion/src/ieee.h
+  3rdparty/double-conversion/src/strtod.cc
+  3rdparty/double-conversion/src/strtod.h
+  3rdparty/double-conversion/src/utils.h
+  )
