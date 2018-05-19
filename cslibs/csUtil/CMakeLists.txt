@@ -6,6 +6,9 @@ project(csUtil)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+include(FormatOutputName)
+
 option(BUILD_SHARED_LIBS "Build shared library" ON)
 
 ### 3rd Party ################################################################
@@ -46,6 +49,8 @@ add_library(csUtil
   ${trdparty_dblcnv_FILES}
   ${trdparty_icu_FILES}
   )
+
+format_output_name(csUtil "csUtil")
 
 target_compile_definitions(csUtil PRIVATE CS_BUILD_UTIL_LIB)
 
