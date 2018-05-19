@@ -2,3 +2,4 @@ bin/
 lib/
 build-*/
 *.pro.user
+*.txt.user
