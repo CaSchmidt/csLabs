@@ -26,6 +26,7 @@ set(csUtil_HEADERS
   include/csUtil/csFormat.h
   include/csUtil/csILogger.h
   include/csUtil/csLogger.h
+  include/csUtil/csNamespace.h
   include/csUtil/csPointer.h
   include/csUtil/csRawConverter.h
   include/csUtil/csTextConverter.h
@@ -67,3 +68,14 @@ endif()
 # ICU
 target_compile_definitions(csUtil PRIVATE U_COMMON_IMPLEMENTATION U_STATIC_IMPLEMENTATION)
 target_include_directories(csUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/icu-ucnv/src)
+
+install(TARGETS csUtil
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+  )
+
+install(DIRECTORY
+  include/ DESTINATION include
+  PATTERN "internal" EXCLUDE
+  )
