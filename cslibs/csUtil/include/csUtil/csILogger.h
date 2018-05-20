@@ -38,9 +38,8 @@
 
 class CS_UTIL_EXPORT csILogger {
 public:
-  virtual ~csILogger()
-  {
-  }
+  csILogger();
+  virtual ~csILogger();
 
   virtual void logText(const std::string&) const = 0;
 
@@ -49,6 +48,10 @@ public:
 
   virtual void logError(const std::string&) const = 0;
   virtual void logError(const int, const std::string&) const = 0;
+
+private:
+  csILogger(const csILogger&) noexcept = delete;
+  csILogger& operator=(const csILogger&) noexcept = delete;
 };
 
 #endif // CSILOGGER_H

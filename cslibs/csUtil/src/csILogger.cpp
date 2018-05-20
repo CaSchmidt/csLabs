@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2016, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2018, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,48 +29,14 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSPOINTER_H
-#define CSPOINTER_H
+#include "csUtil/csILogger.h"
 
-#include <cstdint>
+////// public ////////////////////////////////////////////////////////////////
 
-namespace cs {
+csILogger::csILogger()
+{
+}
 
-  namespace pointer {
-
-    template<int Size>
-    struct csPointerTypeImpl {
-      // SFINAE
-    };
-
-    template<>
-    struct csPointerTypeImpl<4> {
-      typedef uint32_t type;
-    };
-
-    template<>
-    struct csPointerTypeImpl<8> {
-      typedef uint64_t type;
-    };
-
-  } // namespace pointer
-
-} // namespace cs
-
-struct csPointer {
-  typedef cs::pointer::csPointerTypeImpl<sizeof(void*)>::type type;
-
-  template<typename DataT>
-  inline static bool isAlignedTo(const void *p)
-  {
-    return ( reinterpret_cast<type>(p) & static_cast<type>(sizeof(DataT)-1) ) == 0;
-  }
-
-  template<typename DataT>
-  inline static void *alignTo(const void *p)
-  {
-    return static_cast<void*>( reinterpret_cast<type>(p) & ~static_cast<type>(sizeof(DataT)-1) );
-  }
-};
-
-#endif // CSPOINTER_H
+csILogger::~csILogger()
+{
+}

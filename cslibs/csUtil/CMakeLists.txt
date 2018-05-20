@@ -39,6 +39,7 @@ set(csUtil_SOURCES
   src/csCharConv.cpp
   src/csFileIO.cpp
   src/csFormat.cpp
+  src/csILogger.cpp
   src/csLogger.cpp
   src/csTextConverter.cpp
   )
