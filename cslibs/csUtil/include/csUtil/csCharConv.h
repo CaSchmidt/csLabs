@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSCHARCONV_H__
-#define __CSCHARCONV_H__
+#ifndef CSCHARCONV_H
+#define CSCHARCONV_H
 
 #include <cstdint>
 
@@ -135,4 +135,4 @@ namespace cs {
 
 } // namespace cs
 
-#endif // __CSCHARCONV_H__
+#endif // CSCHARCONV_H

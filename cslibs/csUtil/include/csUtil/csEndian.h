@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSENDIAN_H__
-#define __CSENDIAN_H__
+#ifndef CSENDIAN_H
+#define CSENDIAN_H
 
 #include <type_traits>
 
@@ -90,4 +90,4 @@ inline void csCopy(T *dest, const void *src,
   dispatch<SWAP,T>::run(dest, src);
 }
 
-#endif // __CSENDIAN_H__
+#endif // CSENDIAN_H

@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSUTIL_CONFIG_H__
-#define __CSUTIL_CONFIG_H__
+#ifndef CSUTIL_CONFIG_H
+#define CSUTIL_CONFIG_H
 
 ////// Compiler Configuration ////////////////////////////////////////////////
 
@@ -63,4 +63,4 @@
 
 #define CS_TO_CHARS_HAVE_REMOVE_TRAILING_ZEROS
 
-#endif // __CSUTIL_CONFIG_H__
+#endif // CSUTIL_CONFIG_H

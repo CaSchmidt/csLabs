@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSTEXTCONVERTER_H__
-#define __CSTEXTCONVERTER_H__
+#ifndef CSTEXTCONVERTER_H
+#define CSTEXTCONVERTER_H
 
 #include <list>
 #include <memory>
@@ -116,4 +116,4 @@ inline std::string csUnicodeToUtf8(const std::u16string& s)
   return csUnicodeToUtf8(s.data(), static_cast<int>(s.size()));
 }
 
-#endif // __CSTEXTCONVERTER_H__
+#endif // CSTEXTCONVERTER_H

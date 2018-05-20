@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSFLAGS_H__
-#define __CSFLAGS_H__
+#ifndef CSFLAGS_H
+#define CSFLAGS_H
 
 #include <type_traits>
 
@@ -214,4 +214,4 @@ private:
     return result;                                  \
   }
 
-#endif // __CSFLAGS_H__
+#endif // CSFLAGS_H

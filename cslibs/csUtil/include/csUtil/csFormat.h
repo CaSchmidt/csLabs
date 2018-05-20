@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSFORMAT_H__
-#define __CSFORMAT_H__
+#ifndef CSFORMAT_H
+#define CSFORMAT_H
 
 #include <cstdint>
 
@@ -96,4 +96,4 @@ private:
   std::unique_ptr<Formatter> impl;
 };
 
-#endif // __CSFORMAT_H__
+#endif // CSFORMAT_H

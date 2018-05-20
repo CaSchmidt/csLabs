@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSILOGGER_H__
-#define __CSILOGGER_H__
+#ifndef CSILOGGER_H
+#define CSILOGGER_H
 
 #include <string>
 
@@ -51,4 +51,4 @@ public:
   virtual void logError(const int, const std::string&) const = 0;
 };
 
-#endif // __CSILOGGER_H__
+#endif // CSILOGGER_H

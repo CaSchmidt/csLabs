@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSRAWCONVERTER_H__
-#define __CSRAWCONVERTER_H__
+#ifndef CSRAWCONVERTER_H
+#define CSRAWCONVERTER_H
 
 #include <cstdint>
 
@@ -506,4 +506,4 @@ void csConvert(double *dest, const DataT *src, const int N,
   }
 }
 
-#endif // __CSRAWCONVERTER_H__
+#endif // CSRAWCONVERTER_H

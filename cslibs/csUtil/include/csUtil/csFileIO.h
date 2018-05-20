@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSFILEIO_H__
-#define __CSFILEIO_H__
+#ifndef CSFILEIO_H
+#define CSFILEIO_H
 
 #include <cstdint>
 
@@ -43,4 +43,4 @@ CS_UTIL_EXPORT std::string csReadTextFile(const std::string& filename_utf8, bool
 
 CS_UTIL_EXPORT std::vector<uint8_t> csReadBinaryFile(const std::string& filename_utf8, bool *ok = nullptr);
 
-#endif // __CSFILEIO_H__
+#endif // CSFILEIO_H

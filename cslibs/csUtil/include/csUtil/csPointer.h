@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSPOINTER_H__
-#define __CSPOINTER_H__
+#ifndef CSPOINTER_H
+#define CSPOINTER_H
 
 #include <cstdint>
 
@@ -73,4 +73,4 @@ struct csPointer {
   }
 };
 
-#endif // __CSPOINTER_H__
+#endif // CSPOINTER_H

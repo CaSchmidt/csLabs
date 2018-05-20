@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSLOGGER_H__
-#define __CSLOGGER_H__
+#ifndef CSLOGGER_H
+#define CSLOGGER_H
 
 #include <cstdio>
 
@@ -53,4 +53,4 @@ private:
   FILE *_file;
 };
 
-#endif // __CSLOGGER_H__
+#endif // CSLOGGER_H
