@@ -283,12 +283,18 @@ csPDFiumWordsPages csPDFiumDocument::wordsPages(const int firstIndex,
 }
 
 csPDFiumDocument csPDFiumDocument::load(const QString& filename,
-                                        const bool memory)
+                                        const bool memory,
+                                        const QByteArray& password,
+                                        bool *pw_required)
 {
   csPDFiumDocumentImpl *impl = new csPDFiumDocumentImpl();
   if( impl == 0 ) {
     return csPDFiumDocument();
   }
+
+  const char *pdf_password = password.isEmpty()
+      ? NULL
+      : password.constData();
 
   impl->fileName = filename;
   if( memory ) {
@@ -307,18 +313,22 @@ csPDFiumDocument csPDFiumDocument::load(const QString& filename,
     file.close();
 
     impl->document = FPDF_LoadMemDocument(impl->data.constData(),
-                                          impl->data.size(), NULL);
+                                          impl->data.size(), pdf_password);
 
   } else {
 #ifndef Q_OS_WIN // ASSUMPTION: All other OSes treat paths as UTF-8...
     impl->document = FPDF_LoadDocument(filename.toUtf8().constData(), NULL);
 #else
     // NOTE: PDFium uses UTF-16LE encoding!
-    impl->document = FPDF_LoadDocumentW(filename.utf16(), NULL);
+    impl->document = FPDF_LoadDocumentW(filename.utf16(), pdf_password);
 #endif
   }
 
   if( impl->document == NULL ) {
+    if( pw_required != nullptr ) {
+      *pw_required = FPDF_GetLastError() == FPDF_ERR_PASSWORD;
+    }
+
     delete impl;
     return csPDFiumDocument();
   }

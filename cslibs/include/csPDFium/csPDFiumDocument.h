@@ -67,7 +67,9 @@ public:
   csPDFiumWordsPages wordsPages(const int firstIndex, const int count = -1) const;
 
   static csPDFiumDocument load(const QString& filename,
-                               const bool memory = false);
+                               const bool memory = false,
+                               const QByteArray& password = QByteArray(),
+                               bool *pw_required = nullptr);
 
 private:
   csPDFiumDest createDest(const void *_dest, const void *_action) const;
