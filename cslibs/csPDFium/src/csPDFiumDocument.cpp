@@ -292,6 +292,9 @@ csPDFiumDocument csPDFiumDocument::load(const QString& filename,
     return csPDFiumDocument();
   }
 
+  if( pw_required != nullptr ) {
+    *pw_required = false;
+  }
   const char *pdf_password = password.isEmpty()
       ? NULL
       : password.constData();
@@ -317,7 +320,7 @@ csPDFiumDocument csPDFiumDocument::load(const QString& filename,
 
   } else {
 #ifndef Q_OS_WIN // ASSUMPTION: All other OSes treat paths as UTF-8...
-    impl->document = FPDF_LoadDocument(filename.toUtf8().constData(), NULL);
+    impl->document = FPDF_LoadDocument(filename.toUtf8().constData(), pdf_password);
 #else
     // NOTE: PDFium uses UTF-16LE encoding!
     impl->document = FPDF_LoadDocumentW(filename.utf16(), pdf_password);
