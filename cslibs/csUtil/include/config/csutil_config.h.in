@@ -32,6 +32,10 @@
 #ifndef CSUTIL_CONFIG_H
 #define CSUTIL_CONFIG_H
 
+////// Configured by CMake ///////////////////////////////////////////////////
+
+#cmakedefine CS_BUILD_UTIL_STATIC
+
 ////// Compiler Configuration ////////////////////////////////////////////////
 
 #ifdef _MSC_VER

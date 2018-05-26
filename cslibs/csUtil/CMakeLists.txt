@@ -9,7 +9,17 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(FormatOutputName)
 
+# Static Build?
 option(BUILD_SHARED_LIBS "Build shared library" ON)
+
+if(NOT BUILD_SHARED_LIBS)
+  set(CS_BUILD_UTIL_STATIC ON)
+endif()
+
+# config.h
+configure_file(include/config/csutil_config.h.in
+  csUtil/csutil_config.h @ONLY
+  )
 
 ### 3rd Party ################################################################
 
@@ -30,7 +40,6 @@ set(csUtil_HEADERS
   include/csUtil/csPointer.h
   include/csUtil/csRawConverter.h
   include/csUtil/csTextConverter.h
-  include/csUtil/csutil_config.h
   include/internal/csutil_internal.h
   )
 
@@ -56,10 +65,6 @@ format_output_name(csUtil "csUtil")
 
 target_compile_definitions(csUtil PRIVATE CS_BUILD_UTIL_LIB)
 
-if(NOT BUILD_SHARED_LIBS)
-  target_compile_definitions(csUtil PRIVATE CS_BUILD_UTIL_STATIC)
-endif()
-
 target_include_directories(csUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 if(WIN32)
@@ -78,5 +83,10 @@ install(TARGETS csUtil
 
 install(DIRECTORY
   include/ DESTINATION include
+  PATTERN "config" EXCLUDE
   PATTERN "internal" EXCLUDE
+  )
+
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/csUtil/csutil_config.h DESTINATION include/csUtil
   )
