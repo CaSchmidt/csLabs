@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 project(csUtil)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(FormatOutputName)
@@ -18,7 +19,7 @@ endif()
 
 # config.h
 configure_file(include/config/csutil_config.h.in
-  csUtil/csutil_config.h @ONLY
+  include/csUtil/csutil_config.h @ONLY
   )
 
 ### 3rd Party ################################################################
@@ -88,5 +89,5 @@ install(DIRECTORY
   )
 
 install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/csUtil/csutil_config.h DESTINATION include/csUtil
+  ${CMAKE_CURRENT_BINARY_DIR}/include/csUtil/csutil_config.h DESTINATION include/csUtil
   )
