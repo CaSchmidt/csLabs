@@ -60,8 +60,6 @@
 
 ////// Feature Configuration /////////////////////////////////////////////////
 
-#undef CS_FLAGS_HAVE_VALUE_OPERATORS
-
 #undef CS_FROM_CHARS_HAVE_CAPS
 #undef CS_FROM_CHARS_HAVE_PLUS
 

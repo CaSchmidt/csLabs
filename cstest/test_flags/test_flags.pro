@@ -13,10 +13,10 @@ CONFIG -= app_bundle
 
 
 INCLUDEPATH += ./include
-INCLUDEPATH += ../../cslibs/include
+INCLUDEPATH += ../../cslibs/csUtil/include
 
 DEPENDPATH  += ./include
-DEPENDPATH  += ../../cslibs/include
+DEPENDPATH  += ../../cslibs/csUtil/include
 
 
 SOURCES += \

@@ -34,184 +34,144 @@
 
 #include <type_traits>
 
-#include <csUtil/csutil_config.h>
+/*
+ * NOTE:
+ * This implementation is heavily inspired by Anthony Williams' article
+ * "Using Enum Classes as Bitfields".
+ * cf. https://accu.org/var/uploads/journals/Overload132.pdf#page=23
+ */
 
-template<typename EnumT,
-         typename std::enable_if<std::is_enum<EnumT>::value>::type * = nullptr>
-class csFlags {
-public:
-  typedef EnumT enum_type;
-  typedef typename std::underlying_type<EnumT>::type value_type;
+namespace cs {
 
-  csFlags()
-    : _value(0)
-  {
-  }
+  template<typename T>
+  struct is_flags {
+    enum : bool {
+      value = false
+    };
+  };
 
-  explicit csFlags(const value_type value)
-    : _value(value)
-  {
-  }
+  template<typename T>
+  using if_flags_type = typename std::enable_if<
+  std::is_enum<T>::value  &&
+  std::is_unsigned<typename std::underlying_type<T>::type>::value  &&
+  is_flags<T>::value,
+  T>::type;
 
-  csFlags(const EnumT flag)
-    : _value(flag)
-  {
-  }
+  template<typename T>
+  using if_flags_bool = typename std::enable_if<
+  std::is_enum<T>::value  &&
+  std::is_unsigned<typename std::underlying_type<T>::type>::value  &&
+  is_flags<T>::value,
+  bool>::type;
 
-  csFlags(const csFlags<EnumT>& other)
-    : _value(other._value)
-  {
-  }
-
-  ~csFlags()
-  {
-  }
-
-  inline csFlags<EnumT>& operator=(const csFlags<EnumT>& other)
-  {
-    if( this != &other ) {
-      _value = other._value;
-    }
-    return *this;
-  }
-
-  constexpr bool operator!() const
-  {
-    return _value == 0;
-  }
-
-  constexpr csFlags<EnumT> operator~() const
-  {
-    return csFlags<EnumT>(~_value);
-  }
-
-  // AND /////////////////////////////////////////////////////////////////////
-
-  inline csFlags<EnumT>& operator&=(const csFlags<EnumT>& other)
-  {
-    _value &= other._value;
-    return *this;
-  }
-
-  constexpr csFlags<EnumT> operator&(const csFlags<EnumT>& other) const
-  {
-    return csFlags<EnumT>(_value & other._value);
-  }
-
-  // OR //////////////////////////////////////////////////////////////////////
-
-  inline csFlags<EnumT>& operator|=(const csFlags<EnumT>& other)
-  {
-    _value |= other._value;
-    return *this;
-  }
-
-  constexpr csFlags<EnumT> operator|(const csFlags<EnumT>& other) const
-  {
-    return csFlags<EnumT>(_value | other._value);
-  }
-
-  // XOR /////////////////////////////////////////////////////////////////////
-
-  inline csFlags<EnumT>& operator^=(const csFlags<EnumT>& other)
-  {
-    _value ^= other._value;
-    return *this;
-  }
-
-  constexpr csFlags<EnumT> operator^(const csFlags<EnumT>& other) const
-  {
-    return csFlags<EnumT>(_value ^ other._value);
-  }
-
-  // Set /////////////////////////////////////////////////////////////////////
-
-  inline csFlags<EnumT>& setFlag(const EnumT flag, const bool on = true)
+  template<typename T>
+  constexpr void setFlags(T& result, const T& flags, const bool on = true,
+                          const if_flags_type<T> * = nullptr)
   {
     if( on ) {
-      _value |=  static_cast<value_type>(flag);
+      result |=  flags;
     } else {
-      _value &= ~static_cast<value_type>(flag);
+      result &= ~flags;
     }
-    return *this;
   }
 
-  // Tests ///////////////////////////////////////////////////////////////////
-
-  constexpr bool testFlag(const EnumT flag) const
+  template<typename T>
+  constexpr bool testFlags(const T& x, const T& flags,
+                           const if_flags_type<T> * = nullptr)
   {
-    return (_value & static_cast<value_type>(flag)) == static_cast<value_type>(flag);
+    using data_t = typename std::underlying_type<T>::type;
+    return (static_cast<data_t>(x) & static_cast<data_t>(flags)) != 0;
   }
 
-  constexpr bool testFlags(const csFlags<EnumT>& other) const
+  template<typename T>
+  constexpr bool testMask(const T& x, const T& mask,
+                          const if_flags_type<T> * = nullptr)
   {
-    return (_value & other._value) == other._value;
+    using data_t = typename std::underlying_type<T>::type;
+    return (static_cast<data_t>(x) & static_cast<data_t>(mask)) == static_cast<data_t>(mask);
   }
 
-#ifdef CS_FLAGS_HAVE_VALUE_OPERATORS
-  constexpr operator value_type() const
-  {
-    return _value;
-  }
+} // namespace cs
 
-  // AND /////////////////////////////////////////////////////////////////////
+// Logical Negation //////////////////////////////////////////////////////////
 
-  inline csFlags<EnumT>& operator&=(const value_type value)
-  {
-    _value &= value;
-    return *this;
-  }
+template<typename T>
+constexpr cs::if_flags_bool<T> operator!(const T& a)
+{
+  using data_t = typename std::underlying_type<T>::type;
+  return static_cast<data_t>(a) == 0;
+}
 
-  constexpr csFlags<EnumT> operator&(const value_type value) const
-  {
-    return csFlags<EnumT>(_value & value);
-  }
+// AND ///////////////////////////////////////////////////////////////////////
 
-  // OR //////////////////////////////////////////////////////////////////////
+template<typename T>
+constexpr cs::if_flags_type<T> operator&(const T& a, const T& b)
+{
+  using data_t = typename std::underlying_type<T>::type;
+  return static_cast<T>(static_cast<data_t>(a) & static_cast<data_t>(b));
+}
 
-  inline csFlags<EnumT>& operator|=(const value_type value)
-  {
-    _value |= value;
-    return *this;
-  }
+template<typename T>
+constexpr cs::if_flags_type<T>& operator&=(T& result, const T& a)
+{
+  using data_t = typename std::underlying_type<T>::type;
+  result = static_cast<T>(static_cast<data_t>(result) & static_cast<data_t>(a));
+  return result;
+}
 
-  constexpr csFlags<EnumT> operator|(const value_type value) const
-  {
-    return csFlags<EnumT>(_value | value);
-  }
+// NOT ///////////////////////////////////////////////////////////////////////
 
-  // XOR /////////////////////////////////////////////////////////////////////
+template<typename T>
+constexpr cs::if_flags_type<T> operator~(const T& a)
+{
+  using data_t = typename std::underlying_type<T>::type;
+  return static_cast<T>(~static_cast<data_t>(a));
+}
 
-  inline csFlags<EnumT>& operator^=(const value_type value)
-  {
-    _value ^= value;
-    return *this;
-  }
+// OR ////////////////////////////////////////////////////////////////////////
 
-  constexpr csFlags<EnumT> operator^(const value_type value) const
-  {
-    return csFlags<EnumT>(_value ^ value);
-  }
-#endif
+template<typename T>
+constexpr cs::if_flags_type<T> operator|(const T& a, const T& b)
+{
+  using data_t = typename std::underlying_type<T>::type;
+  return static_cast<T>(static_cast<data_t>(a) | static_cast<data_t>(b));
+}
 
-private:
-  value_type _value;
-};
+template<typename T>
+constexpr cs::if_flags_type<T>& operator|=(T& result, const T& a)
+{
+  using data_t = typename std::underlying_type<T>::type;
+  result = static_cast<T>(static_cast<data_t>(result) | static_cast<data_t>(a));
+  return result;
+}
 
-#define CS_DECLARE_OPERATORS_FOR_FLAGS(Flags)       \
-  inline Flags operator|(const Flags::enum_type a,  \
-                         const Flags::enum_type b)  \
-  {                                                 \
-    Flags result(a);                                \
-    result |= b;                                    \
-    return result;                                  \
-  }                                                 \
-  inline Flags operator|(const Flags::enum_type a,  \
-                         const Flags& b)            \
-  {                                                 \
-    Flags result(a);                                \
-    result |= b;                                    \
-    return result;                                  \
+// XOR ///////////////////////////////////////////////////////////////////////
+
+template<typename T>
+constexpr cs::if_flags_type<T> operator^(const T& a, const T& b)
+{
+  using data_t = typename std::underlying_type<T>::type;
+  return static_cast<T>(static_cast<data_t>(a) ^ static_cast<data_t>(b));
+}
+
+template<typename T>
+constexpr cs::if_flags_type<T>& operator^=(T& result, const T& a)
+{
+  using data_t = typename std::underlying_type<T>::type;
+  result = static_cast<T>(static_cast<data_t>(result) ^ static_cast<data_t>(a));
+  return result;
+}
+
+// Macros ////////////////////////////////////////////////////////////////////
+
+#define CS_ENABLE_FLAGS(T) \
+  namespace cs {           \
+    template<>             \
+    struct is_flags<T> {   \
+      enum : bool {        \
+        value = true       \
+      };                   \
+    };                     \
   }
 
 #endif // CSFLAGS_H
