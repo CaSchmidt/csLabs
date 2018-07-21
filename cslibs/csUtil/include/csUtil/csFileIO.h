@@ -34,10 +34,14 @@
 
 #include <cstdint>
 
+#include <fstream>
 #include <string>
 #include <vector>
 
 #include <csUtil/csutil_config.h>
+
+CS_UTIL_EXPORT std::fstream csOpenFile(const std::string& filename_utf8,
+                                       const std::ios_base::openmode mode);
 
 CS_UTIL_EXPORT std::string csReadTextFile(const std::string& filename_utf8, bool *ok = nullptr);
 

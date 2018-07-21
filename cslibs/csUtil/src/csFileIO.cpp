@@ -29,7 +29,6 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <fstream>
 #include <type_traits>
 
 #include "csUtil/csFileIO.h"
@@ -60,14 +59,7 @@ namespace impl {
     }
 
     try {
-      const std::ios_base::openmode mode = std::ios_base::in | std::ios_base::binary;
-      std::fstream file;
-#if defined(_MSC_VER) && defined(_WIN32)
-      const std::u16string filename_utf16 = csUtf8ToUnicode(filename_utf8.data());
-      file.open(reinterpret_cast<const wchar_t*>(filename_utf16.data()), mode);
-#else
-      file.open(filename_utf8, mode);
-#endif
+      std::fstream file = csOpenFile(filename_utf8, std::ios_base::in | std::ios_base::binary);
       if( !file.is_open() ) {
         return result;
       }
@@ -76,7 +68,7 @@ namespace impl {
       const auto size = file.tellg();
       file.seekg(0);
 
-      result.resize(size);
+      result.resize(static_cast<typename T::size_type>(size));
 
       DataT *dest = const_cast<DataT*>(result.data()); // C++17
       file.read(reinterpret_cast<char*>(dest), size);
@@ -95,6 +87,19 @@ namespace impl {
 } // namespace impl
 
 ////// Public ////////////////////////////////////////////////////////////////
+
+CS_UTIL_EXPORT std::fstream csOpenFile(const std::string& filename_utf8,
+                                       const std::ios_base::openmode mode)
+{
+  std::fstream file;
+#if defined(_MSC_VER) && defined(_WIN32)
+  const std::u16string filename_utf16 = csUtf8ToUnicode(filename_utf8.data());
+  file.open(reinterpret_cast<const wchar_t*>(filename_utf16.data()), mode);
+#else
+  file.open(filename_utf8, mode);
+#endif
+  return file;
+}
 
 CS_UTIL_EXPORT std::string csReadTextFile(const std::string& filename_utf8, bool *ok)
 {
