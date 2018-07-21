@@ -6,15 +6,15 @@
 
 void print(const std::string& s)
 {
-  for(int i = 0; i < s.size(); i++) {
-    printf("%2d: 0x%02X\n", i, (uint8_t)s[i]);
+  for(std::string::size_type i = 0; i < s.size(); i++) {
+    printf("%2llu: 0x%02X\n", i, static_cast<uint8_t>(s[i]));
   }
 }
 
 void print(const std::u16string& s)
 {
-  for(int i = 0; i < s.size(); i++) {
-    printf("%2d: 0x%04X\n", i, (uint16_t)s[i]);
+  for(std::u16string::size_type i = 0; i < s.size(); i++) {
+    printf("%2llu: 0x%04X\n", i, static_cast<uint16_t>(s[i]));
   }
 }
 
