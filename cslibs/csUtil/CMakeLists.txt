@@ -63,6 +63,10 @@ add_library(csUtil
   ${trdparty_icu_FILES}
   )
 
+set_property(TARGET csUtil PROPERTY CXX_STANDARD 14)
+set_property(TARGET csUtil PROPERTY CXX_STANDARD_REQUIRED ON)
+set_property(TARGET csUtil PROPERTY CXX_EXTENSIONS OFF)
+
 format_output_name(csUtil "csUtil")
 
 target_compile_definitions(csUtil PRIVATE CS_BUILD_UTIL_LIB)
