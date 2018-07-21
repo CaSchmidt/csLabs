@@ -65,27 +65,25 @@ namespace cs {
   bool>::type;
 
   template<typename T>
-  constexpr void setFlags(T& result, const T& flags, const bool on = true,
-                          const if_flags_type<T> * = nullptr)
+  constexpr if_flags_type<T>& setFlags(T& result, const T& flags, const bool on = true)
   {
     if( on ) {
       result |=  flags;
     } else {
       result &= ~flags;
     }
+    return result;
   }
 
   template<typename T>
-  constexpr bool testFlags(const T& x, const T& flags,
-                           const if_flags_type<T> * = nullptr)
+  constexpr if_flags_bool<T> testFlag(const T& x, const T& flag)
   {
     using data_t = typename std::underlying_type<T>::type;
-    return (static_cast<data_t>(x) & static_cast<data_t>(flags)) != 0;
+    return (static_cast<data_t>(x) & static_cast<data_t>(flag)) != 0;
   }
 
   template<typename T>
-  constexpr bool testMask(const T& x, const T& mask,
-                          const if_flags_type<T> * = nullptr)
+  constexpr if_flags_bool<T> testMask(const T& x, const T& mask)
   {
     using data_t = typename std::underlying_type<T>::type;
     return (static_cast<data_t>(x) & static_cast<data_t>(mask)) == static_cast<data_t>(mask);

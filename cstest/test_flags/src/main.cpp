@@ -57,10 +57,10 @@ int main(int /*argc*/, char ** /*argv*/)
   f &= MyFlags::NoFlags;
   cs::setFlags(f, MyFlags::Flag1);
   printf("  SET: "); print(f);
-  printf(" TEST: %s\n", cs::testFlags(f, MyFlags::Flag1) ? "true" : "false");
+  printf(" TEST: %s\n", cs::testFlag(f, MyFlags::Flag1) ? "true" : "false");
   cs::setFlags(f, MyFlags::Flag1, false);
   printf("RESET: "); print(f);
-  printf(" TEST: %s\n", cs::testFlags(f, MyFlags::Flag1) ? "true" : "false");
+  printf(" TEST: %s\n", cs::testFlag(f, MyFlags::Flag1) ? "true" : "false");
   printf("---\n");
 
   f = MyFlags::Flag0 | MyFlags::Flag1;
