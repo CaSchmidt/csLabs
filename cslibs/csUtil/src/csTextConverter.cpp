@@ -45,12 +45,12 @@ namespace priv {
 
   // UTF-16 -> 8bit //////////////////////////////////////////////////////////
 
-  inline std::string fromUnicode(UConverter *cnv, const UChar *s, int len)
+  inline std::string fromUnicode(UConverter *cnv, const UChar *s, std::string::size_type len)
   {
     std::string result;
 
-    if( len < 0  &&  s != nullptr ) {
-      len = static_cast<int>(u_strlen(s));
+    if( len == std::string::npos  &&  s != nullptr ) {
+      len = static_cast<std::string::size_type>(u_strlen(s));
     }
 
     if( s == nullptr  ||  len < 1 ) {
@@ -58,10 +58,10 @@ namespace priv {
     }
 
     UErrorCode err = U_ZERO_ERROR;
-    const int32_t requiredSize = ucnv_fromUChars(cnv, NULL, 0, s, len, &err);
+    const int32_t requiredSize = ucnv_fromUChars(cnv, NULL, 0, s, static_cast<int32_t>(len), &err);
 
     try {
-      result.resize(requiredSize, 0);
+      result.resize(static_cast<std::string::size_type>(requiredSize), 0);
     } catch(...) {
       result.clear();
       return result;
@@ -70,7 +70,7 @@ namespace priv {
     err = U_ZERO_ERROR;
     ucnv_fromUChars(cnv,
                     const_cast<char*>(result.data()), static_cast<int32_t>(result.size()),
-                    s, len, &err);
+                    s, static_cast<int32_t>(len), &err);
 
     if( U_FAILURE(err) ) {
       result.clear();
@@ -79,7 +79,7 @@ namespace priv {
     return result;
   }
 
-  inline std::string fromUnicode(const char *name, const UChar *s, const int len)
+  inline std::string fromUnicode(const char *name, const UChar *s, const std::string::size_type len)
   {
     std::string result;
 
@@ -98,12 +98,12 @@ namespace priv {
 
   // 8bit -> UTF-16 //////////////////////////////////////////////////////////
 
-  inline std::u16string toUnicode(UConverter *cnv, const char *s, int len)
+  inline std::u16string toUnicode(UConverter *cnv, const char *s, std::u16string::size_type len)
   {
     std::u16string result;
 
-    if( len < 0  &&  s != nullptr ) {
-      len = static_cast<int>(std::strlen(s));
+    if( len == std::u16string::npos  &&  s != nullptr ) {
+      len = static_cast<std::u16string::size_type>(std::strlen(s));
     }
 
     if( s == nullptr  ||  len < 1 ) {
@@ -111,10 +111,10 @@ namespace priv {
     }
 
     UErrorCode err = U_ZERO_ERROR;
-    const int32_t requiredSize = ucnv_toUChars(cnv, NULL, 0, s, len, &err);
+    const int32_t requiredSize = ucnv_toUChars(cnv, NULL, 0, s, static_cast<int32_t>(len), &err);
 
     try {
-      result.resize(requiredSize, 0);
+      result.resize(static_cast<std::u16string::size_type>(requiredSize), 0);
     } catch(...) {
       result.clear();
       return result;
@@ -123,7 +123,7 @@ namespace priv {
     err = U_ZERO_ERROR;
     ucnv_toUChars(cnv,
                   const_cast<UChar*>(result.data()), static_cast<int32_t>(result.size()),
-                  s, len, &err);
+                  s, static_cast<int32_t>(len), &err);
 
     if( U_FAILURE(err) ) {
       result.clear();
@@ -132,7 +132,7 @@ namespace priv {
     return result;
   }
 
-  inline std::u16string toUnicode(const char *name, const char *s, const int len)
+  inline std::u16string toUnicode(const char *name, const char *s, const std::u16string::size_type len)
   {
     std::u16string result;
 
@@ -203,12 +203,12 @@ const char *csTextConverter::name() const
   return d->name.data();
 }
 
-std::string csTextConverter::fromUnicode(const char16_t *s, const int len) const
+std::string csTextConverter::fromUnicode(const char16_t *s, const std::string::size_type len) const
 {
   return priv::fromUnicode(d->cnv, s, len);
 }
 
-std::u16string csTextConverter::toUnicode(const char *s, const int len) const
+std::u16string csTextConverter::toUnicode(const char *s, const std::u16string::size_type len) const
 {
   return priv::toUnicode(d->cnv, s, len);
 }
@@ -274,7 +274,7 @@ std::list<std::string> csTextConverter::listAvailable()
       continue;
     }
 
-    names.insert(std::move(std::string(name)));
+    names.insert(std::string(name));
 
     err = U_ZERO_ERROR;
     const uint16_t numAliases = ucnv_countAliases(name, &err);
@@ -289,7 +289,7 @@ std::list<std::string> csTextConverter::listAvailable()
         continue;
       }
 
-      names.insert(std::move(std::string(alias)));
+      names.insert(std::string(alias));
     } // For each alias
   } // For each available name
 
@@ -298,22 +298,22 @@ std::list<std::string> csTextConverter::listAvailable()
 
 ////// Public ////////////////////////////////////////////////////////////////
 
-CS_UTIL_EXPORT std::u16string csAsciiToUnicode(const char *s, const int len)
+CS_UTIL_EXPORT std::u16string csAsciiToUnicode(const char *s, const std::u16string::size_type len)
 {
   return priv::toUnicode("ASCII", s, len);
 }
 
-CS_UTIL_EXPORT std::u16string csUtf8ToUnicode(const char *s, const int len)
+CS_UTIL_EXPORT std::u16string csUtf8ToUnicode(const char *s, const std::u16string::size_type len)
 {
   return priv::toUnicode("UTF-8", s, len);
 }
 
-CS_UTIL_EXPORT std::string csUnicodeToAscii(const char16_t *s, const int len)
+CS_UTIL_EXPORT std::string csUnicodeToAscii(const char16_t *s, const std::string::size_type len)
 {
   return priv::fromUnicode("ASCII", s, len);
 }
 
-CS_UTIL_EXPORT std::string csUnicodeToUtf8(const char16_t *s, const int len)
+CS_UTIL_EXPORT std::string csUnicodeToUtf8(const char16_t *s, const std::string::size_type len)
 {
   return priv::fromUnicode("UTF-8", s, len);
 }

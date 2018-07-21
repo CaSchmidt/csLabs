@@ -53,18 +53,18 @@ public:
 
   const char *name() const;
 
-  std::string fromUnicode(const char16_t *s, const int len = -1) const;
+  std::string fromUnicode(const char16_t *s, const std::string::size_type len = std::string::npos) const;
 
   inline std::string fromUnicode(const std::u16string& s) const
   {
-    return fromUnicode(s.data(), static_cast<int>(s.size()));
+    return fromUnicode(s.data(), s.size());
   }
 
-  std::u16string toUnicode(const char *s, const int len = -1) const;
+  std::u16string toUnicode(const char *s, const std::u16string::size_type len = std::u16string::npos) const;
 
   inline std::u16string toUnicode(const std::string& s) const
   {
-    return toUnicode(s.data(), static_cast<int>(s.size()));
+    return toUnicode(s.data(), s.size());
   }
 
   static csTextConverter create(const char *name);
@@ -86,34 +86,34 @@ private:
 
 // 8bit -> UTF-16 ////////////////////////////////////////////////////////////
 
-CS_UTIL_EXPORT std::u16string csAsciiToUnicode(const char *s, const int len = -1);
+CS_UTIL_EXPORT std::u16string csAsciiToUnicode(const char *s, const std::u16string::size_type len = std::u16string::npos);
 
 inline std::u16string csAsciiToUnicode(const std::string& s)
 {
-  return csAsciiToUnicode(s.data(), static_cast<int>(s.size()));
+  return csAsciiToUnicode(s.data(), s.size());
 }
 
-CS_UTIL_EXPORT std::u16string csUtf8ToUnicode(const char *s, const int len = -1);
+CS_UTIL_EXPORT std::u16string csUtf8ToUnicode(const char *s, const std::u16string::size_type len = std::u16string::npos);
 
 inline std::u16string csUtf8ToUnicode(const std::string& s)
 {
-  return csUtf8ToUnicode(s.data(), static_cast<int>(s.size()));
+  return csUtf8ToUnicode(s.data(), s.size());
 }
 
 // UTF-16 -> 8bit ////////////////////////////////////////////////////////////
 
-CS_UTIL_EXPORT std::string csUnicodeToAscii(const char16_t *s, const int len = -1);
+CS_UTIL_EXPORT std::string csUnicodeToAscii(const char16_t *s, const std::string::size_type len = std::string::npos);
 
 inline std::string csUnicodeToAscii(const std::u16string& s)
 {
-  return csUnicodeToAscii(s.data(), static_cast<int>(s.size()));
+  return csUnicodeToAscii(s.data(), s.size());
 }
 
-CS_UTIL_EXPORT std::string csUnicodeToUtf8(const char16_t *s, const int len = -1);
+CS_UTIL_EXPORT std::string csUnicodeToUtf8(const char16_t *s, const std::string::size_type len = std::string::npos);
 
 inline std::string csUnicodeToUtf8(const std::u16string& s)
 {
-  return csUnicodeToUtf8(s.data(), static_cast<int>(s.size()));
+  return csUnicodeToUtf8(s.data(), s.size());
 }
 
 #endif // CSTEXTCONVERTER_H
