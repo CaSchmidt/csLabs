@@ -31,6 +31,7 @@ include(3rdparty/icu-ucnv/icu_files.cmake)
 
 set(csUtil_HEADERS
   include/csUtil/csCharConv.h
+  include/csUtil/csCharUtil.h
   include/csUtil/csEndian.h
   include/csUtil/csFileIO.h
   include/csUtil/csFlags.h
