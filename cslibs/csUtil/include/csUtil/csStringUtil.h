@@ -100,6 +100,53 @@ namespace cs {
     return result;
   }
 
+  template<typename T>
+  inline if_string_type<T> trimmed(const std::basic_string<T>& s)
+  {
+    using const_iter = typename std::basic_string<T>::const_iterator;
+
+    std::basic_string<T> result;
+
+    // (1) Scan begin ////////////////////////////////////////////////////////
+
+    const_iter beg = s.cend();
+    for(const_iter it = s.cbegin(); it != s.cend(); it++) {
+      if( !isSpace(*it) ) {
+        beg = it;
+        break;
+      }
+    }
+
+    if( beg == s.cend() ) {
+      return result;
+    }
+
+    // (2) Scan end //////////////////////////////////////////////////////////
+
+    const_iter end = s.cend();
+    for(const_iter it = s.cend(); it != beg; it--) {
+      if( !isSpace(*(it - 1)) ) {
+        end = it;
+        break;
+      }
+    }
+
+    if( end == beg ) {
+      return result;
+    }
+
+    // (3) Copy //////////////////////////////////////////////////////////////
+
+    try {
+      result = std::move(std::basic_string<T>(beg, end));
+    } catch(...) {
+      result.clear();
+      return result;
+    }
+
+    return result;
+  }
+
 } // namespace cs
 
 #endif // CSSTRINGUTIL_H
