@@ -41,6 +41,7 @@ set(csUtil_HEADERS
   include/csUtil/csNamespace.h
   include/csUtil/csPointer.h
   include/csUtil/csRawConverter.h
+  include/csUtil/csStringUtil.h
   include/csUtil/csTextConverter.h
   include/internal/csutil_internal.h
   )

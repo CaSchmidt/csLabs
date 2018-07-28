@@ -29,48 +29,77 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSCHARUTIL_H
-#define CSCHARUTIL_H
+#ifndef CSSTRINGUTIL_H
+#define CSSTRINGUTIL_H
 
-#include <type_traits>
+#include <string>
+
+#include <csUtil/csCharUtil.h>
 
 namespace cs {
 
   template<typename T>
-  struct is_char {
-    enum : bool {
-      value =
-      std::is_same<T,char>::value      ||
-      std::is_same<T,char16_t>::value  ||
-      std::is_same<T,char32_t>::value  ||
-      std::is_same<T,wchar_t>::value
-    };
-  };
+  using if_string_type = typename std::enable_if<is_char<T>::value,std::basic_string<T>>::type;
 
   template<typename T>
-  using if_char_type = typename std::enable_if<is_char<T>::value,T>::type;
-
-  template<typename T>
-  using if_char_bool = typename std::enable_if<is_char<T>::value,bool>::type;
-
-  template<typename T>
-  constexpr if_char_bool<T> isDigit(const T& c)
+  inline if_string_type<T> simplified(const std::basic_string<T>& s)
   {
-    return static_cast<T>('0') <= c  &&  c <=  static_cast<T>('9');
-  }
+    using SizeT = typename std::basic_string<T>::size_type;
+    constexpr T ch_space = static_cast<T>(' ');
 
-  template<typename T>
-  constexpr if_char_bool<T> isSpace(const T& c)
-  {
-    return
-        c == static_cast<T>(' ')   || // space
-        c == static_cast<T>('\f')  || // form feed
-        c == static_cast<T>('\n')  || // line feed
-        c == static_cast<T>('\r')  || // carriage return
-        c == static_cast<T>('\t')  || // horizontal tab
-        c == static_cast<T>('\v');    // vertical tab
+    // (1) Get size //////////////////////////////////////////////////////////
+
+    SizeT numWords = 0;
+    SizeT  numSize = 0;
+    T prev = ch_space;
+    for(const T& curr : s) {
+      if( !isSpace(curr) ) { // count characters in WORD only
+        numSize++;
+
+        if( isSpace(prev) ) { // transition WHITESPACE -> WORD
+          numWords++;
+        }
+      }
+
+      prev = curr;
+    }
+
+    // (2) Create result /////////////////////////////////////////////////////
+
+    std::basic_string<T> result;
+    if( numSize < 1 ) {
+      return result;
+    }
+
+    const SizeT numSpaces = numWords - 1;
+    try {
+      result.reserve(numSize + numSpaces);
+    } catch(...) {
+      result.clear();
+      return result;
+    }
+
+    // (3) Copy //////////////////////////////////////////////////////////////
+
+    SizeT cntSpacesWritten = 0;
+    prev = ch_space;
+    for(const T& curr : s) {
+      if( !isSpace(curr) ) {
+        result += curr;
+      } else {
+        // transition WORD -> WHITESPACE; insert SPACE if necessary
+        if( !isSpace(prev)  &&  cntSpacesWritten < numSpaces ) {
+          result += ch_space;
+          cntSpacesWritten++;
+        }
+      }
+
+      prev = curr;
+    }
+
+    return result;
   }
 
 } // namespace cs
 
-#endif // CSCHARUTIL_H
+#endif // CSSTRINGUTIL_H
