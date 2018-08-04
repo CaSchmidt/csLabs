@@ -34,19 +34,24 @@
 
 #include <string>
 
-#include "csUtil/csutil_config.h"
+#include <csUtil/csutil_config.h>
 
 class CS_UTIL_EXPORT csILogger {
 public:
   csILogger();
   virtual ~csILogger();
 
+  virtual void logText(const char *) const = 0;
   virtual void logText(const std::string&) const = 0;
 
+  virtual void logWarning(const char *) const = 0;
   virtual void logWarning(const std::string&) const = 0;
+  virtual void logWarning(const int, const char *) const = 0;
   virtual void logWarning(const int, const std::string&) const = 0;
 
+  virtual void logError(const char *) const = 0;
   virtual void logError(const std::string&) const = 0;
+  virtual void logError(const int, const char *) const = 0;
   virtual void logError(const int, const std::string&) const = 0;
 
 private:

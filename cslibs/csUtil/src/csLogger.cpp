@@ -31,8 +31,6 @@
 
 #include "csUtil/csLogger.h"
 
-#include "csUtil/csFormat.h"
-
 ////// public ////////////////////////////////////////////////////////////////
 
 csLogger::csLogger(FILE *file)
@@ -44,31 +42,52 @@ csLogger::~csLogger()
 {
 }
 
+void csLogger::logText(const char *s) const
+{
+  fprintf(_file, "%s\n", s);
+}
+
 void csLogger::logText(const std::string& s) const
 {
-  fprintf(_file, "%s\n", s.data());
+  logText(s.data());
+}
+
+void csLogger::logWarning(const char *s) const
+{
+  fprintf(_file, "WARNING: %s\n", s);
 }
 
 void csLogger::logWarning(const std::string& s) const
 {
-  const std::string text(csFormat("WARNING: %1") % s);
-  fprintf(_file, "%s\n", text.data());
+  logWarning(s.data());
+}
+
+void csLogger::logWarning(const int lineno, const char *s) const
+{
+  fprintf(_file, "WARNING:%d: %s\n", lineno, s);
 }
 
 void csLogger::logWarning(const int lineno, const std::string& s) const
 {
-  const std::string text(csFormat("WARNING:%1: %2") % lineno % s);
-  fprintf(_file, "%s\n", text.data());
+  logWarning(lineno, s.data());
+}
+
+void csLogger::logError(const char *s) const
+{
+  fprintf(_file, "ERROR: %s\n", s);
 }
 
 void csLogger::logError(const std::string& s) const
 {
-  const std::string text(csFormat("ERROR: %1") % s);
-  fprintf(_file, "%s\n", text.data());
+  logError(s.data());
+}
+
+void csLogger::logError(const int lineno, const char *s) const
+{
+  fprintf(_file, "ERROR:%d: %s\n", lineno, s);
 }
 
 void csLogger::logError(const int lineno, const std::string& s) const
 {
-  const std::string text(csFormat("ERROR:%1: %2") % lineno % s);
-  fprintf(_file, "%s\n", text.data());
+  logError(lineno, s.data());
 }

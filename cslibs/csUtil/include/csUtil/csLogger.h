@@ -41,12 +41,17 @@ public:
   csLogger(FILE *file = stderr);
   ~csLogger();
 
+  void logText(const char *s) const final;
   void logText(const std::string& s) const final;
 
+  void logWarning(const char *s) const final;
   void logWarning(const std::string& s) const final;
+  void logWarning(const int lineno, const char *s) const final;
   void logWarning(const int lineno, const std::string& s) const final;
 
+  void logError(const char *s) const final;
   void logError(const std::string& s) const final;
+  void logError(const int lineno, const char *s) const final;
   void logError(const int lineno, const std::string& s) const final;
 
 private:
