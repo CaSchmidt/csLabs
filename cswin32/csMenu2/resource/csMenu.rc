@@ -1,0 +1,40 @@
+#include <Windows.h>
+
+#include "resource.h"
+
+IDI_csMenu  ICON  "csMenu.ico"
+
+/* cf. VerRsrc.h and "VS_FIXEDFILEINFO structure (Windows)‎" */
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     1,99,0,0
+PRODUCTVERSION  1,99,0,0
+FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+#ifdef _DEBUG
+FILEFLAGS       VS_FF_DEBUG
+#else
+FILEFLAGS       0x0L
+#endif
+FILEOS          VOS__WINDOWS32
+FILETYPE        VFT_DLL
+FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904B0"
+    BEGIN
+      VALUE "CompanyName",      "Carsten Schmidt\0"
+      VALUE "FileDescription",  "CS::Menu\0"
+      VALUE "FileVersion",      "1.99\0"
+      VALUE "InternalName",     "csMenu\0"
+      VALUE "LegalCopyright",   "(C) 2018 by Carsten Schmidt\0"
+      VALUE "OriginalFilename", "csMenu.DLL\0"
+      VALUE "ProductName",      "CS::Menu\0"
+      VALUE "ProductVersion",   "1.99\0"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1200
+  END
+END
