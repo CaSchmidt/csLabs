@@ -59,23 +59,21 @@ bool csIsFile(const wchar_t *name)
   return (attr & nofilemask) == 0;
 }
 
-/*
 csWStringList csListDirectory(const wchar_t *path)
 {
-  csWStringList files;
+  csWStringList result;
 
   WIN32_FIND_DATAW data;
   HANDLE handle;
   if( (handle = FindFirstFileW(path, &data)) != INVALID_HANDLE_VALUE ) {
-    files.push_back(data.cFileName);
+    result.push_back(data.cFileName);
 
     while( FindNextFileW(handle, &data) != 0 ) {
-      files.push_back(data.cFileName);
+      result.push_back(data.cFileName);
     }
 
     FindClose(handle);
   }
 
-  return files;
+  return result;
 }
-*/
