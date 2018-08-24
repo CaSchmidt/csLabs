@@ -143,7 +143,7 @@ HRESULT csMenu::Initialize(LPCITEMIDLIST /*pidlFolder*/, IDataObject *pdtobj,
     }
 
     if( DragQueryFileW(hDrop, i, const_cast<wchar_t*>(filename.data()),
-                       static_cast<UINT>(filename.size())) == 0 ) {
+                       static_cast<UINT>(filename.size() + 1)) == 0 ) {
       continue;
     }
 
