@@ -14,15 +14,14 @@ QT       -= core gui widgets
 DLLDESTDIR = ../../bin
 
 
+DEFINES += _CRT_SECURE_NO_WARNINGS
+
 INCLUDEPATH += ./include
 INCLUDEPATH += ./resource
-INCLUDEPATH += ../../cslibs/include
 
 DEPENDPATH += ./include
 DEPENDPATH += ./resource
-DEPENDPATH += ../../cslibs/include
 
-LIBS += -L../../lib -lcsCore2$${TARGET_POSTFIX}
 LIBS += advapi32.lib gdi32.lib mpr.lib ole32.lib shell32.lib shlwapi.lib user32.lib
 
 
@@ -34,7 +33,9 @@ SOURCES += \
     src/menu.cpp \
     src/command.cpp \
     src/reg.cpp \
-    src/util.cpp
+    src/util.cpp \
+    src/csCore2/csFileUtil_win32.cpp \
+    src/csCore2/csProcess_win32.cpp
 
 HEADERS += \
     include/csMenu.h \
@@ -44,7 +45,10 @@ HEADERS += \
     include/command.h \
     include/reg.h \
     include/util.hpp \
-    resource/resource.h
+    resource/resource.h \
+    include/csCore2/csWString.h \
+    include/csCore2/csFileUtil.h \
+    include/csCore2/csProcess.h
 
 DEF_FILE = csMenu.def
 

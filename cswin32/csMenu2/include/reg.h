@@ -29,12 +29,12 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __REG_H__
-#define __REG_H__
+#ifndef REG_H
+#define REG_H
 
 #include <Windows.h>
 
-#include <csCore2/csStringList.h>
+#include "csCore2/csWString.h"
 
 HRESULT registerWithFiles(const wchar_t *clsId);
 HRESULT registerWithDirectories(const wchar_t *clsId);
@@ -50,4 +50,4 @@ DWORD regReadParallelCount();
 csWString regReadScriptsPath();
 csWStringList regReadScripts();
 
-#endif // __REG_H__
+#endif // REG_H

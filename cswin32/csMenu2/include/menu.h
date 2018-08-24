@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __MENU_H__
-#define __MENU_H__
+#ifndef MENU_H
+#define MENU_H
 
 #include <Windows.h>
 
@@ -49,4 +49,4 @@ void insertSubMenuItem(HMENU menu, HMENU submenu,
                        const UINT pos, const UINT id, const wchar_t *text,
                        const HBITMAP bitmap);
 
-#endif // __MENU_H__
+#endif // MENU_H

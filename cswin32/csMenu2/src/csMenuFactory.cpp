@@ -56,14 +56,14 @@ csMenuFactory::~csMenuFactory()
 
 ULONG csMenuFactory::AddRef()
 {
-  return InterlockedIncrement(&m_lRefCount);
+  return static_cast<ULONG>(InterlockedIncrement(&m_lRefCount));
 }
 
 HRESULT csMenuFactory::QueryInterface(const IID& riid, void **ppvObject)
 {
   static const QITAB qit[] = {
     QITABENT(csMenuFactory, IClassFactory),
-    { 0 }
+    { nullptr, 0 }
   };
   return QISearch(this, qit, riid, ppvObject);
 }
@@ -74,24 +74,24 @@ ULONG csMenuFactory::Release()
   if( m_lRefCount == 0 ) {
     delete this;
   }
-  return lRet;
+  return static_cast<ULONG>(lRet);
 }
 
 ////// IClassFactory /////////////////////////////////////////////////////////
 
 HRESULT csMenuFactory::CreateInstance(IUnknown *pUnkOuter, const IID& riid, void **ppvObject)
 {
-  if( pUnkOuter != NULL ) {
+  if( pUnkOuter != nullptr ) {
     return CLASS_E_NOAGGREGATION;
   }
 
   if( IsBadWritePtr(ppvObject, sizeof(void*)) ) {
     return E_POINTER;
   }
-  *ppvObject = NULL;
+  *ppvObject = nullptr;
 
   csMenu *menu = new csMenu();
-  if( menu == 0 ) {
+  if( menu == nullptr ) {
     return E_OUTOFMEMORY;
   }
 

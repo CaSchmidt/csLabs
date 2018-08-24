@@ -29,11 +29,15 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <cwchar>
+
+#include <algorithm>
+
 #include <Windows.h>
 #include <objbase.h>
 #include <ShlObj.h>
 
-#include <csCore2/csFile.h>
+#include "csCore2/csFileUtil.h"
 
 #include "command.h"
 
@@ -59,54 +63,52 @@ bool executeCommand(const UINT cmd, const csWStringList& files)
   if(        cmd == Cmd_List                ||
              cmd == Cmd_ListWithPath        ||
              cmd == Cmd_ListWithPathTabular ) {
-    int size = 0;
-    for(csWStringList::const_iterator it = files.begin(); it != files.end(); it++) {
-      wchar_t *uncName = 0;
-      if( isUnc  &&  (uncName = resolveUNC(it->c_str())) != 0 ) {
-        size += lenFN(csWString(uncName), cmd);
-        delete[] uncName;
+    std::size_t size = 0;
+    for(const csWString& filename : files) {
+      csWString uncName;
+      if( isUnc  &&  std::wcslen((uncName = resolveUNC(filename)).data()) > 0 ) {
+        size += lenFN(uncName, cmd);
       } else {
-        size += lenFN(*it, cmd);
+        size += lenFN(filename, cmd);
       }
     }
 
-    wchar_t *text = new wchar_t[size+1];
-    if( text == 0 ) {
+    try {
+      csWString text(size, 0);
+
+      std::size_t pos = 0;
+      for(const csWString& filename : files) {
+        csWString uncName;
+        if( isUnc  &&  std::wcslen((uncName = resolveUNC(filename)).data()) > 0 ) {
+          catFN(const_cast<wchar_t*>(text.data()), pos, uncName, cmd);
+        } else {
+          catFN(const_cast<wchar_t*>(text.data()), pos, filename, cmd);
+        }
+      }
+
+      if( files.size() == 1 ) {
+        // Remove trailing <CR><LF>
+        text.erase(size - 2);
+      }
+
+      if( isUnix ) {
+        std::replace(text.begin(), text.end(), L'\\', L'/');
+      }
+
+      setClipboardText(text.data());
+    } catch(...) {
       return false;
     }
-
-    int pos = 0;
-    for(csWStringList::const_iterator it = files.begin(); it != files.end(); it++) {
-      wchar_t *uncName = 0;
-      if( isUnc  &&  (uncName = resolveUNC(it->c_str())) != 0 ) {
-        catFN(text, pos, csWString(uncName), cmd);
-        delete[] uncName;
-      } else {
-        catFN(text, pos, *it, cmd);
-      }
-    }
-    text[size] = L'\0';
-
-    if( files.size() == 1 ) {
-      // Overwrite trailing <CR><LF>
-      text[size-1] = text[size-2] = L'\0';
-    }
-
-    if( isUnix ) {
-      replace(text, size, L'\\', L'/');
-    }
-
-    setClipboardText(text);
-    delete[] text;
 
     return true;
 
   } else if( cmd == Cmd_CreateSymbolicLink ) {
 
+#if 0
     csWString symLink;
 
-    IFileSaveDialog *saveDialog = NULL;
-    HRESULT hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_INPROC_SERVER,
+    IFileSaveDialog *saveDialog = nullptr;
+    HRESULT hr = CoCreateInstance(CLSID_FileSaveDialog, nullptr, CLSCTX_INPROC_SERVER,
                                   IID_IFileSaveDialog, (LPVOID*)&saveDialog);
     if( hr == S_OK ) {
       saveDialog->SetTitle(L"Create symbolic link");
@@ -116,12 +118,12 @@ bool executeCommand(const UINT cmd, const csWStringList& files)
         const csWString path = files.front().mid(0, index);
         const csWString name = files.front().mid(index+1);
 
-        PIDLIST_ABSOLUTE pidl = NULL;
-        SHParseDisplayName(path.c_str(), NULL, &pidl, 0, NULL);
-        if( pidl != NULL ) {
-          IShellItem *item = NULL;
+        PIDLIST_ABSOLUTE pidl = nullptr;
+        SHParseDisplayName(path.c_str(), nullptr, &pidl, 0, nullptr);
+        if( pidl != nullptr ) {
+          IShellItem *item = nullptr;
           SHCreateItemFromIDList(pidl, IID_IShellItem, (LPVOID*)&item);
-          if( item != NULL ) {
+          if( item != nullptr ) {
             saveDialog->SetFolder(item);
             item->Release();
           }
@@ -188,6 +190,7 @@ bool executeCommand(const UINT cmd, const csWStringList& files)
         return false;
       }
     }
+#endif
 
     return true;
 
@@ -221,18 +224,17 @@ bool executeCommand(const UINT cmd, const csWStringList& files)
     if( isParallel ) {
       csWStringList args(files);
       args.push_front(script);
-      args.push_front(csWString::number(parallelCount));
-      ShellExecuteW(NULL, L"open", parallel.c_str(), joinFileNames(args).c_str(),
-                    NULL, SW_SHOWNORMAL);
+      args.push_front(std::to_wstring(parallelCount));
+      ShellExecuteW(nullptr, L"open", parallel.data(), joinFileNames(args).data(),
+                    nullptr, SW_SHOWNORMAL);
     } else { // DO NOT use parallelizer
       if( isBatch ) {
         const csWString args = joinFileNames(files);
-        ShellExecuteW(NULL, L"open", script.c_str(), args.c_str(), NULL, SW_SHOWNORMAL);
+        ShellExecuteW(nullptr, L"open", script.data(), args.data(), nullptr, SW_SHOWNORMAL);
       } else { // NO batch processing
-        for(csWStringList::const_iterator it = files.begin();
-            it != files.end(); it++) {
-          ShellExecuteW(NULL, L"open", script.c_str(), quoteFileName(*it).c_str(),
-                        NULL, SW_SHOWNORMAL);
+        for(const csWString& filename : files) {
+          ShellExecuteW(nullptr, L"open", script.data(), quoteFileName(filename).data(),
+                        nullptr, SW_SHOWNORMAL);
         }
       }
     }

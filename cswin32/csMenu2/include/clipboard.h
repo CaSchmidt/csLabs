@@ -29,9 +29,9 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CLIPBOARD_H__
-#define __CLIPBOARD_H__
+#ifndef CLIPBOARD_H
+#define CLIPBOARD_H
 
 bool setClipboardText(const wchar_t *text);
 
-#endif // __CLIPBOARD_H__
+#endif // CLIPBOARD_H

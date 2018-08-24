@@ -29,12 +29,12 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __COMMAND_H__
-#define __COMMAND_H__
+#ifndef COMMAND_H
+#define COMMAND_H
 
 #include <Windows.h>
 
-#include <csCore2/csStringList.h>
+#include "csCore2/csWString.h"
 
 #define CMD_FLAG_BATCH     1
 #define CMD_FLAG_PARALLEL  2
@@ -56,4 +56,4 @@ enum Commands {
 
 bool executeCommand(const UINT cmd, const csWStringList& files);
 
-#endif // __COMMAND_H__
+#endif // COMMAND_H

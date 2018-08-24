@@ -31,14 +31,13 @@
 
 #include <Windows.h>
 #include <OleCtl.h>
-#include <csCore2/csString.h>
-#include <csCore2/csStringLib.h>
 
+#include "csCore2/csWString.h"
 #include "csMenu.h"
 #include "csMenuFactory.h"
 #include "reg.h"
 
-HINSTANCE g_hDllInst     = NULL;
+HINSTANCE g_hDllInst     = nullptr;
 LONG      g_lDllRefCount = 0;
 
 HRESULT __stdcall DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID *ppv)
@@ -50,13 +49,15 @@ HRESULT __stdcall DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID *ppv)
   if( IsBadWritePtr(ppv, sizeof(void*)) ) {
     return E_POINTER;
   }
-  *ppv = NULL;
+  *ppv = nullptr;
 
-  csMenuFactory *factory = new csMenuFactory();
-  if( factory == 0 ) {
+  csMenuFactory *factory = nullptr;
+  try {
+    factory = new csMenuFactory();
+    factory->AddRef();
+  } catch(...) {
     return E_OUTOFMEMORY;
   }
-  factory->AddRef();
 
   const HRESULT hrRet = factory->QueryInterface(riid, ppv);
   factory->Release();
@@ -118,7 +119,7 @@ HRESULT __stdcall DllUnregisterServer(void)
 
   keyPath  = L"*\\shellex\\ContextMenuHandlers\\";
   keyPath += clsId;
-  hr = HRESULT_FROM_WIN32(RegDeleteTreeW(HKEY_CLASSES_ROOT, keyPath.c_str()));
+  hr = HRESULT_FROM_WIN32(RegDeleteTreeW(HKEY_CLASSES_ROOT, keyPath.data()));
   if( FAILED(hr) ) {
     return SELFREG_E_CLASS;
   }
@@ -127,7 +128,7 @@ HRESULT __stdcall DllUnregisterServer(void)
 
   keyPath  = L"Directory\\shellex\\ContextMenuHandlers\\";
   keyPath += clsId;
-  hr = HRESULT_FROM_WIN32(RegDeleteTreeW(HKEY_CLASSES_ROOT, keyPath.c_str()));
+  hr = HRESULT_FROM_WIN32(RegDeleteTreeW(HKEY_CLASSES_ROOT, keyPath.data()));
   if( FAILED(hr) ) {
     return SELFREG_E_CLASS;
   }
@@ -136,7 +137,7 @@ HRESULT __stdcall DllUnregisterServer(void)
 
   keyPath  = L"CLSID\\";
   keyPath += clsId;
-  hr = HRESULT_FROM_WIN32(RegDeleteTreeW(HKEY_CLASSES_ROOT, keyPath.c_str()));
+  hr = HRESULT_FROM_WIN32(RegDeleteTreeW(HKEY_CLASSES_ROOT, keyPath.data()));
   if( FAILED(hr) ) {
     return SELFREG_E_CLASS;
   }
@@ -144,8 +145,7 @@ HRESULT __stdcall DllUnregisterServer(void)
   return S_OK;
 }
 
-BOOL __stdcall DllMain(HINSTANCE hinstDLL, DWORD fdwReason,
-                       LPVOID /*lpvReserved*/)
+BOOL __stdcall DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID /*lpvReserved*/)
 {
   if( fdwReason == DLL_PROCESS_ATTACH ) {
     g_hDllInst     = hinstDLL;

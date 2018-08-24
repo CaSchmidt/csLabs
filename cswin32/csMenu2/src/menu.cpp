@@ -31,8 +31,6 @@
 
 #include "menu.h"
 
-#include <csCore2/csStringLib.h>
-
 void insertMenuItem(HMENU menu,
                     const UINT pos, const UINT id, const wchar_t *text,
                     const bool enabled)
@@ -43,7 +41,7 @@ void insertMenuItem(HMENU menu,
   mii.cbSize     = sizeof(MENUITEMINFOW);
   mii.fMask      = MIIM_ID | MIIM_STRING;
   mii.wID        = id;
-  mii.dwTypeData = (LPWSTR)text;
+  mii.dwTypeData = const_cast<LPWSTR>(text);
 
   if( !enabled ) {
     mii.fMask  |= MIIM_STATE;
@@ -64,7 +62,7 @@ void insertCheckableMenuItem(HMENU menu,
   mii.fMask      = MIIM_CHECKMARKS | MIIM_ID | MIIM_STATE | MIIM_STRING;
   mii.wID        = id;
   mii.fState     = state  ?  MFS_CHECKED : MFS_UNCHECKED;
-  mii.dwTypeData = (LPWSTR)text;
+  mii.dwTypeData = const_cast<LPWSTR>(text);
 
   if( !enabled ) {
     mii.fMask  |= MIIM_STATE;
@@ -97,12 +95,12 @@ void insertSubMenuItem(HMENU menu, HMENU submenu,
   mii.cbSize     = sizeof(MENUITEMINFOW);
   mii.fMask      = MIIM_ID | MIIM_STRING | MIIM_SUBMENU;
   mii.wID        = id;
-  mii.dwTypeData = (LPWSTR)text;
+  mii.dwTypeData = const_cast<LPWSTR>(text);
   mii.hSubMenu   = submenu;
 
   InsertMenuItemW(menu, pos, TRUE, &mii);
 
-  if( bitmap != NULL ) {
-    SetMenuItemBitmaps(menu, pos, MF_BYPOSITION, bitmap, NULL);
+  if( bitmap != nullptr ) {
+    SetMenuItemBitmaps(menu, pos, MF_BYPOSITION, bitmap, nullptr);
   }
 }

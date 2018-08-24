@@ -29,33 +29,31 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __UTIL_HPP__
-#define __UTIL_HPP__
+#ifndef UTIL_HPP
+#define UTIL_HPP
 
 #include <Windows.h>
-#include <csCore2/csStringList.h>
 
-void replace(wchar_t *text, const int size,
-             const wchar_t ch, const wchar_t after);
+#include "csCore2/csWString.h"
 
-inline bool testFlags(const DWORD flags, const DWORD mask)
+constexpr bool testFlags(const DWORD flags, const DWORD mask)
 {
   return (flags & mask) == mask;
 }
 
-int lenFN(const csWString& filename, const UINT cmd);
+std::size_t lenFN(const csWString& filename, const UINT cmd);
 
-void catFN(wchar_t *text, int& pos,
+void catFN(wchar_t *text, std::size_t& pos,
            const csWString& filename, const UINT cmd);
 
 csWString joinFileNames(const csWStringList& files);
 
 csWString quoteFileName(const csWString& filename);
 
-wchar_t *resolveUNC(const wchar_t *filename);
+csWString resolveUNC(const csWString& filename);
 
 HBITMAP createBitmapFromIcon(const HICON icon, const int width, const int height);
 
 csWString formatError(const DWORD error);
 
-#endif // __UTIL_HPP__
+#endif // UTIL_HPP

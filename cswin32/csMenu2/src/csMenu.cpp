@@ -58,7 +58,7 @@ const GUID GUID_csMenu = { /* 1A2306A9-DC34-46F0-84CA-7FEE7387CA37 */
 csMenu::csMenu()
   : m_lRefCount()
   , _files()
-  , _menuBitmap(NULL)
+  , _menuBitmap(nullptr)
 {
   InterlockedIncrement(&g_lDllRefCount);
 
@@ -67,7 +67,7 @@ csMenu::csMenu()
   HICON icon = (HICON)LoadImageW(g_hDllInst,
                                  MAKEINTRESOURCEW(IDI_csMenu), IMAGE_ICON,
                                  iconWidth, iconHeight, 0);
-  if( icon != NULL ) {
+  if( icon != nullptr ) {
     _menuBitmap = createBitmapFromIcon(icon, iconWidth, iconHeight);
     DestroyIcon(icon);
   }
@@ -75,7 +75,7 @@ csMenu::csMenu()
 
 csMenu::~csMenu()
 {
-  if( _menuBitmap != NULL ) {
+  if( _menuBitmap != nullptr ) {
     DeleteObject(_menuBitmap);
   }
   InterlockedDecrement(&g_lDllRefCount);
@@ -85,7 +85,7 @@ csMenu::~csMenu()
 
 ULONG csMenu::AddRef()
 {
-  return InterlockedIncrement(&m_lRefCount);
+  return static_cast<ULONG>(InterlockedIncrement(&m_lRefCount));
 }
 
 HRESULT csMenu::QueryInterface(const IID& riid, void **ppvObject)
@@ -93,7 +93,7 @@ HRESULT csMenu::QueryInterface(const IID& riid, void **ppvObject)
   static const QITAB qit[] = {
     QITABENT(csMenu, IShellExtInit),
     QITABENT(csMenu, IContextMenu),
-    { 0 }
+    { nullptr, 0 }
   };
   return QISearch(this, qit, riid, ppvObject);
 }
@@ -104,7 +104,7 @@ ULONG csMenu::Release()
   if( m_lRefCount == 0 ) {
     delete this;
   }
-  return lRet;
+  return static_cast<ULONG>(lRet);
 }
 
 ////// IShellExtInit /////////////////////////////////////////////////////////
@@ -112,49 +112,43 @@ ULONG csMenu::Release()
 HRESULT csMenu::Initialize(LPCITEMIDLIST /*pidlFolder*/, IDataObject *pdtobj,
                            HKEY /*hkeyProgID*/)
 {
-  FORMATETC etc = { CF_HDROP, NULL, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
-  STGMEDIUM stg = { TYMED_HGLOBAL };
+  FORMATETC etc = { CF_HDROP, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+  STGMEDIUM stg = { TYMED_HGLOBAL, {nullptr}, nullptr };
 
   if( FAILED(pdtobj->GetData(&etc, &stg)) ) {
     return E_INVALIDARG;
   }
 
-  HDROP hDrop = (HDROP)GlobalLock(stg.hGlobal);
-  if( hDrop == NULL ) {
+  HDROP hDrop = reinterpret_cast<HDROP>(GlobalLock(stg.hGlobal));
+  if( hDrop == nullptr ) {
     ReleaseStgMedium(&stg);
     return E_INVALIDARG;
   }
 
   _files.clear();
 
-  UINT   sizeFN   = 0;
-  WCHAR *filename = 0;
-
-  const UINT uNumFiles = DragQueryFileW(hDrop, UINT_MAX, NULL, 0);
+  csWString filename;
+  const UINT uNumFiles = DragQueryFileW(hDrop, UINT_MAX, nullptr, 0);
   for(UINT i = 0; i < uNumFiles; i++) {
-    const UINT reqFN = DragQueryFileW(hDrop, i, NULL, 0);
+    const UINT reqFN = DragQueryFileW(hDrop, i, nullptr, 0);
     if( reqFN < 1 ) {
       continue;
     }
 
-    if( reqFN+1 > sizeFN ) {
-      sizeFN = 0;
-      delete[] filename;
-      filename = new wchar_t[reqFN+1];
-      if( filename == 0 ) {
-        continue;
-      }
-      sizeFN = reqFN+1;
-    }
-
-    if( DragQueryFileW(hDrop, i, filename, sizeFN) == 0 ) {
+    try {
+      filename.resize(reqFN, 0);
+    } catch(...) {
+      filename.clear();
       continue;
     }
 
-    _files.push_back(filename);
-  }
+    if( DragQueryFileW(hDrop, i, const_cast<wchar_t*>(filename.data()),
+                       static_cast<UINT>(filename.size())) == 0 ) {
+      continue;
+    }
 
-  delete[] filename;
+    _files.push_back(std::move(filename));
+  }
 
   GlobalUnlock(stg.hGlobal);
   ReleaseStgMedium(&stg);
@@ -222,7 +216,7 @@ HRESULT csMenu::QueryContextMenu(HMENU hmenu, UINT indexMenu, UINT idCmdFirst,
   if( !scripts.empty()  &&  !_files.empty() ) {
     insertSeparatorMenuItem(submenu, uPos++);
     for(csWStringList::const_iterator it = scripts.begin(); it != scripts.end(); it++) {
-      insertMenuItem(submenu, uPos++, uCmdID++, it->c_str());
+      insertMenuItem(submenu, uPos++, uCmdID++, it->data());
     }
   }
 

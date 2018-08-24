@@ -29,38 +29,34 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <vector>
+
 #include <Windows.h>
 #include <winnetwk.h>
-#include <csCore2/csFile.h>
-#include <csCore2/csStringLib.h>
+
+#include "csCore2/csFileUtil.h"
 
 #include "util.hpp"
 
 #include "command.h"
 
-void replace(wchar_t *text, const int size,
-             const wchar_t ch, const wchar_t after)
+std::size_t lenFN(const csWString& filename, const UINT cmd)
 {
-  for(int i = 0; i < size; i++) {
-    if( text[i] == ch ) {
-      text[i] = after;
-    }
-  }
-}
+  using SizeT = csWString::size_type;
 
-int lenFN(const csWString& filename, const UINT cmd)
-{
-  int size = 0;
+  std::size_t size = 0;
 
-  const int len    = filename.length();
-  const int tag    = filename.lastIndexOf(L'\\');
-  const int tagPos = tag < 0 || cmd != Cmd_List  ?  0 : tag+1;
+  const SizeT len    = std::wcslen(filename.data());
+  const SizeT tag    = filename.rfind(L'\\');
+  const SizeT tagPos = tag == csWString::npos || cmd != Cmd_List
+      ? 0
+      : tag + 1;
 
   size += len - tagPos;
   if( cmd == Cmd_ListWithPathTabular ) {
     size++; // separating '\t'
   }
-  if( csIsDirectory(filename.c_str()) ) {
+  if( csIsDirectory(filename.data()) ) {
     size++; // trailing  '\\'
   }
   size += 2; // "\r\n"
@@ -68,15 +64,19 @@ int lenFN(const csWString& filename, const UINT cmd)
   return size;
 }
 
-void catFN(wchar_t *text, int& pos,
+void catFN(wchar_t *text, std::size_t& pos,
            const csWString& filename, const UINT cmd)
 {
-  const int len    = filename.length();
-  const int tag    = filename.lastIndexOf(L'\\');
-  const int tagPos = tag < 0  ?  0 : tag+1;
+  using SizeT = csWString::size_type;
+
+  const SizeT len    = std::wcslen(filename.data());
+  const SizeT tag    = filename.rfind(L'\\');
+  const SizeT tagPos = tag == csWString::npos
+      ? 0
+      : tag + 1;
 
   if( cmd != Cmd_List  &&  tagPos > 0 ) {
-    csStringNCpy(&text[pos], filename.c_str(), tagPos);
+    std::wcsncpy(&text[pos], filename.data(), tagPos);
     pos += tagPos;
   }
 
@@ -85,10 +85,10 @@ void catFN(wchar_t *text, int& pos,
     text[pos++] = L'\t';
   }
 
-  csStringNCpy(&text[pos], &filename[tagPos], len-tagPos);
+  std::wcsncpy(&text[pos], &filename[tagPos], len - tagPos);
   pos += len - tagPos;
 
-  if( csIsDirectory(filename.c_str()) ) {
+  if( csIsDirectory(filename.data()) ) {
     text[pos++] = L'\\';
   }
 
@@ -98,38 +98,38 @@ void catFN(wchar_t *text, int& pos,
 
 csWString joinFileNames(const csWStringList& files)
 {
-  size_t size = 0;
-  for(csWStringList::const_iterator it = files.begin(); it != files.end(); it++) {
-    if( it->size() > 0 ) {
-      size += 3 + it->size(); // '"' + <filename> + '"' + ' '
+  using SizeT = csWString::size_type;
+
+  csWString result;
+
+  SizeT size = 0;
+  for(const csWString& filename : files) {
+    if( std::wcslen(filename.data()) > 0 ) {
+      size += 3 + std::wcslen(filename.data()); // '"' + <filename> + '"' + ' '
     }
   }
 
   if( size < 1 ) {
-    return csWString();
+    return result;
   }
 
-  wchar_t *data = new wchar_t[size];
-  if( data == 0 ) {
-    return csWString();
-  }
+  try {
+    result.reserve(size);
 
-  size_t pos(0);
-  for(csWStringList::const_iterator it = files.begin(); it != files.end(); it++) {
-    if( it->size() > 0 ) {
-      data[pos++] = L'"';
-      csStringNCpy(&data[pos], it->c_str(), it->size());
-      pos += it->size();
-      data[pos++] = L'"';
-      data[pos++] = L' ';
+    for(const csWString& filename : files) {
+      result += L'"';
+      result += filename;
+      result += L'"';
+      result += L' ';
     }
+
+    result[size - 1] = L'\0'; // Overwrite last ' ' with '\0'
+  } catch(...) {
+    result.clear();
+    return result;
   }
-  data[size-1] = L'\0'; // Overwrite last ' ' with '\0'
 
-  csWString joined(data);
-  delete[] data;
-
-  return joined;
+  return result;
 }
 
 csWString quoteFileName(const csWString& filename)
@@ -138,86 +138,75 @@ csWString quoteFileName(const csWString& filename)
     return csWString();
   }
 
-  return csWString(L"\""+filename+L"\"");
+  return csWString(L'"' + filename + L'"');
 }
 
-wchar_t *resolveUNC(const wchar_t *filename)
+csWString resolveUNC(const csWString& filename)
 {
-  UNIVERSAL_NAME_INFOW uniwTemp;
+  using Buffer = std::vector<uint8_t>;
+
+  csWString result;
 
   DWORD uncSize = sizeof(UNIVERSAL_NAME_INFOW);
-  DWORD res = WNetGetUniversalNameW(filename, UNIVERSAL_NAME_INFO_LEVEL,
+  UNIVERSAL_NAME_INFOW uniwTemp;
+  DWORD res = WNetGetUniversalNameW(filename.data(), UNIVERSAL_NAME_INFO_LEVEL,
                                     &uniwTemp, &uncSize);
   if( res != ERROR_MORE_DATA ) {
-    return 0;
+    return result;
   }
 
-  uncSize += sizeof(wchar_t);
-  uint8_t *uncData = new uint8_t[uncSize];
-  if( uncData == 0 ) {
-    return 0;
+  try {
+    uncSize += sizeof(wchar_t);
+    Buffer uncData(uncSize, 0);
+
+    res = WNetGetUniversalNameW(filename.data(), UNIVERSAL_NAME_INFO_LEVEL,
+                                uncData.data(), &uncSize);
+    if( res != NO_ERROR ) {
+      return result;
+    }
+
+    UNIVERSAL_NAME_INFOW *uniw = reinterpret_cast<UNIVERSAL_NAME_INFOW*>(uncData.data());
+    result.append(uniw->lpUniversalName, std::wcslen(uniw->lpUniversalName));
+  } catch(...) {
+    result.clear();
+    return result;
   }
 
-  res = WNetGetUniversalNameW(filename, UNIVERSAL_NAME_INFO_LEVEL,
-                              uncData, &uncSize);
-  if( res != NO_ERROR ) {
-    delete[] uncData;
-    return 0;
-  }
-
-  UNIVERSAL_NAME_INFOW *uniw = (UNIVERSAL_NAME_INFOW*)uncData;
-  const size_t len = csStringLen(uniw->lpUniversalName);
-  if( len < 1 ) {
-    delete[] uncData;
-    return 0;
-  }
-
-  wchar_t *uncName = new wchar_t[len+1];
-  if( uncName == 0 ) {
-    delete[] uncData;
-    return 0;
-  }
-
-  csStringNCpy(uncName, uniw->lpUniversalName, len);
-  uncName[len] = L'\0';
-
-  delete[] uncData;
-
-  return uncName;
+  return result;
 }
 
 HBITMAP createBitmapFromIcon(const HICON icon, const int width, const int height)
 {
-  if( icon == NULL  ||  width < 1  ||  height < 1 ) {
-    return NULL;
+  if( icon == nullptr  ||  width < 1  ||  height < 1 ) {
+    return nullptr;
   }
 
-  HDC screen = GetDC(NULL);
-  if( screen == NULL ) {
-    return NULL;
+  HDC screen = GetDC(nullptr);
+  if( screen == nullptr ) {
+    return nullptr;
   }
 
   // Create a DC compatible with the screen's DC
   HDC dc = CreateCompatibleDC(screen);
-  if( dc == NULL ) {
-    ReleaseDC(NULL, screen);
-    return NULL;
+  if( dc == nullptr ) {
+    ReleaseDC(nullptr, screen);
+    return nullptr;
   }
 
   // Create a BITMAP compatible with the screen's DC
   HBITMAP bitmap = CreateCompatibleBitmap(screen, width, height);
-  if( bitmap == NULL ) {
+  if( bitmap == nullptr ) {
     DeleteDC(dc);
-    ReleaseDC(NULL, screen);
-    return NULL;
+    ReleaseDC(nullptr, screen);
+    return nullptr;
   }
 
-  HBITMAP old = (HBITMAP)SelectObject(dc, bitmap);
-  DrawIconEx(dc, 0, 0, icon, width, height, 0, NULL, DI_NORMAL);
+  HBITMAP old = static_cast<HBITMAP>(SelectObject(dc, bitmap));
+  DrawIconEx(dc, 0, 0, icon, width, height, 0, nullptr, DI_NORMAL);
   SelectObject(dc, old);
 
   DeleteDC(dc);
-  ReleaseDC(NULL, screen);
+  ReleaseDC(nullptr, screen);
 
   return bitmap;
 }
@@ -226,14 +215,15 @@ csWString formatError(const DWORD error)
 {
   csWString res;
 
-  wchar_t *s = 0;
+  wchar_t *s = nullptr;
   if( FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER
                      | FORMAT_MESSAGE_FROM_SYSTEM
                      | FORMAT_MESSAGE_IGNORE_INSERTS,
-                     NULL, error, 0, (LPWSTR)&s, 128, 0) > 0  &&  s != 0 ) {
+                     nullptr, error, 0, reinterpret_cast<LPWSTR>(&s), 128, nullptr) > 0  &&
+      s != nullptr ) {
     res = s;
   }
-  if( s != 0 ) {
+  if( s != nullptr ) {
     LocalFree(s);
   }
   return res;

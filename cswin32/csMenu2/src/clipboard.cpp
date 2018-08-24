@@ -29,36 +29,37 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <Windows.h>
+#include <cwchar>
 
-#include <csCore2/csStringLib.h>
+#define NOMINMAX
+#include <Windows.h>
 
 #include "clipboard.h"
 
 bool setClipboardText(const wchar_t *text)
 {
-  const size_t len = csStringLen(text);
+  const std::size_t len = std::wcslen(text);
   if( len < 1 ) {
     return false;
   }
 
-  if( OpenClipboard(NULL) == FALSE ) {
+  if( OpenClipboard(nullptr) == FALSE ) {
     return false;
   }
   EmptyClipboard();
   CloseClipboard();
 
-  if( OpenClipboard(NULL) == FALSE ) {
+  if( OpenClipboard(nullptr) == FALSE ) {
     return false;
   }
 
   HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, (len+1)*sizeof(wchar_t));
-  if( hGlobal == NULL ) {
+  if( hGlobal == nullptr ) {
     CloseClipboard();
     return false;
   }
 
-  wchar_t *dest = (wchar_t*)GlobalLock(hGlobal);
+  wchar_t *dest = static_cast<wchar_t*>(GlobalLock(hGlobal));
   CopyMemory(dest, text, len*sizeof(wchar_t));
   dest[len] = L'\0';
   GlobalUnlock(hGlobal);

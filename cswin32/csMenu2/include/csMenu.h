@@ -29,13 +29,13 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSMENU_H__
-#define __CSMENU_H__
+#ifndef CSMENU_H
+#define CSMENU_H
 
 #include <Windows.h>
 #include <ShObjIdl.h>
 
-#include <csCore2/csStringList.h>
+#include "csCore2/csWString.h"
 
 class csMenu : public IShellExtInit, public IContextMenu {
 public:
@@ -70,4 +70,4 @@ class __declspec(uuid("{1A2306A9-DC34-46F0-84CA-7FEE7387CA37}")) csMenu;
 
 extern const GUID GUID_csMenu;
 
-#endif // __CSMENU_H__
+#endif // CSMENU_H

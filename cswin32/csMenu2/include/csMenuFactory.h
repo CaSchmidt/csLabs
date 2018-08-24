@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __CSMENUFACTORY_H__
-#define __CSMENUFACTORY_H__
+#ifndef CSMENUFACTORY_H
+#define CSMENUFACTORY_H
 
 #include <Windows.h>
 
@@ -50,4 +50,4 @@ private:
   LONG m_lRefCount;
 };
 
-#endif // __CSMENUFACTORY_H__
+#endif // CSMENUFACTORY_H
