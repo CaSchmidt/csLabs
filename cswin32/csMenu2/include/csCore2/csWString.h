@@ -35,7 +35,7 @@
 #include <list>
 #include <string>
 
-using     csWString = std::basic_string<wchar_t>;
+using csWString     = std::basic_string<wchar_t>;
 using csWStringList = std::list<csWString>;
 
 #endif // CSWSTRING_H

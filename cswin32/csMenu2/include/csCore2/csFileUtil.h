@@ -32,11 +32,30 @@
 #ifndef CSFILEUTIL_H
 #define CSFILEUTIL_H
 
+#include "csCore2/csWString.h"
+
 bool csFileExists(const wchar_t *name);
+inline bool csFileExists(const csWString& name)
+{
+  return csFileExists(name.data());
+}
 
 bool csIsDirectory(const wchar_t *name);
-bool csIsFile(const wchar_t *name);
+inline bool csIsDirectory(const csWString& name)
+{
+  return csIsDirectory(name.data());
+}
 
-// csWStringList csListDirectory(const wchar_t *path);
+bool csIsFile(const wchar_t *name);
+inline bool csIsFile(const csWString& name)
+{
+  return csIsFile(name.data());
+}
+
+csWStringList csListDirectory(const wchar_t *path);
+inline csWStringList csListDirectory(const csWString& path)
+{
+  return csListDirectory(path.data());
+}
 
 #endif // CSFILEUTIL_H
