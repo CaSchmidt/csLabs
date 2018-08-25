@@ -90,8 +90,10 @@ HRESULT csMenuFactory::CreateInstance(IUnknown *pUnkOuter, const IID& riid, void
   }
   *ppvObject = nullptr;
 
-  csMenu *menu = new csMenu();
-  if( menu == nullptr ) {
+  csMenu *menu = nullptr;
+  try {
+    menu = new csMenu();
+  } catch(...) {
     return E_OUTOFMEMORY;
   }
 

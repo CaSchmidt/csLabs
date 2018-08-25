@@ -64,7 +64,7 @@ bool setClipboardText(const wchar_t *text)
   dest[len] = L'\0';
   GlobalUnlock(hGlobal);
 
-  SetClipboardData(CF_UNICODETEXT, hGlobal);
+  SetClipboardData(CF_UNICODETEXT, hGlobal); // TODO: Handle possible errors...
   CloseClipboard();
 
   return true;
