@@ -54,6 +54,4 @@ csWString resolveUNC(const csWString& filename);
 
 HBITMAP createBitmapFromIcon(const HICON icon, const int width, const int height);
 
-csWString formatError(const DWORD error);
-
 #endif // UTIL_HPP
