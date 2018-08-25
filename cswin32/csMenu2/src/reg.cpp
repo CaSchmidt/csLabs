@@ -31,6 +31,8 @@
 
 #include <cwchar>
 
+#include <vector>
+
 #include <OleCtl.h>
 
 #include "csCore2/csFileUtil.h"
@@ -47,35 +49,24 @@ namespace priv_reg {
 
   csWString readSzValue(HKEY key, const wchar_t *name)
   {
-    using SizeT = csWString::size_type;
-
-    csWString result;
-
     DWORD dataSize = 0;
     if( RegGetValueW(key, nullptr, name, RRF_RT_REG_SZ, nullptr, nullptr, &dataSize)
         != ERROR_SUCCESS ) {
       return csWString();
     }
 
+    std::vector<uint8_t> data;
     try {
-      SizeT numChars = dataSize / sizeof(wchar_t);
-      if( dataSize % sizeof(wchar_t) != 0 ) {
-        numChars++;
-      }
+      data.resize(dataSize, 0);
 
-      result.resize(numChars, 0);
-      uint8_t *data = reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(result.data()));
-
-      if( RegGetValueW(key, nullptr, name, RRF_RT_REG_SZ, nullptr, data, &dataSize) != ERROR_SUCCESS ) {
-        result.clear();
-        return result;
+      if( RegGetValueW(key, nullptr, name, RRF_RT_REG_SZ, nullptr, data.data(), &dataSize) != ERROR_SUCCESS ) {
+        return csWString();
       }
     } catch(...) {
-      result.clear();
-      return result;
+      return csWString();
     }
 
-    return result;
+    return csWString(reinterpret_cast<const wchar_t*>(data.data()));
   }
 
   HRESULT setValue(HKEY key, const wchar_t *name, const DWORD value)
