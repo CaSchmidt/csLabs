@@ -17,6 +17,7 @@ find_package(FLEX 2.6 REQUIRED)
 find_package(Eigen3 3.3 REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/forms)
 find_package(Qt5Widgets 5.6 REQUIRED)
@@ -91,6 +92,7 @@ set(VectorCalc_SOURCES
 add_executable(VectorCalc
   ${VectorCalc_HEADERS} ${VectorCalc_SOURCES}
   ${BISON_AST_Parser_OUTPUTS} ${FLEX_AST_Scanner_OUTPUTS}
+  resources/resources.qrc
   )
 
 set_property(TARGET VectorCalc PROPERTY CXX_STANDARD 14)

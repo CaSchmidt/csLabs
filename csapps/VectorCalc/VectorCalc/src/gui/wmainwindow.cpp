@@ -29,6 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <QtGui/QFontDatabase>
+
 #include "gui/wmainwindow.h"
 #include "ui_wmainwindow.h"
 
@@ -49,6 +51,17 @@ WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
   ui->environmentView->setModel(_model);
 
   _model->setFloatFlags(std::ios_base::fixed);
+
+  // Fonts ///////////////////////////////////////////////////////////////////
+
+  QFontDatabase::addApplicationFont(":/fonts/SourceCodePro-Bold.ttf");
+  QFontDatabase::addApplicationFont(":/fonts/SourceCodePro-It.ttf");
+  QFontDatabase::addApplicationFont(":/fonts/SourceCodePro-Regular.ttf");
+
+  QFontDatabase db;
+  const QFont f = db.font("Source Code Pro", "Regular", 10);
+  ui->inputEdit->setFont(f);
+  ui->logBrowser->setFont(f);
 
   // Signals & Slots /////////////////////////////////////////////////////////
 
