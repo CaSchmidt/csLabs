@@ -54,6 +54,9 @@
        <property name="horizontalScrollMode">
         <enum>QAbstractItemView::ScrollPerPixel</enum>
        </property>
+       <attribute name="horizontalHeaderDefaultSectionSize">
+        <number>96</number>
+       </attribute>
       </widget>
       <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout">

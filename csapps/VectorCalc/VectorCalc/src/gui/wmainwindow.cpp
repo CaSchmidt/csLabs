@@ -48,6 +48,8 @@ WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
   _model = new EnvironmentModel(ui->logBrowser, this);
   ui->environmentView->setModel(_model);
 
+  _model->setFloatFlags(std::ios_base::fixed);
+
   // Signals & Slots /////////////////////////////////////////////////////////
 
   connect(ui->inputEdit, &QLineEdit::returnPressed, this, &WMainWindow::evaluateInput);
