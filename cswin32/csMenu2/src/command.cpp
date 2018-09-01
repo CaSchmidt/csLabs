@@ -32,7 +32,9 @@
 #include <cwchar>
 
 #include <algorithm>
+#include <memory>
 
+#define NOMINMAX
 #include <Windows.h>
 #include <objbase.h>
 #include <ShlObj.h>
@@ -44,6 +46,7 @@
 #include "clipboard.h"
 #include "reg.h"
 #include "util.hpp"
+#include "worker/worker.h"
 
 bool executeCommand(const UINT cmd, const csWStringList& files)
 {
@@ -121,6 +124,13 @@ bool executeCommand(const UINT cmd, const csWStringList& files)
     const csWStringList::const_iterator it = std::next(scripts.begin(), cmd - Cmd_ExecuteScripts);
     const csWString script(scriptPath + L'\\' + *it);
 
+    std::unique_ptr<WorkContext> ctx;
+    try {
+      ctx = std::make_unique<WorkContext>(script, parallelCount, files);
+    } catch(...) {
+      return false;
+    }
+
     if( isParallel ) {
       csWStringList args(files);
       args.push_front(script);
@@ -129,13 +139,9 @@ bool executeCommand(const UINT cmd, const csWStringList& files)
                     nullptr, SW_SHOWNORMAL);
     } else { // DO NOT use parallelizer
       if( isBatch ) {
-        const csWString args = joinFileNames(files);
-        ShellExecuteW(nullptr, L"open", script.data(), args.data(), nullptr, SW_SHOWNORMAL);
+        startWork(batch_work, ctx.release());
       } else { // NO batch processing
-        for(const csWString& filename : files) {
-          ShellExecuteW(nullptr, L"open", script.data(), quoteFileName(filename).data(),
-                        nullptr, SW_SHOWNORMAL);
-        }
+        startWork(sequential_work, ctx.release());
       }
     }
     return true;

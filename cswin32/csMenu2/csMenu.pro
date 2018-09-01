@@ -35,7 +35,10 @@ SOURCES += \
     src/reg.cpp \
     src/util.cpp \
     src/csCore2/csFileUtil_win32.cpp \
-    src/csCore2/csProcess_win32.cpp
+    src/csCore2/csProcess_win32.cpp \
+    src/worker/worker.cpp \
+    src/worker/batch_work.cpp \
+    src/worker/sequential_work.cpp
 
 HEADERS += \
     include/csMenu.h \
@@ -48,7 +51,8 @@ HEADERS += \
     resource/resource.h \
     include/csCore2/csWString.h \
     include/csCore2/csFileUtil.h \
-    include/csCore2/csProcess.h
+    include/csCore2/csProcess.h \
+    include/worker/worker.h
 
 DEF_FILE = csMenu.def
 
