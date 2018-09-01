@@ -198,9 +198,6 @@ HRESULT csMenu::QueryContextMenu(HMENU hmenu, UINT indexMenu, UINT idCmdFirst,
   insertMenuItem(submenu, uPos++, uCmdID++, L"List (path)", !_files.empty());
   insertMenuItem(submenu, uPos++, uCmdID++, L"List (path, tabular)", !_files.empty());
   insertSeparatorMenuItem(submenu, uPos++);
-  insertMenuItem(submenu, uPos++, uCmdID++, L"Create symbolic link...",
-                 _files.size() == 1);
-  insertSeparatorMenuItem(submenu, uPos++);
   insertCheckableMenuItem(submenu, uPos++, uCmdID++, L"Batch processing",
                           testFlags(flags, CMD_FLAG_BATCH));
   insertCheckableMenuItem(submenu, uPos++, uCmdID++, L"Parallel execution",

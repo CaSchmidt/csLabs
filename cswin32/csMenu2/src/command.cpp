@@ -99,99 +99,6 @@ bool executeCommand(const UINT cmd, const csWStringList& files)
     } catch(...) {
       return false;
     }
-
-    return true;
-
-  } else if( cmd == Cmd_CreateSymbolicLink ) {
-
-#if 0
-    csWString symLink;
-
-    IFileSaveDialog *saveDialog = nullptr;
-    HRESULT hr = CoCreateInstance(CLSID_FileSaveDialog, nullptr, CLSCTX_INPROC_SERVER,
-                                  IID_IFileSaveDialog, (LPVOID*)&saveDialog);
-    if( hr == S_OK ) {
-      saveDialog->SetTitle(L"Create symbolic link");
-
-      const int index = files.front().lastIndexOf(L'\\');
-      if( index >= 0 ) {
-        const csWString path = files.front().mid(0, index);
-        const csWString name = files.front().mid(index+1);
-
-        PIDLIST_ABSOLUTE pidl = nullptr;
-        SHParseDisplayName(path.c_str(), nullptr, &pidl, 0, nullptr);
-        if( pidl != nullptr ) {
-          IShellItem *item = nullptr;
-          SHCreateItemFromIDList(pidl, IID_IShellItem, (LPVOID*)&item);
-          if( item != nullptr ) {
-            saveDialog->SetFolder(item);
-            item->Release();
-          }
-          CoTaskMemFree(pidl);
-        }
-
-        saveDialog->SetFileName(name.c_str());
-      }
-
-      const COMDLG_FILTERSPEC filterSpec = {
-        L"All files", L"*.*"
-      };
-      saveDialog->SetFileTypes(1, &filterSpec);
-
-      const FILEOPENDIALOGOPTIONS opts
-          = FOS_OVERWRITEPROMPT
-          | FOS_FORCEFILESYSTEM
-          | FOS_PATHMUSTEXIST
-          | FOS_CREATEPROMPT
-          | FOS_NOREADONLYRETURN
-          | FOS_NODEREFERENCELINKS
-          | FOS_DONTADDTORECENT;
-      saveDialog->SetOptions(opts);
-
-      if( saveDialog->Show(NULL) == S_OK ) {
-        IShellItem *item = NULL;
-        if( saveDialog->GetResult(&item) == S_OK ) {
-          wchar_t *filename = NULL;
-          if( item->GetDisplayName(SIGDN_FILESYSPATH, &filename) == S_OK ) {
-            symLink = filename;
-            CoTaskMemFree(filename);
-          }
-
-          item->Release();
-        }
-      }
-
-      saveDialog->Release();
-    }
-
-    if( !symLink.empty() ) {
-      if( csFileExists(symLink.c_str()) ) {
-        MessageBoxW(NULL, L"Symbolic link target already exists!",
-                    L"Error", MB_OK | MB_ICONERROR);
-        return false;
-      }
-
-      const DWORD linkFlags = csIsDirectory(files.front().c_str())
-          ? SYMBOLIC_LINK_FLAG_DIRECTORY
-          : 0;
-
-      if( CreateSymbolicLinkW(symLink.c_str(),
-                              files.front().c_str(),
-                              linkFlags) == 0 ) {
-        const DWORD lastError = GetLastError();
-
-        csWString msg(L"ERROR(0x");
-        msg += csWString::number(lastError, 16);
-        msg += L"): ";
-        msg += formatError(lastError);
-
-        MessageBoxW(NULL, msg.c_str(),
-                    L"Error", MB_OK | MB_ICONERROR);
-        return false;
-      }
-    }
-#endif
-
     return true;
 
   } else if( cmd == Cmd_CheckBatchProcessing ) {
@@ -210,11 +117,11 @@ bool executeCommand(const UINT cmd, const csWStringList& files)
     regWriteFlags(flags ^ CMD_FLAG_UNIX);
     return true;
 
-  } else if( Cmd_ExecuteScripts <= cmd  &&  cmd < Cmd_ExecuteScripts+scripts.size() ) {
+  } else if( Cmd_ExecuteScripts <= cmd  &&  cmd < Cmd_ExecuteScripts + scripts.size() ) {
     csWString script(scriptPath + L"\\");
     UINT i = 0;
     for(csWStringList::const_iterator it = scripts.begin(); it != scripts.end(); it++) {
-      if( i == cmd-Cmd_ExecuteScripts ) {
+      if( i == cmd - Cmd_ExecuteScripts ) {
         script += *it;
         break;
       }
