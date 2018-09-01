@@ -43,6 +43,7 @@ set(csUtil_HEADERS
   include/csUtil/csRawConverter.h
   include/csUtil/csStringUtil.h
   include/csUtil/csTextConverter.h
+  include/csUtil/csTypeTraits.h
   include/internal/csutil_internal.h
   )
 
