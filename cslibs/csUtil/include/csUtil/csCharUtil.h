@@ -32,23 +32,12 @@
 #ifndef CSCHARUTIL_H
 #define CSCHARUTIL_H
 
-#include <type_traits>
+#include <csUtil/csTypeTraits.h>
 
 namespace cs {
 
   template<typename T>
-  struct is_char {
-    enum : bool {
-      value =
-      std::is_same<T,char>::value      ||
-      std::is_same<T,char16_t>::value  ||
-      std::is_same<T,char32_t>::value  ||
-      std::is_same<T,wchar_t>::value
-    };
-  };
-
-  template<typename T>
-  using if_char_type = typename std::enable_if<is_char<T>::value,T>::type;
+  using if_char_t = typename std::enable_if<is_char<T>::value,T>::type;
 
   template<typename T>
   using if_char_bool = typename std::enable_if<is_char<T>::value,bool>::type;

@@ -32,7 +32,7 @@
 #ifndef CSFLAGS_H
 #define CSFLAGS_H
 
-#include <type_traits>
+#include <csUtil/csTypeTraits.h>
 
 /*
  * NOTE:
@@ -51,21 +51,21 @@ namespace cs {
   };
 
   template<typename T>
-  using if_flags_type = typename std::enable_if<
+  using if_flags_t = typename std::enable_if<
   std::is_enum<T>::value  &&
-  std::is_unsigned<typename std::underlying_type<T>::type>::value  &&
+  std::is_unsigned<safe_underlying_type_t<T>>::value  &&
   is_flags<T>::value,
   T>::type;
 
   template<typename T>
   using if_flags_bool = typename std::enable_if<
   std::is_enum<T>::value  &&
-  std::is_unsigned<typename std::underlying_type<T>::type>::value  &&
+  std::is_unsigned<safe_underlying_type_t<T>>::value  &&
   is_flags<T>::value,
   bool>::type;
 
   template<typename T>
-  constexpr if_flags_type<T>& setFlags(T& result, const T& flags, const bool on = true)
+  constexpr if_flags_t<T>& setFlags(T& result, const T& flags, const bool on = true)
   {
     if( on ) {
       result |=  flags;
@@ -78,14 +78,14 @@ namespace cs {
   template<typename T>
   constexpr if_flags_bool<T> testFlag(const T& x, const T& flag)
   {
-    using data_t = typename std::underlying_type<T>::type;
+    using data_t = safe_underlying_type_t<T>;
     return (static_cast<data_t>(x) & static_cast<data_t>(flag)) != 0;
   }
 
   template<typename T>
   constexpr if_flags_bool<T> testMask(const T& x, const T& mask)
   {
-    using data_t = typename std::underlying_type<T>::type;
+    using data_t = safe_underlying_type_t<T>;
     return (static_cast<data_t>(x) & static_cast<data_t>(mask)) == static_cast<data_t>(mask);
   }
 
@@ -96,23 +96,23 @@ namespace cs {
 template<typename T>
 constexpr cs::if_flags_bool<T> operator!(const T& a)
 {
-  using data_t = typename std::underlying_type<T>::type;
+  using data_t = cs::safe_underlying_type_t<T>;
   return static_cast<data_t>(a) == 0;
 }
 
 // AND ///////////////////////////////////////////////////////////////////////
 
 template<typename T>
-constexpr cs::if_flags_type<T> operator&(const T& a, const T& b)
+constexpr cs::if_flags_t<T> operator&(const T& a, const T& b)
 {
-  using data_t = typename std::underlying_type<T>::type;
+  using data_t = cs::safe_underlying_type_t<T>;
   return static_cast<T>(static_cast<data_t>(a) & static_cast<data_t>(b));
 }
 
 template<typename T>
-constexpr cs::if_flags_type<T>& operator&=(T& result, const T& a)
+constexpr cs::if_flags_t<T>& operator&=(T& result, const T& a)
 {
-  using data_t = typename std::underlying_type<T>::type;
+  using data_t = cs::safe_underlying_type_t<T>;
   result = static_cast<T>(static_cast<data_t>(result) & static_cast<data_t>(a));
   return result;
 }
@@ -120,25 +120,25 @@ constexpr cs::if_flags_type<T>& operator&=(T& result, const T& a)
 // NOT ///////////////////////////////////////////////////////////////////////
 
 template<typename T>
-constexpr cs::if_flags_type<T> operator~(const T& a)
+constexpr cs::if_flags_t<T> operator~(const T& a)
 {
-  using data_t = typename std::underlying_type<T>::type;
+  using data_t = cs::safe_underlying_type_t<T>;
   return static_cast<T>(~static_cast<data_t>(a));
 }
 
 // OR ////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-constexpr cs::if_flags_type<T> operator|(const T& a, const T& b)
+constexpr cs::if_flags_t<T> operator|(const T& a, const T& b)
 {
-  using data_t = typename std::underlying_type<T>::type;
+  using data_t = cs::safe_underlying_type_t<T>;
   return static_cast<T>(static_cast<data_t>(a) | static_cast<data_t>(b));
 }
 
 template<typename T>
-constexpr cs::if_flags_type<T>& operator|=(T& result, const T& a)
+constexpr cs::if_flags_t<T>& operator|=(T& result, const T& a)
 {
-  using data_t = typename std::underlying_type<T>::type;
+  using data_t = cs::safe_underlying_type_t<T>;
   result = static_cast<T>(static_cast<data_t>(result) | static_cast<data_t>(a));
   return result;
 }
@@ -146,16 +146,16 @@ constexpr cs::if_flags_type<T>& operator|=(T& result, const T& a)
 // XOR ///////////////////////////////////////////////////////////////////////
 
 template<typename T>
-constexpr cs::if_flags_type<T> operator^(const T& a, const T& b)
+constexpr cs::if_flags_t<T> operator^(const T& a, const T& b)
 {
-  using data_t = typename std::underlying_type<T>::type;
+  using data_t = cs::safe_underlying_type_t<T>;
   return static_cast<T>(static_cast<data_t>(a) ^ static_cast<data_t>(b));
 }
 
 template<typename T>
-constexpr cs::if_flags_type<T>& operator^=(T& result, const T& a)
+constexpr cs::if_flags_t<T>& operator^=(T& result, const T& a)
 {
-  using data_t = typename std::underlying_type<T>::type;
+  using data_t = cs::safe_underlying_type_t<T>;
   result = static_cast<T>(static_cast<data_t>(result) ^ static_cast<data_t>(a));
   return result;
 }

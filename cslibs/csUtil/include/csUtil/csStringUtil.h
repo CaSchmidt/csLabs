@@ -39,10 +39,10 @@
 namespace cs {
 
   template<typename T>
-  using if_string_type = typename std::enable_if<is_char<T>::value,std::basic_string<T>>::type;
+  using if_string_t = typename std::enable_if<is_char<T>::value,std::basic_string<T>>::type;
 
   template<typename T>
-  inline if_string_type<T> simplified(const std::basic_string<T>& s)
+  inline if_string_t<T> simplified(const std::basic_string<T>& s)
   {
     using SizeT = typename std::basic_string<T>::size_type;
     constexpr T ch_space = static_cast<T>(' ');
@@ -101,7 +101,7 @@ namespace cs {
   }
 
   template<typename T>
-  inline if_string_type<T> trimmed(const std::basic_string<T>& s)
+  inline if_string_t<T> trimmed(const std::basic_string<T>& s)
   {
     using const_iter = typename std::basic_string<T>::const_iterator;
 
@@ -138,7 +138,7 @@ namespace cs {
     // (3) Copy //////////////////////////////////////////////////////////////
 
     try {
-      result = std::move(std::basic_string<T>(beg, end));
+      result.assign(beg, end);
     } catch(...) {
       result.clear();
       return result;
