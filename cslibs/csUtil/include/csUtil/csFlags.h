@@ -91,15 +91,6 @@ namespace cs {
 
 } // namespace cs
 
-// Logical Negation //////////////////////////////////////////////////////////
-
-template<typename T>
-constexpr cs::if_flags_bool<T> operator!(const T& a)
-{
-  using data_t = cs::safe_underlying_type_t<T>;
-  return static_cast<data_t>(a) == 0;
-}
-
 // AND ///////////////////////////////////////////////////////////////////////
 
 template<typename T>
