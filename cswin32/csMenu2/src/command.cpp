@@ -118,15 +118,8 @@ bool executeCommand(const UINT cmd, const csWStringList& files)
     return true;
 
   } else if( Cmd_ExecuteScripts <= cmd  &&  cmd < Cmd_ExecuteScripts + scripts.size() ) {
-    csWString script(scriptPath + L"\\");
-    UINT i = 0;
-    for(csWStringList::const_iterator it = scripts.begin(); it != scripts.end(); it++) {
-      if( i == cmd - Cmd_ExecuteScripts ) {
-        script += *it;
-        break;
-      }
-      i++;
-    }
+    const csWStringList::const_iterator it = std::next(scripts.begin(), cmd - Cmd_ExecuteScripts);
+    const csWString script(scriptPath + L'\\' + *it);
 
     if( isParallel ) {
       csWStringList args(files);
