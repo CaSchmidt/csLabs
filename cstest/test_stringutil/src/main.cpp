@@ -1,6 +1,8 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include <array>
+
 #include <csUtil/csStringUtil.h>
 
 void simplify(const std::string& s)
@@ -13,6 +15,19 @@ void trim(const std::string& s)
 {
   const std::string x = cs::trimmed(s);
   printf("<%s> -> <%s>\n", s.data(), x.data());
+}
+
+void test_length(const std::array<char,4>& s, const char *name)
+{
+  printf("length %s = %llu\n", name, cs::lengthN(s.data(), s.size()));
+}
+
+void test_length()
+{
+  std::array<char,4> s1{ {'a', 'b', 'c', 'd'} };
+  test_length(s1, "s1");
+  std::array<char,4> s2{ {'a', 'b', '\0', 'd'} };
+  test_length(s2, "s2");
 }
 
 int main(int /*argc*/, char ** /*argv*/)
@@ -42,6 +57,10 @@ int main(int /*argc*/, char ** /*argv*/)
   trim(single);
   trim(simple);
   trim(example);
+
+  printf("\n---------\n\n");
+
+  test_length();
 
   return EXIT_SUCCESS;
 }

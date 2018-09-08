@@ -32,14 +32,88 @@
 #ifndef CSSTRINGUTIL_H
 #define CSSTRINGUTIL_H
 
+#include <algorithm>
 #include <string>
 
 #include <csUtil/csCharUtil.h>
 
 namespace cs {
 
+  ////// Types ///////////////////////////////////////////////////////////////
+
   template<typename T>
   using if_string_t = typename std::enable_if<is_char<T>::value,std::basic_string<T>>::type;
+
+  ////// Implementation //////////////////////////////////////////////////////
+
+  template<typename T>
+  inline std::size_t length(const T *s,
+                            const if_char_bool<T> * = nullptr) noexcept
+  {
+    return s != nullptr
+        ? std::char_traits<T>::length(s)
+        : 0;
+  }
+
+  template<typename T>
+  inline std::size_t lengthN(const T *s, const std::size_t maxCount,
+                            const if_char_bool<T> * = nullptr) noexcept
+  {
+    std::size_t count = 0;
+
+    if( s == nullptr ) {
+      return count;
+    }
+
+    const T  *ptr = s;
+    const T *last = ptr + maxCount;
+    for(; ptr < last; count++, ptr++) {
+      if( *ptr == glyph<T>::null ) {
+        break;
+      }
+    }
+
+    return count;
+  }
+
+  template<typename T>
+  inline std::size_t lengthDiff(const T *first, const T *last,
+                            const if_char_bool<T> * = nullptr) noexcept
+  {
+    return first != nullptr  &&  first < last
+        ? lengthN(first, static_cast<std::size_t>(last - first))
+        : 0;
+  }
+
+  template<typename T>
+  inline if_char_bool<T> equals(const T *s1, const char *s2,
+                                const std::size_t _count = MAX_SIZE_T) noexcept
+  {
+    const std::size_t count = _count == MAX_SIZE_T
+        ? std::min(length(s1), length(s2))
+        : _count;
+    return std::char_traits<T>::compare(s1, s2, count) == 0;
+  }
+
+  template<typename T>
+  inline if_char_bool<T> greater(const T *s1, const char *s2,
+                                 const std::size_t _count = MAX_SIZE_T) noexcept
+  {
+    const std::size_t count = _count == MAX_SIZE_T
+        ? std::min(length(s1), length(s2))
+        : _count;
+    return std::char_traits<T>::compare(s1, s2, count) > 0;
+  }
+
+  template<typename T>
+  if_char_bool<T> less(const T *s1, const char *s2,
+                       const std::size_t _count = MAX_SIZE_T) noexcept
+  {
+    const std::size_t count = _count == MAX_SIZE_T
+        ? std::min(length(s1), length(s2))
+        : _count;
+    return std::char_traits<T>::compare(s1, s2, count) < 0;
+  }
 
   template<typename T>
   inline if_string_t<T> simplified(const std::basic_string<T>& s)
