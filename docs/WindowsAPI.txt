@@ -13,6 +13,12 @@ o  Registering Shell Extension Handlers (Windows)‎
 
 o  Using Window Procedures
 
+o  High DPI Desktop Application Development on Windows
+
+o  Everyone quotes command line arguments the wrong way
+
+-> https://blogs.msdn.microsoft.com/twistylittlepassagesallalike/2011/04/23/everyone-quotes-command-line-arguments-the-wrong-way/
+
 o  EFNet #Winprog
 
 -> http://winprog.org/
