@@ -44,7 +44,6 @@ HRESULT registerWithCLSID(const wchar_t *clsId,
 DWORD regReadFlags();
 void  regWriteFlags(const DWORD flags);
 
-csWString regReadParallel();
 DWORD regReadParallelCount();
 
 csWString regReadScriptsPath();

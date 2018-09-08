@@ -50,9 +50,8 @@
 
 bool executeCommand(const UINT cmd, const csWStringList& files)
 {
-  const csWString parallel  = regReadParallel();
   const DWORD parallelCount = regReadParallelCount();
-  const bool    hasParallel = !parallel.empty()  &&  parallelCount > 1;
+  const bool    hasParallel = parallelCount > 1;
 
   const DWORD flags      = regReadFlags();
   const bool  isBatch    = testFlags(flags, CMD_FLAG_BATCH);

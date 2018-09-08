@@ -234,28 +234,6 @@ void regWriteFlags(const DWORD flags)
   RegCloseKey(key);
 }
 
-csWString regReadParallel()
-{
-  HKEY    key;
-  HRESULT hr;
-
-  hr = HRESULT_FROM_WIN32(RegCreateKeyExW(HKEY_CURRENT_USER, KEY_HKCU_CSMENU,
-                                          0, nullptr, REG_OPTION_NON_VOLATILE,
-                                          KEY_READ, nullptr, &key, nullptr));
-  if( FAILED(hr) ) {
-    return csWString();
-  }
-
-  const csWString parallel = priv_reg::readSzValue(key, L"Parallel");
-  RegCloseKey(key);
-
-  if( !csIsFile(parallel) ) {
-    return csWString();
-  }
-
-  return parallel;
-}
-
 DWORD regReadParallelCount()
 {
   HKEY    key;

@@ -189,9 +189,8 @@ HRESULT csMenu::QueryContextMenu(HMENU hmenu, UINT indexMenu, UINT idCmdFirst,
 
   const DWORD flags = regReadFlags();
 
-  const csWString parallel  = regReadParallel();
   const DWORD parallelCount = regReadParallelCount();
-  const bool hasParallel    = !parallel.empty()  &&  parallelCount > 1;
+  const bool hasParallel    = parallelCount > 1;
 
   HMENU submenu = CreatePopupMenu();
   insertMenuItem(submenu, uPos++, uCmdID++, L"List", !_files.empty());
