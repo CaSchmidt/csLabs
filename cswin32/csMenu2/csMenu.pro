@@ -22,7 +22,7 @@ INCLUDEPATH += ./resource
 DEPENDPATH += ./include
 DEPENDPATH += ./resource
 
-LIBS += advapi32.lib gdi32.lib mpr.lib ole32.lib shell32.lib shlwapi.lib user32.lib
+LIBS += advapi32.lib comctl32.lib gdi32.lib mpr.lib ole32.lib shell32.lib shlwapi.lib user32.lib
 
 
 SOURCES += \
@@ -39,7 +39,10 @@ SOURCES += \
     src/worker/worker.cpp \
     src/worker/batch_work.cpp \
     src/worker/sequential_work.cpp \
-    src/worker/parallel_work.cpp
+    src/worker/parallel_work.cpp \
+    src/worker/IJobQueue.cpp \
+    src/worker/ParallelExecutor.cpp \
+    src/worker/ProgressUI.cpp
 
 HEADERS += \
     include/csMenu.h \
@@ -53,7 +56,10 @@ HEADERS += \
     include/csCore2/csWString.h \
     include/csCore2/csFileUtil.h \
     include/csCore2/csProcess.h \
-    include/worker/worker.h
+    include/worker/worker.h \
+    include/worker/IJobQueue.h \
+    include/worker/ParallelExecutor.h \
+    include/worker/ProgressUI.h
 
 DEF_FILE = csMenu.def
 
