@@ -29,29 +29,24 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef WORKER_H
-#define WORKER_H
+#include <memory>
 
-#define NOMINMAX
-#include <Windows.h>
+#include "worker/worker.h"
 
-#include <csCore2/csWString.h>
+#include "util.hpp"
 
-struct WorkContext {
-  WorkContext(const csWString& _script,
-              const unsigned int _numThreds,
-              const csWStringList& _files);
+////// Public ////////////////////////////////////////////////////////////////
 
-  csWString script;
-  unsigned int numThreads;
-  csWStringList files;
-};
+DWORD WINAPI parallel_work(LPVOID lpParameter)
+{
+  std::unique_ptr<WorkContext> ctx(reinterpret_cast<WorkContext*>(lpParameter));
+  lpParameter = nullptr;
 
-// NOTE: startWork() takes ownership of 'context'!
-void startWork(LPTHREAD_START_ROUTINE pfnWorkProc, WorkContext *context);
+  if( IsGUIThread(TRUE) == FALSE ) {
+    MessageBoxW(nullptr, L"IsGUIThread()", L"Error",
+                MB_ICONERROR | MB_OK);
+    return 0;
+  }
 
-DWORD WINAPI batch_work(LPVOID lpParameter);
-DWORD WINAPI parallel_work(LPVOID lpParameter);
-DWORD WINAPI sequential_work(LPVOID lpParameter);
-
-#endif // WORKER_H
+  return 0;
+}

@@ -38,7 +38,8 @@ SOURCES += \
     src/csCore2/csProcess_win32.cpp \
     src/worker/worker.cpp \
     src/worker/batch_work.cpp \
-    src/worker/sequential_work.cpp
+    src/worker/sequential_work.cpp \
+    src/worker/parallel_work.cpp
 
 HEADERS += \
     include/csMenu.h \
