@@ -35,6 +35,7 @@
 #include "csUtil/csFormat.h"
 
 #include "csUtil/csCharConv.h"
+#include "csUtil/csStringUtil.h"
 
 namespace cs {
 
@@ -81,6 +82,13 @@ namespace cs {
       {
       }
 
+      void arg(const CharT& c,
+               const int width, const CharT fill)
+      {
+        const CharT s[2] = { c, glyph<CharT>::null };
+        replace_index(s, s + 1, width, fill);
+      }
+
       void arg(const std::basic_string<CharT>& s,
                const int width, const CharT fill)
       {
@@ -107,7 +115,7 @@ namespace cs {
         if( res.ec != std::errc() ) {
           return;
         }
-        const size_type len = length(_temp.data(), res.ptr);
+        const size_type len = lengthDiff(_temp.data(), res.ptr);
         replace_index(_temp.data(), _temp.data() + len, width, fill);
       }
 
@@ -132,20 +140,8 @@ namespace cs {
         if( res.ec != std::errc() ) {
           return;
         }
-        const size_type len = length(_temp.data(), res.ptr);
+        const size_type len = lengthDiff(_temp.data(), res.ptr);
         replace_index(_temp.data(), _temp.data() + len, width, fill);
-      }
-
-      static inline size_type length(const CharT *s)
-      {
-        size_type result = 0;
-        if( s == nullptr ) {
-          return result;
-        }
-        while( *s++ != CharT('\0') ) {
-          result++;
-        }
-        return result;
       }
 
       inline const Options<CharT>& options() const
@@ -274,19 +270,6 @@ namespace cs {
         *dest++ = *src++;
       }
 
-      // NOTE: Processes [begin,end)
-      static inline size_type length(const CharT *begin,
-                                     const CharT *end)
-      {
-        if( end <= begin ) {
-          return 0;
-        }
-        const CharT *last = end - 1;
-        return *last == CharT('\0') // Interval includes '\0'?
-            ? static_cast<size_type>(last - begin)
-            : static_cast<size_type>(end - begin);
-      }
-
       index_type next_index() const
       {
         index_type result = 0;
@@ -358,7 +341,7 @@ csFormat::csFormat(const char *s)
   : impl()
 {
   try {
-    impl = std::make_unique<Formatter>(s, s + Formatter::length(s));
+    impl = std::make_unique<Formatter>(s, s + cs::length(s));
   } catch(...) {
     impl.reset(nullptr);
   }
@@ -371,6 +354,13 @@ csFormat::~csFormat()
 csFormat::operator std::string() const
 {
   return impl->yield();
+}
+
+csFormat& csFormat::arg(const csFormatChar& c,
+                        const int width, const char fill)
+{
+  impl->arg(c.value, width, fill);
+  return *this;
 }
 
 csFormat& csFormat::arg(const std::string& s,
@@ -455,6 +445,12 @@ csFormat& csFormat::arg(const double value,
 {
   impl->arg(value, width, format, precision, fill);
   return *this;
+}
+
+csFormat& csFormat::operator%(const csFormatChar& c)
+{
+  const cs::format::Options<char>& opt = impl->options();
+  return arg(c, opt.width, opt.fill);
 }
 
 csFormat& csFormat::operator%(const std::string& s)

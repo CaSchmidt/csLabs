@@ -46,6 +46,25 @@ namespace cs {
   }
 }
 
+struct csFormatChar {
+  inline explicit csFormatChar(const char& c)
+    : value(c)
+  {
+  }
+
+  inline explicit csFormatChar(const signed char& c)
+    : value(static_cast<char>(c))
+  {
+  }
+
+  inline explicit csFormatChar(const unsigned char& c)
+    : value(static_cast<char>(c))
+  {
+  }
+
+  const char value;
+};
+
 class CS_UTIL_EXPORT csFormat {
 public:
   csFormat(const std::string& s);
@@ -53,6 +72,8 @@ public:
   ~csFormat();
 
   operator std::string() const;
+
+  csFormat& arg(const csFormatChar& c, const int width = 0, const char fill = ' ');
 
   csFormat& arg(const std::string& s, const int width = 0, const char fill = ' ');
   csFormat& arg(const char *s, const int width = 0, const char fill = ' ');
@@ -68,6 +89,8 @@ public:
 
   csFormat& arg(const float value, const int width = 0, const char format = 'g', const int precision = 6, const char fill = ' ');
   csFormat& arg(const double value, const int width = 0, const char format = 'g', const int precision = 6, const char fill = ' ');
+
+  csFormat& operator%(const csFormatChar& c);
 
   csFormat& operator%(const std::string& s);
   csFormat& operator%(const char *s);
