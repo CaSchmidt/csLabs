@@ -36,28 +36,47 @@
 
 namespace cs {
 
+  ////// Types ///////////////////////////////////////////////////////////////
+
   template<typename T>
   using if_char_t = typename std::enable_if<is_char<T>::value,T>::type;
 
   template<typename T>
   using if_char_bool = typename std::enable_if<is_char<T>::value,bool>::type;
 
+  ////// Implementation //////////////////////////////////////////////////////
+
+  template<typename T>
+  struct glyph {
+    static constexpr auto null = static_cast<T>('\0');
+
+    static constexpr auto space = static_cast<T>(' ');  // space
+    static constexpr auto    ff = static_cast<T>('\f'); // form feed
+    static constexpr auto    lf = static_cast<T>('\n'); // line feed
+    static constexpr auto    cr = static_cast<T>('\r'); // carriage return
+    static constexpr auto    ht = static_cast<T>('\t'); // horizontal tab
+    static constexpr auto    vt = static_cast<T>('\v'); // vertical tab
+
+    static constexpr auto zero = static_cast<T>('0');
+    static constexpr auto nine = static_cast<T>('9');
+  };
+
   template<typename T>
   constexpr if_char_bool<T> isDigit(const T& c)
   {
-    return static_cast<T>('0') <= c  &&  c <=  static_cast<T>('9');
+    return glyph<T>::zero <= c  &&  c <= glyph<T>::nine;
   }
 
   template<typename T>
   constexpr if_char_bool<T> isSpace(const T& c)
   {
     return
-        c == static_cast<T>(' ')   || // space
-        c == static_cast<T>('\f')  || // form feed
-        c == static_cast<T>('\n')  || // line feed
-        c == static_cast<T>('\r')  || // carriage return
-        c == static_cast<T>('\t')  || // horizontal tab
-        c == static_cast<T>('\v');    // vertical tab
+        c == glyph<T>::space  ||
+        c == glyph<T>::ff     ||
+        c == glyph<T>::lf     ||
+        c == glyph<T>::cr     ||
+        c == glyph<T>::ht     ||
+        c == glyph<T>::vt;
   }
 
 } // namespace cs
