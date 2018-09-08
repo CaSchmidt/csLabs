@@ -33,7 +33,12 @@
 
 #include "worker/worker.h"
 
-#include "util.hpp"
+#include "worker/ParallelExecutor.h"
+#include "worker/ProgressUI.h"
+
+////// Global ////////////////////////////////////////////////////////////////
+
+extern HINSTANCE g_hDllInst; // main.cpp
 
 ////// Public ////////////////////////////////////////////////////////////////
 
@@ -46,6 +51,26 @@ DWORD WINAPI parallel_work(LPVOID lpParameter)
     MessageBoxW(nullptr, L"IsGUIThread()", L"Error",
                 MB_ICONERROR | MB_OK);
     return 0;
+  }
+
+  std::unique_ptr<ParallelExecutor> pex;
+  try {
+    pex = std::make_unique<ParallelExecutor>(ctx->numThreads, ctx->script, ctx->files);
+  } catch(...) {
+    return 0;
+  }
+
+  std::unique_ptr<ProgressUI> pui = ProgressUI::create(pex.release(), g_hDllInst, 480, 48);
+  if( !pui ) {
+    return 0;
+  }
+
+  pui->show();
+
+  MSG msg;
+  while( GetMessageW(&msg, nullptr, 0, 0) > 0 ) {
+    TranslateMessage(&msg);
+    DispatchMessageW(&msg);
   }
 
   return 0;

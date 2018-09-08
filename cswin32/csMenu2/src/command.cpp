@@ -132,11 +132,7 @@ bool executeCommand(const UINT cmd, const csWStringList& files)
     }
 
     if( isParallel ) {
-      csWStringList args(files);
-      args.push_front(script);
-      args.push_front(std::to_wstring(parallelCount));
-      ShellExecuteW(nullptr, L"open", parallel.data(), joinFileNames(args).data(),
-                    nullptr, SW_SHOWNORMAL);
+      startWork(parallel_work, ctx.release());
     } else { // DO NOT use parallelizer
       if( isBatch ) {
         startWork(batch_work, ctx.release());
