@@ -4,10 +4,9 @@ cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 
 project(csUtil)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
+# Custom CMake utilities
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(FormatOutputName)
 
 # Static Build?
@@ -19,17 +18,24 @@ endif()
 
 # config.h
 configure_file(include/config/csutil_config.h.in
-  include/csUtil/csutil_config.h @ONLY
+  ${CMAKE_BINARY_DIR}/include/csUtil/csutil_config.h @ONLY
   )
+
+include_directories(${CMAKE_BINARY_DIR}/include)
+
+# C++
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 ### 3rd Party ################################################################
 
-include(3rdparty/double-conversion/dblcnv_files.cmake)
-include(3rdparty/icu-ucnv/icu_files.cmake)
+add_subdirectory(3rdparty/double-conversion)
+add_subdirectory(3rdparty/icu-ucnv)
 
 ### csUtil ###################################################################
 
-set(csUtil_HEADERS
+list(APPEND csUtil_HEADERS
   include/csUtil/csCharConv.h
   include/csUtil/csCharUtil.h
   include/csUtil/csEndian.h
@@ -47,7 +53,7 @@ set(csUtil_HEADERS
   include/internal/csutil_internal.h
   )
 
-set(csUtil_SOURCES
+list(APPEND csUtil_SOURCES
   src/csCharConv-fp.cpp
   src/csCharConv.cpp
   src/csFileIO.cpp
@@ -61,23 +67,15 @@ set(csUtil_SOURCES
 
 add_library(csUtil
   ${csUtil_HEADERS} ${csUtil_SOURCES}
-  ${trdparty_dblcnv_FILES}
-  ${trdparty_icu_FILES}
+  $<TARGET_OBJECTS:dblcnv>
+  $<TARGET_OBJECTS:icu>
   )
-
-set_property(TARGET csUtil PROPERTY CXX_STANDARD 14)
-set_property(TARGET csUtil PROPERTY CXX_STANDARD_REQUIRED ON)
-set_property(TARGET csUtil PROPERTY CXX_EXTENSIONS OFF)
 
 format_output_name(csUtil "csUtil")
 
 target_compile_definitions(csUtil PRIVATE CS_BUILD_UTIL_LIB)
-
+target_include_directories(csUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(csUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-if(WIN32)
-  target_compile_definitions(csUtil PRIVATE _CRT_SECURE_NO_WARNINGS)
-endif()
 
 # ICU
 target_compile_definitions(csUtil PRIVATE U_COMMON_IMPLEMENTATION U_STATIC_IMPLEMENTATION)
@@ -96,5 +94,5 @@ install(DIRECTORY
   )
 
 install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/include/csUtil/csutil_config.h DESTINATION include/csUtil
+  ${CMAKE_BINARY_DIR}/include/csUtil/csutil_config.h DESTINATION include/csUtil
   )
