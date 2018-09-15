@@ -77,7 +77,7 @@ target_include_directories(csUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(csUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # ICU
-target_compile_definitions(csUtil PRIVATE U_COMMON_IMPLEMENTATION U_STATIC_IMPLEMENTATION)
+target_compile_definitions(csUtil PRIVATE ${icu_DEFINES})
 target_include_directories(csUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/icu-ucnv/src)
 
 install(TARGETS csUtil

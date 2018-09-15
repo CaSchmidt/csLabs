@@ -149,6 +149,11 @@ list(APPEND icu_FILES
   src-dat/icudt61l_dat.c
   )
 
+list(APPEND icu_DEFINES
+  U_COMMON_IMPLEMENTATION
+  U_STATIC_IMPLEMENTATION
+  )
+
 add_library(icu OBJECT
   ${icu_FILES}
   )
@@ -157,5 +162,7 @@ if(WIN32)
   target_compile_definitions(icu PRIVATE _CRT_SECURE_NO_WARNINGS)
 endif()
 
-target_compile_definitions(icu PRIVATE U_COMMON_IMPLEMENTATION U_STATIC_IMPLEMENTATION)
+target_compile_definitions(icu PRIVATE ${icu_DEFINES})
 target_include_directories(icu PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+set(icu_DEFINES ${icu_DEFINES} PARENT_SCOPE)
