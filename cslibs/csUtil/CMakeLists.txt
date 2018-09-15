@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 project(csUtil)
 
 # Custom CMake utilities
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(FormatOutputName)
 
@@ -18,10 +18,8 @@ endif()
 
 # config.h
 configure_file(include/config/csutil_config.h.in
-  ${CMAKE_BINARY_DIR}/include/csUtil/csutil_config.h @ONLY
+  ${CMAKE_CURRENT_BINARY_DIR}/include/csUtil/csutil_config.h @ONLY
   )
-
-include_directories(${CMAKE_BINARY_DIR}/include)
 
 # C++
 set(CMAKE_CXX_STANDARD 14)
@@ -74,6 +72,7 @@ add_library(csUtil
 format_output_name(csUtil "csUtil")
 
 target_compile_definitions(csUtil PRIVATE CS_BUILD_UTIL_LIB)
+target_include_directories(csUtil PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include)
 target_include_directories(csUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(csUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
