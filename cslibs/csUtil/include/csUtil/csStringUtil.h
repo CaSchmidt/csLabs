@@ -47,8 +47,7 @@ namespace cs {
   ////// Implementation //////////////////////////////////////////////////////
 
   template<typename T>
-  inline std::size_t length(const T *s,
-                            const if_char_bool<T> * = nullptr) noexcept
+  inline std::size_t length(const T *s) noexcept
   {
     return s != nullptr
         ? std::char_traits<T>::length(s)
@@ -56,8 +55,7 @@ namespace cs {
   }
 
   template<typename T>
-  inline std::size_t lengthN(const T *s, const std::size_t maxCount,
-                            const if_char_bool<T> * = nullptr) noexcept
+  inline std::size_t lengthN(const T *s, const std::size_t maxCount) noexcept
   {
     std::size_t count = 0;
 
@@ -77,8 +75,7 @@ namespace cs {
   }
 
   template<typename T>
-  inline std::size_t lengthDiff(const T *first, const T *last,
-                            const if_char_bool<T> * = nullptr) noexcept
+  inline std::size_t lengthDiff(const T *first, const T *last) noexcept
   {
     return first != nullptr  &&  first < last
         ? lengthN(first, static_cast<std::size_t>(last - first))
