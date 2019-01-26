@@ -1,9 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>icons/scalable/add.svg</file>
-        <file>icons/scalable/pause.svg</file>
-        <file>icons/scalable/remove.svg</file>
-        <file>icons/scalable/start.svg</file>
-        <file>icons/scalable/stop.svg</file>
-    </qresource>
-</RCC>
