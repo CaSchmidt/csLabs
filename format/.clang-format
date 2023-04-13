@@ -1,6 +1,6 @@
 BasedOnStyle: LLVM
 Language: Cpp
-# File Structure
+# File
 LineEnding: LF
 UseTab: Never
 ColumnLimit: 0
@@ -9,27 +9,28 @@ ContinuationIndentWidth: 2
 # Pointer & Reference
 PointerAlignment: Right
 ReferenceAlignment: Left
-
-# Shortening of Blocks
-#AllowShortBlocksOnASingleLine: Never
-#AllowShortCaseLabelsOnASingleLine: false
-#AllowShortEnumsOnASingleLine: false
-#AllowShortFunctionsOnASingleLine: None
-#AllowShortIfStatementsOnASingleLine: Never
-#AllowShortLambdasOnASingleLine: None
-#AllowShortLoopsOnASingleLine: false
-
 # Classes & Inheritance
 BreakInheritanceList: BeforeComma
 BreakConstructorInitializers: BeforeComma
 ConstructorInitializerIndentWidth: 2
-# Handling of Operators
+# Operators
 AlignOperands: AlignAfterOperator
 BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeTernaryOperators: true
-# Handling of Braces
+# Braces
+InsertBraces: true
 BreakBeforeBraces: Custom
 BraceWrapping:
+  AfterControlStatement: Never
   AfterFunction: true
-  SplitEmptyFunction: true
-  SplitEmptyRecord: true
+# Namespaces
+FixNamespaceComments: true
+NamespaceIndentation: All
+ShortNamespaceLines: 0
+# Spaces
+SpaceBeforeParens: Custom
+SpaceBeforeParensOptions:
+  AfterControlStatements: false
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceInEmptyBlock: true
+SpacesInConditionalStatement: true

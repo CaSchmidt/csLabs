@@ -1,16 +1,23 @@
 #include <cstdio>
 #include <cstdlib>
 
+namespace MyOuterSpace {
+  namespace MyInnerSpace {
+    int i;
+  } // namespace MyInnerSpace
+  int j;
+} // namespace MyOuterSpace
+
 enum MyEnum {
   A,
   B,
   C
 };
 
-struct MyStruct {};
+struct MyStruct { };
 
-class MyParentA {};
-class MyParentB {};
+class MyParentA { };
+class MyParentB { };
 
 class MyClass
   : public MyParentA
@@ -30,14 +37,18 @@ void test_empty(const int *intPtr, const int& intRef)
 {
 }
 
-void test_flow(const int *intPtr, const int& intRef)
+void test_ctrl(const int *intPtr, const int& intRef)
 {
   int y = 0;
-  if (intPtr != nullptr) {
+  if( intPtr != nullptr ) {
     y = *intPtr;
-  } else if (intRef != 0) {
+  } else if( intRef != 0 && intPtr != nullptr ) {
     y = intRef;
   } else {
+  }
+
+  for( const int i : {1, 2, 3} ) {
+    y = i;
   }
 }
 
