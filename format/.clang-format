@@ -6,6 +6,7 @@ UseTab: Never
 ColumnLimit: 0
 IndentWidth: 2
 ContinuationIndentWidth: 2
+SortIncludes: Never
 # Pointer & Reference
 PointerAlignment: Right
 ReferenceAlignment: Left
@@ -27,6 +28,13 @@ BraceWrapping:
 FixNamespaceComments: true
 NamespaceIndentation: All
 ShortNamespaceLines: 0
+# Assignments
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+  AlignCompound: true
+  PadOperators: true
 # Spaces
 SpaceBeforeParens: Custom
 SpaceBeforeParensOptions:
