@@ -7,6 +7,7 @@ ColumnLimit: 0
 IndentWidth: 2
 ContinuationIndentWidth: 2
 SortIncludes: Never
+InsertNewlineAtEOF: true
 # Pointer & Reference
 PointerAlignment: Right
 ReferenceAlignment: Left
