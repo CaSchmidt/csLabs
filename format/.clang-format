@@ -43,3 +43,8 @@ SpaceBeforeParensOptions:
 SpaceBeforeRangeBasedForLoopColon: true
 SpaceInEmptyBlock: true
 SpacesInConditionalStatement: true
+# Macros
+AlignConsecutiveMacros:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
